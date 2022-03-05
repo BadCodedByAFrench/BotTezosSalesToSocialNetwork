@@ -4,11 +4,15 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales;
 
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlace;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SaleType;
+import java.time.Instant;
+
 /**
  * Represent the sale of an NFT
  * @author david
  */
-public class Sale {
+public class Sale implements Comparable<Sale> {
     
     /**
      * Name of the nft
@@ -29,13 +33,13 @@ public class Sale {
      * Type of the sale (listed / offer / english auction / dutch auction)
      * Could be replace by an Enum
      */
-    private String type;
+    private SaleType type;
     
     /**
      * Marketplace of the sale
      * Could be replace by an Enum
      */
-    private String marketplace;
+    private MarketPlace marketplace;
 
     /**
      * The path of a contract on Objkt
@@ -45,9 +49,9 @@ public class Sale {
     /**
      * Get the moment of the sale (as string until I convert into a proper date)
      */
-    private String timestamp;
+    private Instant timestamp;
     
-    public Sale(String name, Long id, double price, String type, String marketplace, String pathname, String timestamp) {
+    public Sale(String name, Long id, double price, SaleType type, MarketPlace marketplace, String pathname, Instant timestamp) {
         this.name = name;
         this.id = id;
         this.price = price;
@@ -70,11 +74,11 @@ public class Sale {
         return price;
     }    
 
-    public String getType() {
+    public SaleType getType() {
         return type;
     }
 
-    public String getMarketplace() {
+    public MarketPlace getMarketplace() {
         return marketplace;
     }
 
@@ -82,14 +86,19 @@ public class Sale {
         return pathname;
     }
 
-    public String getTimestamp() {
+    public Instant getTimestamp() {
         return timestamp;
     }
 
-    
+
     @Override
     public String toString() {
         return "Title : " + name + " Id : " + id + " Price : " + price  ; // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+    }
+
+    @Override
+    public int compareTo(Sale o) {
+        return Double.compare(o.getPrice(), this.getPrice());
     }
     
     

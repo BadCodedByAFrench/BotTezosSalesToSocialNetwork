@@ -4,9 +4,8 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceInterface;
 
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlace;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.List;
 
 /**
@@ -21,4 +20,11 @@ public interface CallMarketPlaceInterface {
      * @throws Exception
      */
     public List<Sale> query() throws Exception;
+    
+    /**
+     * Get the name of the marketplace
+     * @return 
+     */
+    public MarketPlace getName();
+    
 }

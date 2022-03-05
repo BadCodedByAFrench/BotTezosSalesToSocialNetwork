@@ -4,9 +4,9 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterface;
 
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetwork;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
 import java.util.List;
-import twitter4j.TwitterException;
 
 /**
  * Interface that should be use by all of the SocialNetwork
@@ -20,4 +20,10 @@ public interface SocialNetworkInterface {
      * @throws Exception 
      */
     public void send(List<Sale> newSales) throws Exception;
+    
+     /**
+     * Get the name of the social network
+     * @return 
+     */
+    public SocialNetwork getName();
 }

@@ -4,15 +4,18 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass;
 
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlace;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetwork;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
 import java.util.List;
-import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterface.SocialNetworkInterface;
+import java.text.DecimalFormat;
 import java.util.concurrent.TimeUnit;
+import twitter4j.Status;
 
 /**
  * Represent Twitter
@@ -30,6 +33,15 @@ public class TwitterSocialNetwork implements SocialNetworkInterface{
      * Contract of the collection
      */
     private String contract;
+    
+    /**
+     * Name of the social network
+     */
+    private SocialNetwork name;
+    
+    public TwitterSocialNetwork(){
+        name = SocialNetwork.Twitter;
+    }
     
     /**
      * We instance the connection with the twitter account and we set up the path name
@@ -57,14 +69,15 @@ public class TwitterSocialNetwork implements SocialNetworkInterface{
     public void send(List<Sale> newSales)throws TwitterException, InterruptedException {
         
         int countAvoidTwitterDuplicate = 1;
+        DecimalFormat df = new DecimalFormat("##.00");
         
         for(Sale aSale : newSales){
             
             if (countAvoidTwitterDuplicate <= 45){
                 String status = "";
-                status = countAvoidTwitterDuplicate + " " + aSale.getTimestamp().substring(0, 19) + " : " + aSale.getName() + " has been sold for " + aSale.getPrice() + " XTZ on " + aSale.getMarketplace();
+                status = countAvoidTwitterDuplicate + " " + aSale.getTimestamp().toString().substring(0, 19) + " : " + aSale.getType().getType() + " " + aSale.getName() + " has been sold for " + df.format(aSale.getPrice()) + " XTZ on " + aSale.getMarketplace().toString();
 
-                if (aSale.getMarketplace().equals("Objkt")){
+                if (aSale.getMarketplace() == MarketPlace.Objkt){
                     if (aSale.getPathname() == null){
                         status += " \nhttps://objkt.com/asset/"+ this.contract + "/"+ aSale.getId();
                     }
@@ -83,9 +96,17 @@ public class TwitterSocialNetwork implements SocialNetworkInterface{
                 Status newTweet = twitterInstance.updateStatus(status);
 
                 TimeUnit.MINUTES.sleep(1);
+                
                 countAvoidTwitterDuplicate++;
             }
         }
     }
+
+    @Override
+    public SocialNetwork getName() {
+        return name;
+    }
+    
+    
     
 }

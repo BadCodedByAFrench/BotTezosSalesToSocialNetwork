@@ -5,7 +5,6 @@
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.ApiRunnable;
 
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
-import com.poorlycodedbyafrench.bottezosselltotwitter.MainForm.MainBotForm;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -15,6 +14,7 @@ import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceInterface.CallMarketPlaceInterface;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterface.SocialNetworkInterface;
+import java.util.Collections;
 import twitter4j.TwitterException;
 
 /**
@@ -92,29 +92,32 @@ public class SalesToSocialNetwork implements Runnable {
                 try {
                     numberOfSale = allNewSell.size();
                     allNewSell.addAll(oneMarkeplace.query());
-                    model.insertRow(0, new Object[]{oneMarkeplace.getClass().getSimpleName(),"OK" ,allNewSell.size() - numberOfSale });
+                    model.insertRow(0, new Object[]{oneMarkeplace.getName().toString(),"OK" ,allNewSell.size() - numberOfSale });
                 } catch (IOException ex) {
-                    model.insertRow(0, new Object[]{oneMarkeplace.getClass().getSimpleName(),"Error : network issue" ,ex.getMessage()});
+                    model.insertRow(0, new Object[]{oneMarkeplace.getName().toString(),"Error : network issue" ,ex.getMessage()});
                 } catch (URISyntaxException ex) {
-                    model.insertRow(0, new Object[]{oneMarkeplace.getClass().getSimpleName(),"Error : URI issue" ,ex.getMessage()});
+                    model.insertRow(0, new Object[]{oneMarkeplace.getName().toString(),"Error : URI issue" ,ex.getMessage()});
                 } catch (InterruptedException ex) {
-                    model.insertRow(0, new Object[]{oneMarkeplace.getClass().getSimpleName(),"Error : interrupted issue" ,ex.getMessage()});;
+                    model.insertRow(0, new Object[]{oneMarkeplace.getName().toString(),"Error : interrupted issue" ,ex.getMessage()});;
                 } catch (Exception ex) {
-                    model.insertRow(0, new Object[]{oneMarkeplace.getClass().getSimpleName(),"Error : unable to get sale" ,ex.getMessage()});
+                    model.insertRow(0, new Object[]{oneMarkeplace.getName().toString(),"Error : unable to get sale" ,ex.getMessage()});
                     Logger.getLogger(SalesToSocialNetwork.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             
+            //sort all the sales by prices to show the most important one first
+            Collections.sort(allNewSell);
+                    
             for (SocialNetworkInterface oneSocialNetwork : this.socialNetworks){
                 
                 try {
                     oneSocialNetwork.send(allNewSell);
-                    model.insertRow(0, new Object[]{oneSocialNetwork.getClass().getSimpleName(),"OK" ,allNewSell.size()});
+                    model.insertRow(0, new Object[]{oneSocialNetwork.getName().toString(),"OK" ,allNewSell.size()});
                 } catch (TwitterException ex) {
-                    model.insertRow(0, new Object[]{oneSocialNetwork.getClass().getSimpleName(),"Error : unable to send a tweet" ,ex.getMessage()});
+                    model.insertRow(0, new Object[]{oneSocialNetwork.getName().toString(),"Error : unable to send a tweet" ,ex.getMessage()});
                     Logger.getLogger(SalesToSocialNetwork.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (Exception ex) {
-                    model.insertRow(0, new Object[]{oneSocialNetwork.getClass().getSimpleName(),"Error : unable to send a tweet" ,ex.getMessage()});
+                    model.insertRow(0, new Object[]{oneSocialNetwork.getName().toString(),"Error : unable to send a tweet" ,ex.getMessage()});
                     Logger.getLogger(SalesToSocialNetwork.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
