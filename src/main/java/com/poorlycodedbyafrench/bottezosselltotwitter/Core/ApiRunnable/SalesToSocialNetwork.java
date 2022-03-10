@@ -98,7 +98,7 @@ public class SalesToSocialNetwork implements Runnable {
                 } catch (URISyntaxException ex) {
                     model.insertRow(0, new Object[]{oneMarkeplace.getName().toString(),"Error : URI issue" ,ex.getMessage()});
                 } catch (InterruptedException ex) {
-                    model.insertRow(0, new Object[]{oneMarkeplace.getName().toString(),"Error : interrupted issue" ,ex.getMessage()});;
+                    model.insertRow(0, new Object[]{oneMarkeplace.getName().toString(),"Error : interrupted issue" ,ex.getMessage()});
                 } catch (Exception ex) {
                     model.insertRow(0, new Object[]{oneMarkeplace.getName().toString(),"Error : unable to get sale" ,ex.getMessage()});
                     Logger.getLogger(SalesToSocialNetwork.class.getName()).log(Level.SEVERE, null, ex);

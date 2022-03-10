@@ -51,7 +51,17 @@ public class Sale implements Comparable<Sale> {
      */
     private Instant timestamp;
     
-    public Sale(String name, Long id, double price, SaleType type, MarketPlace marketplace, String pathname, Instant timestamp) {
+    /**
+     * Contract related to the sale
+     */
+    private String contract;
+    
+    /**
+     * Name of the associated collection
+     */
+    private String collectionName;
+    
+    public Sale(String name, Long id, double price, SaleType type, MarketPlace marketplace, String pathname, Instant timestamp, String contract, String collectionName) {
         this.name = name;
         this.id = id;
         this.price = price;
@@ -59,6 +69,8 @@ public class Sale implements Comparable<Sale> {
         this.marketplace = marketplace;
         this.pathname = pathname;
         this.timestamp = timestamp;
+        this.contract = contract;
+        this.collectionName = collectionName;
     }
 
     public String getName() {
@@ -90,6 +102,13 @@ public class Sale implements Comparable<Sale> {
         return timestamp;
     }
 
+    public String getContract() {
+        return contract;
+    }
+
+    public String getCollectionName() {
+        return collectionName;
+    }
 
     @Override
     public String toString() {

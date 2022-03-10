@@ -6,6 +6,7 @@ package com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass;
 
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlace;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetwork;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Contract;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
 import java.util.List;
 import twitter4j.Twitter;
@@ -14,6 +15,9 @@ import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterface.SocialNetworkInterface;
 import java.text.DecimalFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import twitter4j.Status;
 
@@ -30,14 +34,13 @@ public class TwitterSocialNetwork implements SocialNetworkInterface{
     private Twitter twitterInstance;
     
     /**
-     * Contract of the collection
-     */
-    private String contract;
-    
-    /**
      * Name of the social network
      */
     private SocialNetwork name;
+    
+    private boolean stat;
+    
+    private boolean sales;
     
     public TwitterSocialNetwork(){
         name = SocialNetwork.Twitter;
@@ -51,7 +54,7 @@ public class TwitterSocialNetwork implements SocialNetworkInterface{
      * @param privateAccessKey
      * @param contract 
      */
-    public void instanceTwitter(String publicConsumerKey, String privateConsumerKey, String publicAccessKey, String privateAccessKey, String contract ){
+    public void instanceTwitter(String publicConsumerKey, String privateConsumerKey, String publicAccessKey, String privateAccessKey, boolean stat, boolean sales ){
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setDebugEnabled(true)
         .setOAuthConsumerKey(publicConsumerKey)
@@ -62,7 +65,8 @@ public class TwitterSocialNetwork implements SocialNetworkInterface{
         TwitterFactory tf = new TwitterFactory(cb.build());
         twitterInstance = tf.getInstance();
         
-        this.contract = contract;
+        this.stat = stat;
+        this.sales = sales;
     }
     
     @Override
@@ -71,33 +75,96 @@ public class TwitterSocialNetwork implements SocialNetworkInterface{
         int countAvoidTwitterDuplicate = 1;
         DecimalFormat df = new DecimalFormat("##.00");
         
-        for(Sale aSale : newSales){
+        Instant previousUTCHour = Instant.now().minus(1, ChronoUnit.HOURS);
+        
+        if(this.stat){
+            List<Contract> contracts = new ArrayList<Contract>();
+            for(Sale aSale : newSales){
+                
+                boolean contractExist = false;
+                
+                for(Contract contract : contracts){  
+                    if(contract.getContract().equals(aSale.getContract())){
+                        contract.addSale(aSale);
+                        contractExist = true;
+                    }
+                }
+                
+                if(!contractExist){
+                    Contract newContract = new Contract(aSale);
+                    contracts.add(newContract);
+                }
+            }
             
-            if (countAvoidTwitterDuplicate <= 45){
+            for(Contract contract : contracts){  
                 String status = "";
-                status = countAvoidTwitterDuplicate + " " + aSale.getTimestamp().toString().substring(0, 19) + " : " + aSale.getType().getType() + " " + aSale.getName() + " has been sold for " + df.format(aSale.getPrice()) + " XTZ on " + aSale.getMarketplace().toString();
-
-                if (aSale.getMarketplace() == MarketPlace.Objkt){
-                    if (aSale.getPathname() == null){
-                        status += " \nhttps://objkt.com/asset/"+ this.contract + "/"+ aSale.getId();
+                
+                status = countAvoidTwitterDuplicate + " Stat for " + contract.getName() + " since " +previousUTCHour.toString().substring(0,19) + " : ";
+                status += "\nNumber of sales : " + contract.getNbSale();
+                status += "\nTotal xtz : " + df.format(contract.getTotalprice());
+                status += "\nMin price : " + df.format(contract.getMin());
+                status += "\nMax price : " + df.format(contract.getMax());
+                status += "\nAverage price : " + df.format(contract.getAvg());
+                
+                if(contract.getMarketplace().contains(MarketPlace.Objkt)){
+                    status += "\nObjkt Link : " ;
+                    if (contract.getPath()== null){
+                        status += " https://objkt.com/collection/"+ contract.getContract();
                     }
                     else{
-                        status += " \nhttps://objkt.com/asset/"+ aSale.getPathname() + "/"+ aSale.getId();
+                        status += " https://objkt.com/collection/"+ contract.getPath();
                     }
-
                 }
-
-                status += " \n#tezos #nft #"+aSale.getMarketplace();
-
-                if (aSale.getPathname() != null){
-                    status += " #"+aSale.getPathname();
+                
+                status += " \n#tezos #nft ";
+                
+                for(MarketPlace m : contract.getMarketplace()){
+                    status += " #" + m.toString();
                 }
-
+                
+                if (contract.getPath() != null){
+                    status += " #"+contract.getPath();
+                }
+                
                 Status newTweet = twitterInstance.updateStatus(status);
 
                 TimeUnit.MINUTES.sleep(1);
                 
                 countAvoidTwitterDuplicate++;
+                    
+                    
+            }
+        }
+        
+        if(this.sales){
+            for(Sale aSale : newSales){
+
+                if (countAvoidTwitterDuplicate <= 45){
+                    String status = "";
+                    status = countAvoidTwitterDuplicate + " " + aSale.getTimestamp().toString().substring(0, 19) + " : " + aSale.getType().getType() + " " + aSale.getName() + " has been sold for " + df.format(aSale.getPrice()) + " XTZ on " + aSale.getMarketplace().toString();
+
+                    if (aSale.getMarketplace() == MarketPlace.Objkt){
+                        if (aSale.getPathname() == null){
+                            status += " \nhttps://objkt.com/asset/"+ aSale.getContract() + "/"+ aSale.getId();
+                        }
+                        else{
+                            status += " \nhttps://objkt.com/asset/"+ aSale.getPathname() + "/"+ aSale.getId();
+                        }
+
+                    }
+
+                    status += " \n#tezos #nft #"+aSale.getMarketplace();
+
+                    if (aSale.getPathname() != null){
+                        status += " #"+aSale.getPathname();
+                    }
+
+                    Status newTweet = twitterInstance.updateStatus(status);
+
+                    TimeUnit.MINUTES.sleep(1);
+                    
+                    countAvoidTwitterDuplicate++;
+                }
             }
         }
     }
