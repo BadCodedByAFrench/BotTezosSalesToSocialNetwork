@@ -101,10 +101,10 @@ public class TwitterSocialNetwork implements SocialNetworkInterface{
                 
                 status = countAvoidTwitterDuplicate + " Stat for " + contract.getName() + " since " +previousUTCHour.toString().substring(0,19) + " : ";
                 status += "\nNumber of sales : " + contract.getNbSale();
-                status += "\nTotal xtz : " + df.format(contract.getTotalprice());
-                status += "\nMin price : " + df.format(contract.getMin());
-                status += "\nMax price : " + df.format(contract.getMax());
-                status += "\nAverage price : " + df.format(contract.getAvg());
+                status += "\nTotal xtz : " + df.format(contract.getTotalprice()).replace(',', '.');
+                status += "\nMin price : " + df.format(contract.getMin()).replace(',', '.');
+                status += "\nMax price : " + df.format(contract.getMax()).replace(',', '.');
+                status += "\nAverage price : " + df.format(contract.getAvg()).replace(',', '.');
                 
                 if(contract.getMarketplace().contains(MarketPlace.Objkt)){
                     status += "\nObjkt Link : " ;
@@ -141,7 +141,7 @@ public class TwitterSocialNetwork implements SocialNetworkInterface{
 
                 if (countAvoidTwitterDuplicate <= 45){
                     String status = "";
-                    status = countAvoidTwitterDuplicate + " " + aSale.getTimestamp().toString().substring(0, 19) + " : " + aSale.getType().getType() + " " + aSale.getName() + " has been sold for " + df.format(aSale.getPrice()) + " XTZ on " + aSale.getMarketplace().toString();
+                    status = countAvoidTwitterDuplicate + " " + aSale.getTimestamp().toString().substring(0, 19) + " : " + aSale.getType().getType() + " " + aSale.getName() + " has been sold for " + df.format(aSale.getPrice()).replace(',', '.') + " XTZ on " + aSale.getMarketplace().toString();
 
                     if (aSale.getMarketplace() == MarketPlace.Objkt){
                         if (aSale.getPathname() == null){
