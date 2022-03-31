@@ -4,6 +4,7 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales;
 
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotConfiguration;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlace;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SaleType;
 import java.time.Instant;
@@ -61,7 +62,23 @@ public class Sale implements Comparable<Sale> {
      */
     private String collectionName;
     
-    public Sale(String name, Long id, double price, SaleType type, MarketPlace marketplace, String pathname, Instant timestamp, String contract, String collectionName) {
+    /**
+     * Wallet of the buyer
+     */
+    private Address buyer;
+    
+    /**
+     * Wallet of the seller
+     */
+    private Address seller;
+    
+    /**
+     * IPFS file of the NFT
+     */
+    private String ipfs; 
+    
+    
+    public Sale(String name, Long id, double price, SaleType type, MarketPlace marketplace, String pathname, Instant timestamp, String contract, String collectionName, Address buyer, Address seller, String ipfs) {
         this.name = name;
         this.id = id;
         this.price = price;
@@ -71,6 +88,9 @@ public class Sale implements Comparable<Sale> {
         this.timestamp = timestamp;
         this.contract = contract;
         this.collectionName = collectionName;
+        this.buyer = buyer;
+        this.seller = seller;
+        this.ipfs = ipfs;
     }
 
     public String getName() {
@@ -109,16 +129,37 @@ public class Sale implements Comparable<Sale> {
     public String getCollectionName() {
         return collectionName;
     }
+    
+    public Address getBuyer() {
+        return buyer;
+    }
+
+    public Address getSeller() {
+        return seller;
+    }
+
+    public String getIpfs() {
+        return ipfs;
+    }
 
     @Override
     public String toString() {
         return "Title : " + name + " Id : " + id + " Price : " + price  ; // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
     }
 
+    /**
+     * Depending of the configuration, we sort by the msot oldiest timestamp or biggest price
+     * @param o
+     * @return 
+     */
     @Override
     public int compareTo(Sale o) {
-        return Double.compare(o.getPrice(), this.getPrice());
+        
+        if(BotConfiguration.getConfiguration().getOrderBy() == 0){
+            return this.getTimestamp().compareTo(o.getTimestamp());
+        }
+        else {
+            return Double.compare(o.getPrice(), this.getPrice());
+        }
     }
-    
-    
 }

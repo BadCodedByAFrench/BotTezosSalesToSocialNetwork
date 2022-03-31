@@ -4,17 +4,18 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.ApiRunnable;
 
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotLastRefresh;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceInterface.CallMarketPlaceInterface;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterface.SocialNetworkInterface;
 import java.util.Collections;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import twitter4j.TwitterException;
 
 /**
@@ -42,19 +43,16 @@ public class SalesToSocialNetwork implements Runnable {
      * Table of main window
      */
     private DefaultTableModel model;
+        
+    private int mode;
     
-    /**
-     * Know if the bot should run
-     */
-    private boolean isActive;
-    
-    public SalesToSocialNetwork(DefaultTableModel model) {
+    public SalesToSocialNetwork(DefaultTableModel model, int mode) {
         this.newSell = new ArrayList<Sale>();
         this.marketplaces = new ArrayList<CallMarketPlaceInterface>();
         this.socialNetworks = new ArrayList<SocialNetworkInterface>();
         
         this.model = model;
-        this.isActive = false;
+        this.mode = mode;
     }
 
     public void setMarketplaces(List<CallMarketPlaceInterface> marketplaces) {
@@ -66,10 +64,6 @@ public class SalesToSocialNetwork implements Runnable {
     }
 
     
-    public void setIsActive(boolean isActive) {
-        this.isActive = isActive;
-    }
-    
     
     /**
      * if the bot is active
@@ -80,10 +74,8 @@ public class SalesToSocialNetwork implements Runnable {
     public void run() {
         long numberOfSale = 0;
         
-        if(this.isActive){
-            
-            if (model.getRowCount() >= 72){
-                model.setRowCount(24);
+            if (model.getRowCount() >= 1000){
+                model.setRowCount(500);
             }
             
             List<Sale> allNewSell = new ArrayList<Sale>();
@@ -91,27 +83,33 @@ public class SalesToSocialNetwork implements Runnable {
 
                 try {
                     numberOfSale = allNewSell.size();
-                    allNewSell.addAll(oneMarkeplace.query());
+                    allNewSell.addAll(oneMarkeplace.query(mode));
                     model.insertRow(0, new Object[]{oneMarkeplace.getName().toString(),"OK" ,allNewSell.size() - numberOfSale });
                 } catch (IOException ex) {
                     model.insertRow(0, new Object[]{oneMarkeplace.getName().toString(),"Error : network issue" ,ex.getMessage()});
+                    Logger.getLogger(SalesToSocialNetwork.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (URISyntaxException ex) {
                     model.insertRow(0, new Object[]{oneMarkeplace.getName().toString(),"Error : URI issue" ,ex.getMessage()});
+                    Logger.getLogger(SalesToSocialNetwork.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (InterruptedException ex) {
                     model.insertRow(0, new Object[]{oneMarkeplace.getName().toString(),"Error : interrupted issue" ,ex.getMessage()});
+                    Logger.getLogger(SalesToSocialNetwork.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (Exception ex) {
                     model.insertRow(0, new Object[]{oneMarkeplace.getName().toString(),"Error : unable to get sale" ,ex.getMessage()});
                     Logger.getLogger(SalesToSocialNetwork.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             
-            //sort all the sales by prices to show the most important one first
+            //sort all the sales depend of configuration setting
             Collections.sort(allNewSell);
-                    
+            
+            //Set the last successful refresh
+            BotLastRefresh.getLastRefresh().setLastRefresh(allNewSell, mode);
+            
             for (SocialNetworkInterface oneSocialNetwork : this.socialNetworks){
                 
                 try {
-                    oneSocialNetwork.send(allNewSell);
+                    oneSocialNetwork.send(allNewSell, this.mode);
                     model.insertRow(0, new Object[]{oneSocialNetwork.getName().toString(),"OK" ,allNewSell.size()});
                 } catch (TwitterException ex) {
                     model.insertRow(0, new Object[]{oneSocialNetwork.getName().toString(),"Error : unable to send a tweet" ,ex.getMessage()});
@@ -121,7 +119,6 @@ public class SalesToSocialNetwork implements Runnable {
                     Logger.getLogger(SalesToSocialNetwork.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-        }
     }
     
 }

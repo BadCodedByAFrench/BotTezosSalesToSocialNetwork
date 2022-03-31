@@ -19,7 +19,7 @@ public interface CallMarketPlaceInterface {
      * @return
      * @throws Exception
      */
-    public List<Sale> query() throws Exception;
+    public List<Sale> query(int mode) throws Exception;
     
     /**
      * Get the name of the marketplace

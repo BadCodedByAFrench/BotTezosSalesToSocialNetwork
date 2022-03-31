@@ -19,7 +19,7 @@ public interface SocialNetworkInterface {
      * @param newSales
      * @throws Exception 
      */
-    public void send(List<Sale> newSales) throws Exception;
+    public void send(List<Sale> newSales, int mode) throws Exception;
     
      /**
      * Get the name of the social network

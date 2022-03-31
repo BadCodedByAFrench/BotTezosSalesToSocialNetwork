@@ -5,19 +5,22 @@
 package com.poorlycodedbyafrench.bottezosselltotwitter.MainForm;
 
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.ApiRunnable.SalesToSocialNetwork;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotConfiguration;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotLastRefresh;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.CallObjkt;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterface.SocialNetworkInterface;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import javax.swing.table.DefaultTableModel;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceInterface.CallMarketPlaceInterface;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass.TwitterSocialNetwork;
+import java.awt.Dialog;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Vector;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
@@ -48,14 +51,23 @@ public class MainBotForm extends javax.swing.JFrame {
     private DefaultTableModel dtb;
     
     /**
-     * The thread that will call API 
+     * The thread that will call API for follow sales 
      */
-    private SalesToSocialNetwork apiHandler;
+    private SalesToSocialNetwork apiHandlerSales;
+    
+    /**
+     * The thread that will call API for follow stat
+     */
+    private SalesToSocialNetwork apiHandlerStat;
+    
     
     /**
      * Tool that will execute query every hours
      */
-    private ScheduledExecutorService executor;
+    private ScheduledThreadPoolExecutor  executor;
+    
+    private ScheduledFuture<?> scheduledFutureSales;
+    private ScheduledFuture<?> scheduledFutureStat;
     
     /**
      * Boolean used because we never stop the thread. And instead of starting the thread when we start the app, we create it at the fist click on "start" button. Then we have the first call
@@ -86,9 +98,11 @@ public class MainBotForm extends javax.swing.JFrame {
         
         socialNetworks.add(new TwitterSocialNetwork());
               
-        apiHandler = new SalesToSocialNetwork(model);
+        apiHandlerSales = new SalesToSocialNetwork(model,0);
+        apiHandlerStat = new SalesToSocialNetwork(model,1);
         
-        executor = Executors.newScheduledThreadPool(1);
+        executor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(1);
+        executor.setRemoveOnCancelPolicy(true);
         
         firststart = true;
     }
@@ -99,6 +113,7 @@ public class MainBotForm extends javax.swing.JFrame {
      */
     private void setStateComponent(boolean stateStart){
         btn_start.setEnabled(stateStart);
+        BTN_Configuration.setEnabled(stateStart);
         tbl_contracts.setEnabled(stateStart);
         pwd_twitter_public_consumer_key.setEnabled(stateStart);
         pwd_twitter_private_consumer_key.setEnabled(stateStart);
@@ -113,7 +128,7 @@ public class MainBotForm extends javax.swing.JFrame {
                 btn_remove.setEnabled(true);
             }
             
-            if(dtb.getRowCount() >= 20){
+            if(dtb.getRowCount() >= 12){
                 btn_add.setEnabled(false);
             }
             else{
@@ -157,6 +172,7 @@ public class MainBotForm extends javax.swing.JFrame {
         btn_remove = new javax.swing.JButton();
         cb_twitter_stat = new javax.swing.JCheckBox();
         cb_twitter_sales = new javax.swing.JCheckBox();
+        BTN_Configuration = new javax.swing.JButton();
 
         btn_add1.setText("Add");
 
@@ -246,6 +262,13 @@ public class MainBotForm extends javax.swing.JFrame {
 
         cb_twitter_sales.setText("Sales");
 
+        BTN_Configuration.setText("Configuration");
+        BTN_Configuration.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BTN_ConfigurationActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -261,14 +284,6 @@ public class MainBotForm extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(27, 27, 27)
                                 .addComponent(jLabel1))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(BTN_License)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(btn_start)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(btn_stop)))
-                                .addGap(13, 13, 13))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(btn_remove, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -292,7 +307,16 @@ public class MainBotForm extends javax.swing.JFrame {
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(pwd_twitter_private_key, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addComponent(pwd_twitter_public_key, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(cb_twitter_sales))))))))
+                                            .addComponent(cb_twitter_sales)))))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(BTN_License)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(btn_start)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(btn_stop))
+                                    .addComponent(BTN_Configuration))
+                                .addGap(13, 13, 13)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -328,7 +352,9 @@ public class MainBotForm extends javax.swing.JFrame {
                             .addComponent(cb_twitter_sales))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(BTN_License)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(BTN_Configuration)
+                        .addGap(7, 7, 7)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btn_start)
                             .addComponent(btn_stop))
@@ -430,6 +456,14 @@ public class MainBotForm extends javax.swing.JFrame {
         license.setVisible(true);
     }//GEN-LAST:event_BTN_LicenseActionPerformed
 
+    private void BTN_ConfigurationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BTN_ConfigurationActionPerformed
+        JDialog license = new JDialog();
+        license.add(new ConfigurationMenu());
+        license.pack();
+        license.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+        license.setVisible(true);
+    }//GEN-LAST:event_BTN_ConfigurationActionPerformed
+
     
     /**
      * Check if the field are fill
@@ -493,13 +527,17 @@ public class MainBotForm extends javax.swing.JFrame {
             
             if (oneSocialNetwork.getClass() == TwitterSocialNetwork.class){
                 TwitterSocialNetwork twitterSocialNetwork = (TwitterSocialNetwork) oneSocialNetwork;
-                twitterSocialNetwork.instanceTwitter(new String(pwd_twitter_public_consumer_key.getPassword()), new String(pwd_twitter_private_consumer_key.getPassword()), new String(pwd_twitter_public_key.getPassword()), new String(pwd_twitter_private_key.getPassword()), cb_twitter_stat.isSelected(), cb_twitter_sales.isSelected());
+                twitterSocialNetwork.instanceTwitter(new String(pwd_twitter_public_consumer_key.getPassword()), new String(pwd_twitter_private_consumer_key.getPassword()), new String(pwd_twitter_public_key.getPassword()), new String(pwd_twitter_private_key.getPassword()), cb_twitter_stat.isSelected(), cb_twitter_sales.isSelected(), model);
             }
         }
         
         
-        apiHandler.setMarketplaces(marketplaces);
-        apiHandler.setSocialNetworks(socialNetworks);
+        apiHandlerSales.setMarketplaces(marketplaces);
+        apiHandlerSales.setSocialNetworks(socialNetworks);
+        
+        apiHandlerStat.setMarketplaces(marketplaces);
+        apiHandlerStat.setSocialNetworks(socialNetworks);
+        
     }
     
     /**
@@ -507,19 +545,30 @@ public class MainBotForm extends javax.swing.JFrame {
      * 
      */
     private void startloop(){
-       if (firststart){
-           executor.scheduleAtFixedRate(apiHandler, 0, 1, TimeUnit.HOURS);
-           firststart = false;
-       }
-       
-       apiHandler.setIsActive(true);
+
+        if(cb_twitter_sales.isSelected()){
+            scheduledFutureSales = executor.scheduleAtFixedRate(apiHandlerSales, 0, BotConfiguration.getConfiguration().getRefreshSalesTime(), BotConfiguration.getConfiguration().getRefreshSales());
+        }
+        
+        if(cb_twitter_stat.isSelected()){
+            scheduledFutureStat = executor.scheduleAtFixedRate(apiHandlerStat, 0, BotConfiguration.getConfiguration().getRefreshSalesStats(), BotConfiguration.getConfiguration().getRefreshStats());
+        }
     }
     
     /**
      * Stop the bot
      */
     private void stoploop(){
-        apiHandler.setIsActive(false);
+        
+        if(cb_twitter_sales.isSelected()){
+            scheduledFutureSales.cancel(true);
+        }
+        
+        if(cb_twitter_stat.isSelected()){
+            scheduledFutureStat.cancel(true);
+        }
+        
+        BotLastRefresh.sendToCollector();
     }
     
     /**
@@ -558,6 +607,7 @@ public class MainBotForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BTN_Configuration;
     private javax.swing.JButton BTN_License;
     private javax.swing.JButton btn_add;
     private javax.swing.JButton btn_add1;

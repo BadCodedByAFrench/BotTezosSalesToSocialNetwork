@@ -43,17 +43,6 @@
                               <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="BTN_License" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="btn_start" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="btn_stop" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
-                              <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="1" attributes="0">
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Component id="btn_remove" max="32767" attributes="0"/>
                                   <Component id="btn_add" max="32767" attributes="0"/>
@@ -85,6 +74,18 @@
                                       </Group>
                                   </Group>
                               </Group>
+                          </Group>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="BTN_License" min="-2" max="-2" attributes="0"/>
+                                  <Group type="102" attributes="0">
+                                      <Component id="btn_start" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                      <Component id="btn_stop" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Component id="BTN_Configuration" alignment="0" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -134,7 +135,9 @@
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                       <Component id="BTN_License" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="BTN_Configuration" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="btn_start" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="btn_stop" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -315,6 +318,14 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Sales"/>
       </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="BTN_Configuration">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Configuration"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BTN_ConfigurationActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>
