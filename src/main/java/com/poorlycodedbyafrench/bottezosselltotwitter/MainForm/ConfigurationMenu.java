@@ -5,6 +5,7 @@
 package com.poorlycodedbyafrench.bottezosselltotwitter.MainForm;
 
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotConfiguration;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.LogManager;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
@@ -14,8 +15,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -549,7 +548,9 @@ public class ConfigurationMenu extends javax.swing.JPanel {
         try {
             BotConfiguration.getConfiguration().export();
         } catch (IOException ex) {
-            Logger.getLogger(ConfigurationMenu.class.getName()).log(Level.SEVERE, null, ex);
+            LogManager.getLogManager().writeLog(ConfigurationMenu.class.getName(), ex);
+        } catch (Exception ex) {
+            LogManager.getLogManager().writeLog(ConfigurationMenu.class.getName(), ex);
         }
     }//GEN-LAST:event_btn_ExportActionPerformed
 
@@ -558,7 +559,10 @@ public class ConfigurationMenu extends javax.swing.JPanel {
             BotConfiguration.getConfiguration().importFile();
             setValue();
         } catch (IOException ex) {
-            Logger.getLogger(ConfigurationMenu.class.getName()).log(Level.SEVERE, null, ex);
+            LogManager.getLogManager().writeLog(ConfigurationMenu.class.getName(), ex);
+        }
+        catch(Exception ex){
+            LogManager.getLogManager().writeLog(ConfigurationMenu.class.getName(), ex);
         }
     }//GEN-LAST:event_btn_importActionPerformed
 

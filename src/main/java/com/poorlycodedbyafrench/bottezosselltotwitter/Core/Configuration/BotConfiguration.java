@@ -132,7 +132,7 @@ public class BotConfiguration {
     /**
      * Export data into an ini file
      */
-    public void export() throws IOException{
+    public void export() throws IOException, Exception{
         
         
         Wini ini = new Wini();
@@ -169,7 +169,7 @@ public class BotConfiguration {
         }
     }
     
-    public void importFile() throws IOException {
+    public void importFile() throws IOException, Exception {
         
         JFileChooser chooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter(

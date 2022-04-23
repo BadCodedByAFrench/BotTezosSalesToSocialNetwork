@@ -7,6 +7,7 @@ package com.poorlycodedbyafrench.bottezosselltotwitter.MainForm;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.ApiRunnable.SalesToSocialNetwork;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotConfiguration;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotLastRefresh;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.LogManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.CallObjkt;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterface.SocialNetworkInterface;
 import java.util.ArrayList;
@@ -588,13 +589,13 @@ public class MainBotForm extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainBotForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            LogManager.getLogManager().writeLog(MainBotForm.class.getName(), ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainBotForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            LogManager.getLogManager().writeLog(MainBotForm.class.getName(), ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainBotForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            LogManager.getLogManager().writeLog(MainBotForm.class.getName(), ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MainBotForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            LogManager.getLogManager().writeLog(MainBotForm.class.getName(), ex);
         }
         //</editor-fold>
 

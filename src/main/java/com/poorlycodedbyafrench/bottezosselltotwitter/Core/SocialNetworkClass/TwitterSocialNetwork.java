@@ -4,8 +4,8 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass;
 
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.ApiRunnable.SalesToSocialNetwork;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotConfiguration;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.LogManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlace;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetwork;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Contract;
@@ -27,8 +27,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
@@ -270,7 +268,7 @@ public class TwitterSocialNetwork implements SocialNetworkInterface{
                         }
                         catch (Exception ex){
                             model.insertRow(0, new Object[]{this.getName().toString(),"Error : unable to send a tweet" ,ex.getMessage()});
-                            Logger.getLogger(TwitterSocialNetwork.class.getName()).log(Level.SEVERE, null, ex);
+                           LogManager.getLogManager().writeLog(TwitterSocialNetwork.class.getName(), ex);
                         }
                     }
                     Status newTweet = twitterInstance.updateStatus(newStatus);
