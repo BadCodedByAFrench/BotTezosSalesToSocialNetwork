@@ -4,9 +4,15 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import org.ini4j.Wini;
 
 /**
  * Class that keep all the configuration of the bot
@@ -121,6 +127,89 @@ public class BotConfiguration {
         hashtags = new ArrayList<String>();
         hashtags.add("Nft");
         hashtags.add("Tezos");
+    }
+    
+    /**
+     * Export data into an ini file
+     */
+    public void export() throws IOException{
+        
+        
+        Wini ini = new Wini();
+        
+        ini.put("BotConfig", "refreshSales", refreshSales);
+        ini.put("BotConfig", "refreshSalesTime", refreshSalesTime);
+        ini.put("BotConfig", "securityIdSales", securityIdSales);
+        ini.put("BotConfig", "orderBy", orderBy);
+        ini.put("BotConfig", "saleType", saleType);
+        ini.put("BotConfig", "adress", adress);
+        ini.put("BotConfig", "ipfs", ipfs);
+        ini.put("BotConfig", "refreshStats", refreshStats);
+        ini.put("BotConfig", "refreshSalesStats", refreshSalesStats);
+        ini.put("BotConfig", "securityIdStats", securityIdStats);
+        ini.put("BotConfig", "avgPriceStat", avgPriceStat);
+        ini.put("BotConfig", "minPriceStat", minPriceStat);
+        ini.put("BotConfig", "maxPriceStat", maxPriceStat);
+        ini.put("BotConfig", "sentences", String.join("#&#", sentences));
+        ini.put("BotConfig", "hashtags", String.join("#&#", hashtags));
+        
+        JFileChooser chooser = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                "INI file", "ini");
+        chooser.setFileFilter(filter);
+        int returnVal = chooser.showOpenDialog(null);
+        if(returnVal == JFileChooser.APPROVE_OPTION) {
+            
+            String saveFile = chooser.getSelectedFile().getAbsolutePath();
+            if(!saveFile.toLowerCase().endsWith(".ini"))
+            {
+                saveFile += ".ini";
+            }
+            ini.store(new File(saveFile));
+        }
+    }
+    
+    public void importFile() throws IOException {
+        
+        JFileChooser chooser = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                "INI file", "ini");
+        chooser.setFileFilter(filter);
+        int returnVal = chooser.showOpenDialog(null);
+        if(returnVal == JFileChooser.APPROVE_OPTION && chooser.getSelectedFile().getAbsolutePath().toLowerCase().endsWith(".ini")) {
+            Wini ini = new Wini(chooser.getSelectedFile());
+
+            this.refreshSales = ini.get("BotConfig", "refreshSales", TimeUnit.class);
+            this.refreshSalesTime = ini.get("BotConfig", "refreshSalesTime", int.class);
+            this.securityIdSales = ini.get("BotConfig", "securityIdSales", boolean.class);
+            this.orderBy = ini.get("BotConfig", "orderBy", int.class);
+            this.saleType = ini.get("BotConfig", "saleType", boolean.class);
+            this.adress = ini.get("BotConfig", "adress", boolean.class);
+            this.ipfs = ini.get("BotConfig", "ipfs", boolean.class);
+            this.refreshStats = ini.get("BotConfig", "refreshStats", TimeUnit.class);
+            this.refreshSalesStats = ini.get("BotConfig", "refreshSalesStats", int.class);
+            this.securityIdStats = ini.get("BotConfig", "securityIdStats", boolean.class);
+            this.avgPriceStat = ini.get("BotConfig", "avgPriceStat", boolean.class);
+            this.minPriceStat = ini.get("BotConfig", "minPriceStat", boolean.class);
+            this.maxPriceStat = ini.get("BotConfig", "maxPriceStat", boolean.class);
+
+            String fileSentences = ini.get("BotConfig", "sentences");
+            String fileHashtags = ini.get("BotConfig", "hashtags");
+
+            if(fileSentences.isBlank()){
+                this.sentences = new ArrayList<>();
+            }
+            else{
+                this.sentences = new ArrayList<> (Arrays.asList(fileSentences.split("#&#"))); 
+            }
+
+            if(fileHashtags.isBlank()){
+                this.hashtags = new ArrayList<>();
+            }
+            else{
+                this.hashtags = new ArrayList<> (Arrays.asList(fileHashtags.split("#&#"))); 
+            }
+        }
     }
     
     public static BotConfiguration getConfiguration(){

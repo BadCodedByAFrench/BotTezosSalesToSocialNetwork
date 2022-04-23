@@ -7,12 +7,15 @@ package com.poorlycodedbyafrench.bottezosselltotwitter.MainForm;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotConfiguration;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -105,6 +108,8 @@ public class ConfigurationMenu extends javax.swing.JPanel {
         btn_reset = new javax.swing.JButton();
         lbl_IPFS_sales = new javax.swing.JLabel();
         cb_IPFS_sales = new javax.swing.JCheckBox();
+        btn_Export = new javax.swing.JButton();
+        btn_import = new javax.swing.JButton();
 
         tbl_sentences.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -226,6 +231,20 @@ public class ConfigurationMenu extends javax.swing.JPanel {
 
         cb_IPFS_sales.setText("Show");
 
+        btn_Export.setText("Export");
+        btn_Export.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_ExportActionPerformed(evt);
+            }
+        });
+
+        btn_import.setText("Import");
+        btn_import.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_importActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -272,7 +291,7 @@ public class ConfigurationMenu extends javax.swing.JPanel {
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                 .addComponent(btn_add_sentence, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(btn_remove_sentence)))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -302,16 +321,19 @@ public class ConfigurationMenu extends javax.swing.JPanel {
                         .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(btn_add_hashtag, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(btn_remove_hashtag))
-                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(btn_add_hashtag, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btn_remove_hashtag)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(btn_save)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btn_reset)))))
+                                .addGap(0, 3, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addComponent(btn_save, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btn_reset))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addComponent(btn_import)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btn_Export)))))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -385,18 +407,22 @@ public class ConfigurationMenu extends javax.swing.JPanel {
                             .addComponent(btn_add_sentence)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                             .addComponent(btn_remove_sentence)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btn_add_hashtag)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btn_remove_hashtag)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(btn_reset)
-                                    .addComponent(btn_save)))
-                            .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(11, 11, 11))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(btn_add_hashtag)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(btn_remove_hashtag)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(btn_save)
+                                .addComponent(btn_reset))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(btn_Export)
+                                .addComponent(btn_import)))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(11, 11, 11)))))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -467,7 +493,7 @@ public class ConfigurationMenu extends javax.swing.JPanel {
         List<String> sentences = new ArrayList<String>(); 
         Vector<Vector> sentencesData = ((DefaultTableModel)this.tbl_sentences.getModel()).getDataVector();
         for(Vector v : sentencesData){
-            if(v.get(0).toString().isBlank()){
+            if(v.get(0).toString().isBlank() || v.get(0).toString().contains("#&#")){
                 checkValue = false;
             }
             sentences.add(v.get(0).toString());
@@ -476,7 +502,7 @@ public class ConfigurationMenu extends javax.swing.JPanel {
         List<String> hashtags = new ArrayList<String>(); 
         Vector<Vector> hashtagsData = ((DefaultTableModel)this.tbl_hashtags.getModel()).getDataVector();
         for(Vector v : hashtagsData){
-            if(v.get(0).toString().isBlank()){
+            if(v.get(0).toString().isBlank() || v.get(0).toString().contains("#&#") ){
                 checkValue = false;
             }
             
@@ -519,6 +545,23 @@ public class ConfigurationMenu extends javax.swing.JPanel {
         setValue();
     }//GEN-LAST:event_btn_resetActionPerformed
 
+    private void btn_ExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ExportActionPerformed
+        try {
+            BotConfiguration.getConfiguration().export();
+        } catch (IOException ex) {
+            Logger.getLogger(ConfigurationMenu.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btn_ExportActionPerformed
+
+    private void btn_importActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_importActionPerformed
+        try {
+            BotConfiguration.getConfiguration().importFile();
+            setValue();
+        } catch (IOException ex) {
+            Logger.getLogger(ConfigurationMenu.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btn_importActionPerformed
+
     /**
      * Set value from the Singleton Object to the field
      */
@@ -557,8 +600,10 @@ public class ConfigurationMenu extends javax.swing.JPanel {
         
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btn_Export;
     private javax.swing.JButton btn_add_hashtag;
     private javax.swing.JButton btn_add_sentence;
+    private javax.swing.JButton btn_import;
     private javax.swing.JButton btn_remove_hashtag;
     private javax.swing.JButton btn_remove_sentence;
     private javax.swing.JButton btn_reset;
