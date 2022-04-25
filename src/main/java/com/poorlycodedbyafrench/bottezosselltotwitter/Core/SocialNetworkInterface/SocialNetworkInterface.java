@@ -26,4 +26,14 @@ public interface SocialNetworkInterface {
      * @return 
      */
     public SocialNetwork getName();
+    
+    /**
+     * Function to say that the bot is starting
+     */
+    public void start() throws Exception;
+    
+    /**
+     * Function to say that the bot is stopping
+     */
+    public void stop()throws Exception;
 }

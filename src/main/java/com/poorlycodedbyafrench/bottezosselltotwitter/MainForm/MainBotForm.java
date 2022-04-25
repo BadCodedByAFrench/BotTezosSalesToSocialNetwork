@@ -547,12 +547,21 @@ public class MainBotForm extends javax.swing.JFrame {
      */
     private void startloop(){
 
-        if(cb_twitter_sales.isSelected()){
-            scheduledFutureSales = executor.scheduleAtFixedRate(apiHandlerSales, 0, BotConfiguration.getConfiguration().getRefreshSalesTime(), BotConfiguration.getConfiguration().getRefreshSales());
-        }
-        
-        if(cb_twitter_stat.isSelected()){
-            scheduledFutureStat = executor.scheduleAtFixedRate(apiHandlerStat, 0, BotConfiguration.getConfiguration().getRefreshSalesStats(), BotConfiguration.getConfiguration().getRefreshStats());
+        try{
+            for(SocialNetworkInterface oneSocialNetwork : socialNetworks){
+                oneSocialNetwork.start();
+            }
+
+            if(cb_twitter_sales.isSelected()){
+                scheduledFutureSales = executor.scheduleAtFixedRate(apiHandlerSales, 0, BotConfiguration.getConfiguration().getRefreshSalesTime(), BotConfiguration.getConfiguration().getRefreshSales());
+            }
+
+            if(cb_twitter_stat.isSelected()){
+                scheduledFutureStat = executor.scheduleAtFixedRate(apiHandlerStat, 0, BotConfiguration.getConfiguration().getRefreshSalesStats(), BotConfiguration.getConfiguration().getRefreshStats());
+            }
+        }catch (Exception ex){
+            model.insertRow(0, new Object[]{"Start","Error : unable to start" ,ex.getMessage()});
+            LogManager.getLogManager().writeLog(MainBotForm.class.getName(), ex);
         }
     }
     
@@ -560,6 +569,15 @@ public class MainBotForm extends javax.swing.JFrame {
      * Stop the bot
      */
     private void stoploop(){
+        
+        try{
+            for(SocialNetworkInterface oneSocialNetwork : socialNetworks){
+                oneSocialNetwork.stop();
+            }
+        }catch (Exception ex){
+            model.insertRow(0, new Object[]{"Stop","Error : unable to stop correctly" ,ex.getMessage()});
+            LogManager.getLogManager().writeLog(MainBotForm.class.getName(), ex);
+        }
         
         if(cb_twitter_sales.isSelected()){
             scheduledFutureSales.cancel(true);

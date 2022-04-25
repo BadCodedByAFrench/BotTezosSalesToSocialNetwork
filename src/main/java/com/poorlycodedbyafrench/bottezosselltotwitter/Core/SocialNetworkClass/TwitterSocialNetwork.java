@@ -27,6 +27,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
@@ -285,7 +287,20 @@ public class TwitterSocialNetwork implements SocialNetworkInterface{
     public SocialNetwork getName() {
         return name;
     }
-    
+
+    @Override
+    public void start() throws TwitterException {
+        Instant currentHour = Instant.now();
+        
+        twitterInstance.updateStatus(currentHour.toString().substring(5, 7) + "-"+ currentHour.toString().substring(8, 10) + "-" + currentHour.toString().substring(0, 4) + " at " + currentHour.toString().substring(11, 16) + " UTC : The bot is running !");
+    }
+
+    @Override
+    public void stop() throws TwitterException {
+        Instant currentHour = Instant.now();
+        
+        twitterInstance.updateStatus(currentHour.toString().substring(5, 7) + "-"+ currentHour.toString().substring(8, 10) + "-" + currentHour.toString().substring(0, 4) + " at " + currentHour.toString().substring(11, 16) + " UTC : The bot is no longer running");
+    }
     
     
 }
