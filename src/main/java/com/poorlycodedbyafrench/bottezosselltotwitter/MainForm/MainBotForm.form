@@ -33,59 +33,86 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane1" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" pref="0" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Component id="jScrollPane2" min="-2" pref="141" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
-                              <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="1" attributes="0">
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="btn_remove" max="32767" attributes="0"/>
-                                  <Component id="btn_add" max="32767" attributes="0"/>
-                              </Group>
-                              <EmptySpace max="32767" attributes="0"/>
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Group type="102" attributes="0">
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="lbl_twitter_private_consumer_key" min="-2" max="-2" attributes="0"/>
-                                          <Component id="lbl_twitter_public_consumer_key" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="pwd_twitter_private_consumer_key" min="-2" pref="74" max="-2" attributes="0"/>
-                                          <Component id="pwd_twitter_public_consumer_key" min="-2" pref="74" max="-2" attributes="0"/>
-                                      </Group>
+                          <Group type="102" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="1" attributes="0">
+                                      <Component id="BTN_License" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="BTN_Configuration" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="32767" attributes="0"/>
+                                      <Component id="btn_start" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="btn_stop" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="1" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="lbl_twitter_access_key" min="-2" max="-2" attributes="0"/>
-                                          <Component id="lbl_twitter_private_key" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="cb_twitter_stat" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Group type="102" attributes="0">
+                                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                                  <Component id="btn_remove" max="32767" attributes="0"/>
+                                                  <Component id="btn_add" max="32767" attributes="0"/>
+                                              </Group>
+                                              <EmptySpace min="0" pref="13" max="32767" attributes="0"/>
+                                          </Group>
+                                          <Group type="102" alignment="1" attributes="0">
+                                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Component id="cb_discord" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="cb_twitter" min="-2" max="-2" attributes="0"/>
+                                              </Group>
+                                          </Group>
                                       </Group>
-                                      <EmptySpace max="32767" attributes="0"/>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="pwd_twitter_private_key" min="-2" pref="74" max="-2" attributes="0"/>
-                                          <Component id="pwd_twitter_public_key" alignment="0" min="-2" pref="74" max="-2" attributes="0"/>
-                                          <Component id="cb_twitter_sales" min="-2" max="-2" attributes="0"/>
+                                          <Group type="102" attributes="0">
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Component id="lbl_discord_token" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="lbl_discord_channel" min="-2" max="-2" attributes="0"/>
+                                              </Group>
+                                              <EmptySpace max="32767" attributes="0"/>
+                                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                                  <Component id="pwd_discord_token" pref="74" max="32767" attributes="0"/>
+                                                  <Component id="txt_discord_channel" max="32767" attributes="0"/>
+                                              </Group>
+                                          </Group>
+                                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                              <Group type="102" alignment="1" attributes="0">
+                                                  <Group type="103" groupAlignment="0" attributes="0">
+                                                      <Component id="lbl_twitter_access_key" min="-2" max="-2" attributes="0"/>
+                                                      <Component id="lbl_twitter_private_key" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                  </Group>
+                                                  <EmptySpace max="32767" attributes="0"/>
+                                                  <Group type="103" groupAlignment="0" attributes="0">
+                                                      <Component id="pwd_twitter_private_key" min="-2" pref="74" max="-2" attributes="0"/>
+                                                      <Component id="pwd_twitter_public_key" alignment="0" min="-2" pref="74" max="-2" attributes="0"/>
+                                                  </Group>
+                                              </Group>
+                                              <Group type="102" alignment="0" attributes="0">
+                                                  <Group type="103" groupAlignment="0" attributes="0">
+                                                      <Component id="lbl_twitter_private_consumer_key" min="-2" max="-2" attributes="0"/>
+                                                      <Component id="lbl_twitter_public_consumer_key" min="-2" max="-2" attributes="0"/>
+                                                      <Component id="cb_stat" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                  </Group>
+                                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                                  <Group type="103" groupAlignment="0" attributes="0">
+                                                      <Component id="cb_sales" min="-2" max="-2" attributes="0"/>
+                                                      <Component id="pwd_twitter_private_consumer_key" min="-2" pref="74" max="-2" attributes="0"/>
+                                                      <Component id="pwd_twitter_public_consumer_key" min="-2" pref="74" max="-2" attributes="0"/>
+                                                  </Group>
+                                              </Group>
+                                          </Group>
                                       </Group>
                                   </Group>
                               </Group>
                           </Group>
-                          <Group type="102" alignment="1" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="BTN_License" min="-2" max="-2" attributes="0"/>
-                                  <Group type="102" attributes="0">
-                                      <Component id="btn_start" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="btn_stop" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Component id="BTN_Configuration" alignment="0" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
+                              <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -100,57 +127,73 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="lbl_twitter_public_consumer_key" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="pwd_twitter_public_consumer_key" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="btn_add" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="btn_add" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
+                              <Component id="btn_remove" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="44" max="-2" attributes="0"/>
+                              <Component id="cb_twitter" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="cb_stat" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="cb_sales" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="lbl_twitter_public_consumer_key" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="pwd_twitter_public_consumer_key" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="pwd_twitter_private_consumer_key" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="lbl_twitter_private_consumer_key" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="lbl_twitter_access_key" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="pwd_twitter_public_key" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="pwd_twitter_private_key" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="lbl_twitter_private_key" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
                           </Group>
-                          <Group type="102" alignment="0" attributes="0">
+                      </Group>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
                               <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
-                              <Component id="btn_remove" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="lbl_discord_token" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="pwd_discord_token" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="txt_discord_channel" min="-2" max="-2" attributes="0"/>
+                                  <Component id="lbl_discord_channel" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="1" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="cb_discord" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="lbl_twitter_access_key" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="pwd_twitter_public_key" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="pwd_twitter_private_key" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="lbl_twitter_private_key" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="cb_twitter_stat" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="cb_twitter_sales" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="32767" attributes="0"/>
-                      <Component id="BTN_License" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="BTN_Configuration" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="btn_start" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="btn_stop" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="BTN_License" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="BTN_Configuration" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="jScrollPane2" min="-2" pref="352" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                  </Group>
+                  <Component id="jScrollPane2" alignment="0" min="-2" pref="352" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
               <Component id="jScrollPane1" min="-2" pref="95" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -309,12 +352,12 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_removeActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JCheckBox" name="cb_twitter_stat">
+    <Component class="javax.swing.JCheckBox" name="cb_stat">
       <Properties>
         <Property name="text" type="java.lang.String" value="Stat"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JCheckBox" name="cb_twitter_sales">
+    <Component class="javax.swing.JCheckBox" name="cb_sales">
       <Properties>
         <Property name="text" type="java.lang.String" value="Sales"/>
       </Properties>
@@ -326,6 +369,36 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BTN_ConfigurationActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="lbl_discord_token">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Discord token"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JPasswordField" name="pwd_discord_token">
+    </Component>
+    <Component class="javax.swing.JLabel" name="lbl_discord_channel">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Discord channel"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="cb_twitter">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Twitter"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cb_twitterActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="cb_discord">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Discord"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cb_discordActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JTextField" name="txt_discord_channel">
     </Component>
   </SubComponents>
 </Form>

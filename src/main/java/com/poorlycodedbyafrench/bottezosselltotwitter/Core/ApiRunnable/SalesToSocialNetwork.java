@@ -115,7 +115,7 @@ public class SalesToSocialNetwork implements Runnable {
                     model.insertRow(0, new Object[]{oneSocialNetwork.getName().toString(),"Error : unable to send a tweet" ,ex.getMessage()});
                     LogManager.getLogManager().writeLog(SalesToSocialNetwork.class.getName(), ex);
                 } catch (Exception ex) {
-                    model.insertRow(0, new Object[]{oneSocialNetwork.getName().toString(),"Error : unable to send a tweet" ,ex.getMessage()});
+                    model.insertRow(0, new Object[]{oneSocialNetwork.getName().toString(),"Error : unable to send a message" ,ex.getMessage()});
                     LogManager.getLogManager().writeLog(SalesToSocialNetwork.class.getName(), ex);
                 }
             }

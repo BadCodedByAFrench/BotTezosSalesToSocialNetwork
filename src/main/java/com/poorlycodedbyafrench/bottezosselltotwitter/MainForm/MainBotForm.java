@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import javax.swing.table.DefaultTableModel;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceInterface.CallMarketPlaceInterface;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass.DiscordSocialNetwork;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass.TwitterSocialNetwork;
 import java.awt.Dialog;
 import java.util.Arrays;
@@ -22,11 +23,15 @@ import java.util.Collections;
 import java.util.Vector;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.security.auth.login.LoginException;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 /**
  * Main form of the application
+ *
  * @author david
  */
 public class MainBotForm extends javax.swing.JFrame {
@@ -34,115 +39,131 @@ public class MainBotForm extends javax.swing.JFrame {
     /**
      * List of all tje marketplaces where we will find sales
      */
-    private List<CallMarketPlaceInterface> marketplaces; 
-    
+    private List<CallMarketPlaceInterface> marketplaces;
+
     /**
      * List of all Social network where we will share information
      */
-    private List<SocialNetworkInterface> socialNetworks; 
-    
+    private List<SocialNetworkInterface> socialNetworks;
+
     /**
      * Table that contains the log
      */
     private DefaultTableModel model;
-    
+
     /**
      * Table that contains the contracts
      */
     private DefaultTableModel dtb;
-    
+
     /**
-     * The thread that will call API for follow sales 
+     * The thread that will call API for follow sales
      */
     private SalesToSocialNetwork apiHandlerSales;
-    
+
     /**
      * The thread that will call API for follow stat
      */
     private SalesToSocialNetwork apiHandlerStat;
-    
-    
+
     /**
      * Tool that will execute query every hours
      */
-    private ScheduledThreadPoolExecutor  executor;
-    
+    private ScheduledThreadPoolExecutor executor;
+
     private ScheduledFuture<?> scheduledFutureSales;
     private ScheduledFuture<?> scheduledFutureStat;
-    
+
     /**
-     * Boolean used because we never stop the thread. And instead of starting the thread when we start the app, we create it at the fist click on "start" button. Then we have the first call
+     * Boolean used because we never stop the thread. And instead of starting
+     * the thread when we start the app, we create it at the fist click on
+     * "start" button. Then we have the first call
      */
     private boolean firststart;
+
     /**
-     * Creates new form MainBotForm
-     * Get the table as dataModel
-     * Create social and maketplace object
-     * Create the APIHandler and Executor
+     * Creates new form MainBotForm Get the table as dataModel Create social and
+     * maketplace object Create the APIHandler and Executor
      */
     public MainBotForm() {
         initComponents();
-        
+
         model = (DefaultTableModel) tbl_status.getModel();
         model.setRowCount(0);
-        
-        dtb = (DefaultTableModel)tbl_contracts.getModel();
+
+        dtb = (DefaultTableModel) tbl_contracts.getModel();
         dtb.addRow(new Object[]{""});
-        
+
         setStateComponent(true);
-                
-        
+
         marketplaces = new ArrayList<CallMarketPlaceInterface>();
         socialNetworks = new ArrayList<SocialNetworkInterface>();
-        
+
         marketplaces.add(new CallObjkt());
-        
-        socialNetworks.add(new TwitterSocialNetwork());
-              
-        apiHandlerSales = new SalesToSocialNetwork(model,0);
-        apiHandlerStat = new SalesToSocialNetwork(model,1);
-        
+
+        apiHandlerSales = new SalesToSocialNetwork(model, 0);
+        apiHandlerStat = new SalesToSocialNetwork(model, 1);
+
         executor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(1);
         executor.setRemoveOnCancelPolicy(true);
-        
+
         firststart = true;
     }
 
     /**
      * Change the state of the component depending if the bot is running or not
-     * @param stateStart 
+     *
+     * @param stateStart
      */
-    private void setStateComponent(boolean stateStart){
+    private void setStateComponent(boolean stateStart) {
         btn_start.setEnabled(stateStart);
         BTN_Configuration.setEnabled(stateStart);
         tbl_contracts.setEnabled(stateStart);
-        pwd_twitter_public_consumer_key.setEnabled(stateStart);
-        pwd_twitter_private_consumer_key.setEnabled(stateStart);
-        pwd_twitter_public_key.setEnabled(stateStart);
-        pwd_twitter_private_key.setEnabled(stateStart);
         tbl_contracts.setEnabled(stateStart);
-        
-        if(stateStart){
-            if(dtb.getRowCount() <= 1 ){
+
+        cb_twitter.setEnabled(stateStart);
+        if (cb_twitter.isSelected() && cb_twitter.isEnabled()) {
+            pwd_twitter_public_consumer_key.setEnabled(stateStart);
+            pwd_twitter_private_consumer_key.setEnabled(stateStart);
+            pwd_twitter_public_key.setEnabled(stateStart);
+            pwd_twitter_private_key.setEnabled(stateStart);
+        } else {
+            pwd_twitter_public_consumer_key.setEnabled(false);
+            pwd_twitter_private_consumer_key.setEnabled(false);
+            pwd_twitter_public_key.setEnabled(false);
+            pwd_twitter_private_key.setEnabled(false);
+        }
+
+        cb_discord.setEnabled(stateStart);
+        if (cb_discord.isSelected() && cb_discord.isEnabled()) {
+            pwd_discord_token.setEnabled(stateStart);
+            txt_discord_channel.setEnabled(stateStart);
+        } else {
+            pwd_discord_token.setEnabled(false);
+            txt_discord_channel.setEnabled(false);
+        }
+
+        if (stateStart) {
+            if (dtb.getRowCount() <= 1) {
                 btn_remove.setEnabled(false);
-            }else{
+            } else {
                 btn_remove.setEnabled(true);
             }
-            
-            if(dtb.getRowCount() >= 12){
+
+            if (dtb.getRowCount() >= 12) {
                 btn_add.setEnabled(false);
-            }
-            else{
+            } else {
                 btn_add.setEnabled(true);
             }
-            
-        }else{
+
+        } else {
             btn_remove.setEnabled(false);
             btn_add.setEnabled(false);
         }
-        
+
         btn_stop.setEnabled(!stateStart);
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -171,9 +192,15 @@ public class MainBotForm extends javax.swing.JFrame {
         tbl_contracts = new javax.swing.JTable();
         btn_add = new javax.swing.JButton();
         btn_remove = new javax.swing.JButton();
-        cb_twitter_stat = new javax.swing.JCheckBox();
-        cb_twitter_sales = new javax.swing.JCheckBox();
+        cb_stat = new javax.swing.JCheckBox();
+        cb_sales = new javax.swing.JCheckBox();
         BTN_Configuration = new javax.swing.JButton();
+        lbl_discord_token = new javax.swing.JLabel();
+        pwd_discord_token = new javax.swing.JPasswordField();
+        lbl_discord_channel = new javax.swing.JLabel();
+        cb_twitter = new javax.swing.JCheckBox();
+        cb_discord = new javax.swing.JCheckBox();
+        txt_discord_channel = new javax.swing.JTextField();
 
         btn_add1.setText("Add");
 
@@ -259,14 +286,32 @@ public class MainBotForm extends javax.swing.JFrame {
             }
         });
 
-        cb_twitter_stat.setText("Stat");
+        cb_stat.setText("Stat");
 
-        cb_twitter_sales.setText("Sales");
+        cb_sales.setText("Sales");
 
         BTN_Configuration.setText("Configuration");
         BTN_Configuration.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BTN_ConfigurationActionPerformed(evt);
+            }
+        });
+
+        lbl_discord_token.setText("Discord token");
+
+        lbl_discord_channel.setText("Discord channel");
+
+        cb_twitter.setText("Twitter");
+        cb_twitter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cb_twitterActionPerformed(evt);
+            }
+        });
+
+        cb_discord.setText("Discord");
+        cb_discord.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cb_discordActionPerformed(evt);
             }
         });
 
@@ -277,47 +322,66 @@ public class MainBotForm extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(27, 27, 27)
-                                .addComponent(jLabel1))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(btn_remove, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(btn_add, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(lbl_twitter_private_consumer_key)
-                                            .addComponent(lbl_twitter_public_consumer_key))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(pwd_twitter_private_consumer_key, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(pwd_twitter_public_consumer_key, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addComponent(BTN_License)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(BTN_Configuration)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(btn_start)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btn_stop))
                                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(lbl_twitter_access_key)
-                                            .addComponent(lbl_twitter_private_key)
-                                            .addComponent(cb_twitter_stat))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                    .addComponent(btn_remove, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                    .addComponent(btn_add, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                                .addGap(0, 13, Short.MAX_VALUE))
+                                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                .addGap(0, 0, Short.MAX_VALUE)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(cb_discord)
+                                                    .addComponent(cb_twitter))))
+                                        .addGap(18, 18, 18)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(pwd_twitter_private_key, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(pwd_twitter_public_key, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(cb_twitter_sales)))))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(BTN_License)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(btn_start)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(btn_stop))
-                                    .addComponent(BTN_Configuration))
-                                .addGap(13, 13, 13)))))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(lbl_discord_token)
+                                                    .addComponent(lbl_discord_channel))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                    .addComponent(pwd_discord_token, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)
+                                                    .addComponent(txt_discord_channel)))
+                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(lbl_twitter_access_key)
+                                                        .addComponent(lbl_twitter_private_key))
+                                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(pwd_twitter_private_key, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(pwd_twitter_public_key, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                .addGroup(layout.createSequentialGroup()
+                                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(lbl_twitter_private_consumer_key)
+                                                        .addComponent(lbl_twitter_public_consumer_key)
+                                                        .addComponent(cb_stat))
+                                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(cb_sales)
+                                                        .addComponent(pwd_twitter_private_consumer_key, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(pwd_twitter_public_consumer_key, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))))))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(37, 37, 37)
+                                .addComponent(jLabel1)
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -326,45 +390,57 @@ public class MainBotForm extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lbl_twitter_public_consumer_key)
-                            .addComponent(pwd_twitter_public_consumer_key, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btn_add))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
+                                .addComponent(btn_add)
+                                .addGap(7, 7, 7)
+                                .addComponent(btn_remove)
+                                .addGap(44, 44, 44)
+                                .addComponent(cb_twitter))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(cb_stat)
+                                    .addComponent(cb_sales))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(lbl_twitter_public_consumer_key)
+                                    .addComponent(pwd_twitter_public_consumer_key, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(pwd_twitter_private_consumer_key, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lbl_twitter_private_consumer_key)))
+                                    .addComponent(lbl_twitter_private_consumer_key))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(lbl_twitter_access_key)
+                                    .addComponent(pwd_twitter_public_key, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(pwd_twitter_private_key, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lbl_twitter_private_key))))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(7, 7, 7)
-                                .addComponent(btn_remove)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lbl_twitter_access_key)
-                            .addComponent(pwd_twitter_public_key, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(pwd_twitter_private_key, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lbl_twitter_private_key))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cb_twitter_stat)
-                            .addComponent(cb_twitter_sales))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(BTN_License)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(BTN_Configuration)
-                        .addGap(7, 7, 7)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(lbl_discord_token)
+                                    .addComponent(pwd_discord_token, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txt_discord_channel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lbl_discord_channel))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cb_discord)
+                                .addGap(30, 30, 30)))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btn_start)
-                            .addComponent(btn_stop))
-                        .addGap(3, 3, 3)
+                            .addComponent(btn_stop)
+                            .addComponent(BTN_License)
+                            .addComponent(BTN_Configuration))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 352, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 352, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -375,81 +451,87 @@ public class MainBotForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-
-    
-
-     /**
-     * Add row in the contracts table
-     * Limite to 20 contracts
-     * @param evt 
+    /**
+     * Add row in the contracts table Limite to 20 contracts
+     *
+     * @param evt
      */
-    
+
     private void btn_addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_addActionPerformed
         dtb.addRow(new Object[]{""});
         setStateComponent(true);
     }//GEN-LAST:event_btn_addActionPerformed
 
-     /**
-     * Remove selected row in contracts table
-     * Can't remove when there's one line
-     * @param evt 
+    /**
+     * Remove selected row in contracts table Can't remove when there's one line
+     *
+     * @param evt
      */
-    
+
     private void btn_removeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_removeActionPerformed
-        if(tbl_contracts.getSelectedRows().length != 0){
-            
+        if (tbl_contracts.getSelectedRows().length != 0) {
+
             int[] allIndex = tbl_contracts.getSelectedRows();
             int[] reversedAllIndex = Arrays.stream(allIndex).boxed()
                     .sorted(Collections.reverseOrder())
                     .mapToInt(Integer::intValue)
                     .toArray();
 
-            for (int i : reversedAllIndex ){
-                 dtb.removeRow(i);
+            for (int i : reversedAllIndex) {
+                dtb.removeRow(i);
             }
+        } else {
+            dtb.removeRow(dtb.getRowCount() - 1);
         }
-        else{
-            dtb.removeRow(dtb.getRowCount()-1);
-        }
-        
+
         setStateComponent(true);
     }//GEN-LAST:event_btn_removeActionPerformed
 
-     /**
-     * We change the state of component
-     * and we stop the bot
-     * @param evt 
+    /**
+     * We change the state of component and we stop the bot
+     *
+     * @param evt
      */
-    
+
     private void btn_stopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_stopActionPerformed
         setStateComponent(true);
         stoploop();
     }//GEN-LAST:event_btn_stopActionPerformed
 
-     /**
-     * We check value
-     * If it's good, we change the state of component
-     * Update data
+    /**
+     * We check value If it's good, we change the state of component Update data
      * and start the bot
-     * @param evt 
+     *
+     * @param evt
      */
-    
+
     private void btn_startActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_startActionPerformed
         if (checkvalue()) {
-            setStateComponent(false);
-            updateData();
-            startloop(); 
-        }
-        else{
+            try {
+                updateData();
+                setStateComponent(false);
+                startloop();
+            } catch (LoginException ex) {
+                model.insertRow(0, new Object[]{this.getName().toString(), "Error : unable to connect to the Discord bot", ex.getMessage()});
+                LogManager.getLogManager().writeLog(MainBotForm.class.getName(), ex);
+            } catch (InterruptedException ex) {
+                model.insertRow(0, new Object[]{this.getName().toString(), "Error : unable to connect to the Discord bot", ex.getMessage()});
+                LogManager.getLogManager().writeLog(MainBotForm.class.getName(), ex);
+            } catch (Exception ex) {
+                model.insertRow(0, new Object[]{this.getName().toString(), "Error : unable to connect to the Discord bot", ex.getMessage()});
+                LogManager.getLogManager().writeLog(MainBotForm.class.getName(), ex);
+            }
+        } else {
             JOptionPane.showMessageDialog(null, "All the field are not filled", "Empty field", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_btn_startActionPerformed
 
-     /**
+    /**
      * Show the license window
-     * @param evt 
+     *
+     * @param evt
      */
-    
+
     private void BTN_LicenseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BTN_LicenseActionPerformed
         JDialog license = new JDialog();
         license.add(new LicenseBot());
@@ -465,131 +547,161 @@ public class MainBotForm extends javax.swing.JFrame {
         license.setVisible(true);
     }//GEN-LAST:event_BTN_ConfigurationActionPerformed
 
-    
+    private void cb_discordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_discordActionPerformed
+        setStateComponent(true);
+    }//GEN-LAST:event_cb_discordActionPerformed
+
+    private void cb_twitterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_twitterActionPerformed
+        setStateComponent(true);
+    }//GEN-LAST:event_cb_twitterActionPerformed
+
     /**
      * Check if the field are fill
+     *
      * @return true if all data are correct, else wrong
      */
-    private boolean checkvalue(){
-        
+    private boolean checkvalue() {
+
         boolean isDataCorrect = true;
-        
+
         Vector<Vector> contractsData = dtb.getDataVector();
-        
-        for(Vector v : contractsData){
-            
-            if (v.get(0).toString().isBlank()){
+
+        for (Vector v : contractsData) {
+
+            if (v.get(0).toString().isBlank()) {
                 isDataCorrect = false;
             }
         }
-        
-        if (new String(pwd_twitter_public_consumer_key.getPassword()).isBlank()){
+
+        if (cb_twitter.isSelected()) {
+            if (new String(pwd_twitter_public_consumer_key.getPassword()).isBlank()) {
+                isDataCorrect = false;
+            }
+
+            if (new String(pwd_twitter_private_consumer_key.getPassword()).isBlank()) {
+                isDataCorrect = false;
+            }
+
+            if (new String(pwd_twitter_public_key.getPassword()).isBlank()) {
+                isDataCorrect = false;
+            }
+
+            if (new String(pwd_twitter_private_key.getPassword()).isBlank()) {
+                isDataCorrect = false;
+            }
+        }
+
+        if (cb_discord.isSelected()) {
+
+            if (new String(pwd_discord_token.getPassword()).isBlank()) {
+                isDataCorrect = false;
+            }
+
+            if (txt_discord_channel.getText().isBlank()) {
+                isDataCorrect = false;
+            }
+        }
+
+        if (!cb_discord.isSelected() && !cb_twitter.isSelected()) {
             isDataCorrect = false;
         }
-        
-        if (new String(pwd_twitter_private_consumer_key.getPassword()).isBlank()){
+
+        if (!cb_stat.isSelected() && !cb_sales.isSelected()) {
             isDataCorrect = false;
         }
-        
-        if (new String(pwd_twitter_public_key.getPassword()).isBlank()){
-            isDataCorrect = false;
-        }
-        
-        if ( new String(pwd_twitter_private_key.getPassword()).isBlank()){
-            isDataCorrect = false;
-        }
-        
-        if(!cb_twitter_stat.isSelected() && !cb_twitter_sales.isSelected() ){
-            isDataCorrect = false;
-        }
-        
+
         return isDataCorrect;
     }
-    
+
     /**
      * Update the data of Marketplace and SocialNetwork
      */
-    private void updateData(){
-        
-        List<String> contracts = new ArrayList<String>(); 
+    private void updateData() throws LoginException, InterruptedException {
+
+        List<String> contracts = new ArrayList<String>();
+        socialNetworks.clear();
         Vector<Vector> contractsData = dtb.getDataVector();
-        for(Vector v : contractsData){
+        for (Vector v : contractsData) {
             contracts.add(v.get(0).toString());
         }
-        
-        for(CallMarketPlaceInterface oneMarkeplace : marketplaces){
-                if (oneMarkeplace.getClass() == CallObjkt.class){
-                    CallObjkt objkt = (CallObjkt) oneMarkeplace;
-                    objkt.setContracts(contracts);
-                }
-        }
-        
-        for(SocialNetworkInterface oneSocialNetwork : socialNetworks){
-            
-            if (oneSocialNetwork.getClass() == TwitterSocialNetwork.class){
-                TwitterSocialNetwork twitterSocialNetwork = (TwitterSocialNetwork) oneSocialNetwork;
-                twitterSocialNetwork.instanceTwitter(new String(pwd_twitter_public_consumer_key.getPassword()), new String(pwd_twitter_private_consumer_key.getPassword()), new String(pwd_twitter_public_key.getPassword()), new String(pwd_twitter_private_key.getPassword()), cb_twitter_stat.isSelected(), cb_twitter_sales.isSelected(), model);
+
+        for (CallMarketPlaceInterface oneMarkeplace : marketplaces) {
+            if (oneMarkeplace.getClass() == CallObjkt.class) {
+                CallObjkt objkt = (CallObjkt) oneMarkeplace;
+                objkt.setContracts(contracts);
             }
         }
-        
-        
+
+        if (cb_discord.isSelected()) {
+            DiscordSocialNetwork discordSocialNetwork = new DiscordSocialNetwork();
+            discordSocialNetwork.instanceDiscord(new String(pwd_discord_token.getPassword()), txt_discord_channel.getText(), model);
+            socialNetworks.add(discordSocialNetwork);
+        }
+
+        if (cb_twitter.isSelected()) {
+            TwitterSocialNetwork twitterSocialNetwork = new TwitterSocialNetwork();
+            twitterSocialNetwork.instanceTwitter(new String(pwd_twitter_public_consumer_key.getPassword()), new String(pwd_twitter_private_consumer_key.getPassword()), new String(pwd_twitter_public_key.getPassword()), new String(pwd_twitter_private_key.getPassword()), model);
+            socialNetworks.add(twitterSocialNetwork);
+
+        }
+
         apiHandlerSales.setMarketplaces(marketplaces);
         apiHandlerSales.setSocialNetworks(socialNetworks);
-        
+
         apiHandlerStat.setMarketplaces(marketplaces);
         apiHandlerStat.setSocialNetworks(socialNetworks);
-        
+
     }
-    
+
     /**
      * Start the bot
-     * 
+     *
      */
-    private void startloop(){
+    private void startloop() {
 
-        try{
-            for(SocialNetworkInterface oneSocialNetwork : socialNetworks){
+        try {
+            for (SocialNetworkInterface oneSocialNetwork : socialNetworks) {
                 oneSocialNetwork.start();
             }
 
-            if(cb_twitter_sales.isSelected()){
+            if (cb_sales.isSelected()) {
                 scheduledFutureSales = executor.scheduleAtFixedRate(apiHandlerSales, 0, BotConfiguration.getConfiguration().getRefreshSalesTime(), BotConfiguration.getConfiguration().getRefreshSales());
             }
 
-            if(cb_twitter_stat.isSelected()){
+            if (cb_stat.isSelected()) {
                 scheduledFutureStat = executor.scheduleAtFixedRate(apiHandlerStat, 0, BotConfiguration.getConfiguration().getRefreshSalesStats(), BotConfiguration.getConfiguration().getRefreshStats());
             }
-        }catch (Exception ex){
-            model.insertRow(0, new Object[]{"Start","Error : unable to start" ,ex.getMessage()});
+        } catch (Exception ex) {
+            model.insertRow(0, new Object[]{"Start", "Error : unable to start", ex.getMessage()});
             LogManager.getLogManager().writeLog(MainBotForm.class.getName(), ex);
         }
     }
-    
+
     /**
      * Stop the bot
      */
-    private void stoploop(){
-        
-        try{
-            for(SocialNetworkInterface oneSocialNetwork : socialNetworks){
+    private void stoploop() {
+
+        try {
+            for (SocialNetworkInterface oneSocialNetwork : socialNetworks) {
                 oneSocialNetwork.stop();
             }
-        }catch (Exception ex){
-            model.insertRow(0, new Object[]{"Stop","Error : unable to stop correctly" ,ex.getMessage()});
+        } catch (Exception ex) {
+            model.insertRow(0, new Object[]{"Stop", "Error : unable to stop correctly", ex.getMessage()});
             LogManager.getLogManager().writeLog(MainBotForm.class.getName(), ex);
         }
-        
-        if(cb_twitter_sales.isSelected()){
+
+        if (cb_sales.isSelected()) {
             scheduledFutureSales.cancel(true);
         }
-        
-        if(cb_twitter_stat.isSelected()){
+
+        if (cb_stat.isSelected()) {
             scheduledFutureStat.cancel(true);
         }
-        
+
         BotLastRefresh.sendToCollector();
     }
-    
+
     /**
      * @param args the command line arguments
      */
@@ -633,20 +745,26 @@ public class MainBotForm extends javax.swing.JFrame {
     private javax.swing.JButton btn_remove;
     private javax.swing.JButton btn_start;
     private javax.swing.JButton btn_stop;
-    private javax.swing.JCheckBox cb_twitter_sales;
-    private javax.swing.JCheckBox cb_twitter_stat;
+    private javax.swing.JCheckBox cb_discord;
+    private javax.swing.JCheckBox cb_sales;
+    private javax.swing.JCheckBox cb_stat;
+    private javax.swing.JCheckBox cb_twitter;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel lbl_discord_channel;
+    private javax.swing.JLabel lbl_discord_token;
     private javax.swing.JLabel lbl_twitter_access_key;
     private javax.swing.JLabel lbl_twitter_private_consumer_key;
     private javax.swing.JLabel lbl_twitter_private_key;
     private javax.swing.JLabel lbl_twitter_public_consumer_key;
+    private javax.swing.JPasswordField pwd_discord_token;
     private javax.swing.JPasswordField pwd_twitter_private_consumer_key;
     private javax.swing.JPasswordField pwd_twitter_private_key;
     private javax.swing.JPasswordField pwd_twitter_public_consumer_key;
     private javax.swing.JPasswordField pwd_twitter_public_key;
     private javax.swing.JTable tbl_contracts;
     private javax.swing.JTable tbl_status;
+    private javax.swing.JTextField txt_discord_channel;
     // End of variables declaration//GEN-END:variables
 }

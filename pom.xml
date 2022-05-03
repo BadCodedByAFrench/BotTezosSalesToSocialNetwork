@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.poorlycodedbyafrench</groupId>
     <artifactId>BotTezosSalesToSocialNetwork</artifactId>
-    <version>1.4.0</version>
+    <version>1.5.0</version>
     <packaging>jar</packaging>
     
     <build>
@@ -36,6 +36,13 @@
         </plugins>
     </build>
     
+    <repositories>
+	<repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+	</repository>
+    </repositories>
+        
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -62,6 +69,12 @@
             <version>0.5.4</version>
         </dependency>
     
+        <dependency>
+	    <groupId>com.github.DV8FromTheWorld</groupId>
+	    <artifactId>JDA</artifactId>
+	    <version>v5.0.0-alpha.11</version>
+	</dependency>
+
     </dependencies>
     <name>BotTezosSalesToSocialNetwork</name>
 </project>
