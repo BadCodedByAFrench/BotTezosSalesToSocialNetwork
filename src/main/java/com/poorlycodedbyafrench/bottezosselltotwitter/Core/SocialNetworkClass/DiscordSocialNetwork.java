@@ -26,6 +26,7 @@ import java.nio.file.StandardCopyOption;
 import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -82,7 +83,7 @@ public class DiscordSocialNetwork implements SocialNetworkInterface {
     }
 
     @Override
-    public synchronized void send(List<Sale> newSales, int mode) throws Exception {
+    public synchronized void send(List<Sale> newSales, int mode, HashMap<Sale, String> messageSaver) throws Exception {
         int countAvoidTwitterDuplicate = 1;
         DecimalFormat df = new DecimalFormat("##.00");
 
@@ -108,9 +109,19 @@ public class DiscordSocialNetwork implements SocialNetworkInterface {
 
             Random rand = new Random();
             for (Sale aSale : newSales) {
-
+                
+                String message = "";
+                
+                if(messageSaver.containsKey(aSale)){
+                    message = messageSaver.get(aSale);
+                }
+                else{
+                    message = NetworkMessageManager.getMessageManager().createSaleMessage(aSale, df, rand, countAvoidTwitterDuplicate);
+                    messageSaver.put(aSale, message);
+                }
+                
                 eb.setTitle(aSale.getName() + " has been sold for " + df.format(aSale.getPrice()).replace(',', '.') + " XTZ");
-                eb.setDescription(NetworkMessageManager.getMessageManager().createSaleMessage(aSale, df, rand, countAvoidTwitterDuplicate));
+                eb.setDescription(message);
                 eb.setColor(Color.BLUE);
 
                 if (BotConfiguration.getConfiguration().isIpfs()) {    
@@ -121,7 +132,7 @@ public class DiscordSocialNetwork implements SocialNetworkInterface {
 
                 TimeUnit.SECONDS.sleep(20);
 
-                //System.out.println(status);
+                //System.out.println(message);
                 countAvoidTwitterDuplicate++;
             }
         }

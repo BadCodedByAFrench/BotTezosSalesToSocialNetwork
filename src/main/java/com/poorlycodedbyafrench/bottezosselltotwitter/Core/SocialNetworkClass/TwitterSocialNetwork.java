@@ -7,7 +7,6 @@ package com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotConfiguration;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.LogManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.NetworkMessageManager;
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlace;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetwork;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Contract;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
@@ -25,7 +24,7 @@ import java.net.URLConnection;
 import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import javax.swing.table.DefaultTableModel;
@@ -84,7 +83,7 @@ public class TwitterSocialNetwork implements SocialNetworkInterface {
     }
 
     @Override
-    public synchronized void send(List<Sale> newSales, int mode) throws TwitterException, InterruptedException, MalformedURLException, IOException {
+    public synchronized void send(List<Sale> newSales, int mode, HashMap<Sale, String> messageSaver) throws TwitterException, InterruptedException, MalformedURLException, IOException {
         int countAvoidTwitterDuplicate = 1;
         DecimalFormat df = new DecimalFormat("##.00");
 
@@ -106,7 +105,17 @@ public class TwitterSocialNetwork implements SocialNetworkInterface {
             Random rand = new Random();
             for (Sale aSale : newSales) {
 
-                StatusUpdate newStatus = new StatusUpdate(NetworkMessageManager.getMessageManager().createSaleMessage(aSale, df, rand, countAvoidTwitterDuplicate));
+                String message = "";
+                
+                if(messageSaver.containsKey(aSale)){
+                    message = messageSaver.get(aSale);
+                }
+                else{
+                    message = NetworkMessageManager.getMessageManager().createSaleMessage(aSale, df, rand, countAvoidTwitterDuplicate);
+                    messageSaver.put(aSale, message);
+                }
+                
+                StatusUpdate newStatus = new StatusUpdate(message);
                 if (BotConfiguration.getConfiguration().isIpfs()) {
                     try {
                         URL newURL = new URL("https://cloudflare-ipfs.com/" + aSale.getIpfs().replace(":/", ""));
@@ -133,7 +142,7 @@ public class TwitterSocialNetwork implements SocialNetworkInterface {
 
                 TimeUnit.MINUTES.sleep(1);
 
-                //System.out.println(status);
+                //System.out.println(message);
                 countAvoidTwitterDuplicate++;
             }
         }

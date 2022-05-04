@@ -6,6 +6,7 @@ package com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterfa
 
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetwork;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -19,7 +20,7 @@ public interface SocialNetworkInterface {
      * @param newSales
      * @throws Exception 
      */
-    public void send(List<Sale> newSales, int mode) throws Exception;
+    public void send(List<Sale> newSales, int mode, HashMap<Sale, String> messageSaver) throws Exception;
     
      /**
      * Get the name of the social network

@@ -16,6 +16,7 @@ import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceInterface.
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterface.SocialNetworkInterface;
 import com.poorlycodedbyafrench.bottezosselltotwitter.MainForm.ConfigurationMenu;
 import java.util.Collections;
+import java.util.HashMap;
 import twitter4j.TwitterException;
 
 /**
@@ -106,10 +107,11 @@ public class SalesToSocialNetwork implements Runnable {
             //Set the last successful refresh
             BotLastRefresh.getLastRefresh().setLastRefresh(allNewSell, mode);
             
+            HashMap<Sale, String> messageSaver = new HashMap<Sale,String>();
             for (SocialNetworkInterface oneSocialNetwork : this.socialNetworks){
                 
                 try {
-                    oneSocialNetwork.send(allNewSell, this.mode);
+                    oneSocialNetwork.send(allNewSell, this.mode, messageSaver);
                     model.insertRow(0, new Object[]{oneSocialNetwork.getName().toString(),"OK" ,allNewSell.size()});
                 } catch (TwitterException ex) {
                     model.insertRow(0, new Object[]{oneSocialNetwork.getName().toString(),"Error : unable to send a tweet" ,ex.getMessage()});
@@ -119,6 +121,9 @@ public class SalesToSocialNetwork implements Runnable {
                     LogManager.getLogManager().writeLog(SalesToSocialNetwork.class.getName(), ex);
                 }
             }
+            
+            messageSaver.clear();
+            messageSaver = null;
     }
     
 }
