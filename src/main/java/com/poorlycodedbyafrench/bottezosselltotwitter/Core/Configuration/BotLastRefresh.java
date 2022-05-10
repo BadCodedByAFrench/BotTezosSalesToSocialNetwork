@@ -25,16 +25,26 @@ public class BotLastRefresh {
      */
     private Instant lastSucessfullStatRefresh;
     
+    private Instant startTime;
+    
     /**
      * Random singleton
      */
     private static BotLastRefresh lastRefresh;
     
     private BotLastRefresh(){
+        resetRefresh();
+    }
+    
+    /**
+     * Function to refresh the instant at start/restart
+     */
+    public void resetRefresh(){
         this.lastSucessfullSaleRefresh = Instant.now().minus(BotConfiguration.getConfiguration().getRefreshSalesTime(), ChronoUnit.valueOf(BotConfiguration.getConfiguration().getRefreshSales().toString().toUpperCase()));
         
         this.lastSucessfullStatRefresh = Instant.now().minus(BotConfiguration.getConfiguration().getRefreshSalesStats(), ChronoUnit.valueOf(BotConfiguration.getConfiguration().getRefreshStats().toString().toUpperCase()));
         
+        this.startTime = Instant.now();
     }
     
     /**
@@ -68,8 +78,17 @@ public class BotLastRefresh {
     private void setLastSucessfullStatRefresh(Instant lastSucessfullStatRefresh) {
         this.lastSucessfullStatRefresh = lastSucessfullStatRefresh;
     }
+
+    public static void setLastRefresh(BotLastRefresh lastRefresh) {
+        BotLastRefresh.lastRefresh = lastRefresh;
+    }
+
+    public Instant getStartTime() {
+        return startTime;
+    }
     
     public void setLastRefresh(List<Sale> newSales, int mode){
+        
         
         if (newSales.size() != 0){
             Instant lasttimeStamp = newSales.get(0).getTimestamp();
@@ -80,11 +99,11 @@ public class BotLastRefresh {
                 }
             }
             
-            if(mode == 0){
-                this.setLastSucessfullSaleRefresh(lasttimeStamp);
-            }
-            else{
+            if (mode == 1 && lasttimeStamp.isAfter(this.getLastSucessfullStatRefresh())){
                 this.setLastSucessfullStatRefresh(lasttimeStamp);
+            }
+            else if(lasttimeStamp.isAfter(this.getLastSucessfullSaleRefresh())){
+                this.setLastSucessfullSaleRefresh(lasttimeStamp);
             }
         }
     }

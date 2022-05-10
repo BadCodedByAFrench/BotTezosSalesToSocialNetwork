@@ -77,8 +77,12 @@ public class Sale implements Comparable<Sale> {
      */
     private String ipfs; 
     
+    /**
+     * Id of the transaction
+     */
+    private Long idtransaction;
     
-    public Sale(String name, Long id, double price, SaleType type, MarketPlace marketplace, String pathname, Instant timestamp, String contract, String collectionName, Address buyer, Address seller, String ipfs) {
+    public Sale(String name, Long id, double price, SaleType type, MarketPlace marketplace, String pathname, Instant timestamp, String contract, String collectionName, Address buyer, Address seller, String ipfs, Long idtransaction) {
         this.name = name;
         this.id = id;
         this.price = price;
@@ -91,6 +95,7 @@ public class Sale implements Comparable<Sale> {
         this.buyer = buyer;
         this.seller = seller;
         this.ipfs = ipfs;
+        this.idtransaction = idtransaction;
     }
 
     public String getName() {
@@ -142,6 +147,11 @@ public class Sale implements Comparable<Sale> {
         return ipfs;
     }
 
+    public Long getIdtransaction() {
+        return idtransaction;
+    }
+
+    
     @Override
     public String toString() {
         return "Title : " + name + " Id : " + id + " Price : " + price  ; // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody

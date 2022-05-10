@@ -23,8 +23,6 @@ import java.util.Collections;
 import java.util.Vector;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.security.auth.login.LoginException;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -650,6 +648,8 @@ public class MainBotForm extends javax.swing.JFrame {
 
         apiHandlerStat.setMarketplaces(marketplaces);
         apiHandlerStat.setSocialNetworks(socialNetworks);
+        
+        BotLastRefresh.getLastRefresh().resetRefresh();
 
     }
 

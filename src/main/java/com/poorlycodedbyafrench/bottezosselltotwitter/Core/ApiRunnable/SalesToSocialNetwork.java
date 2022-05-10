@@ -6,6 +6,7 @@ package com.poorlycodedbyafrench.bottezosselltotwitter.Core.ApiRunnable;
 
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotLastRefresh;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.LogManager;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.SalesHistoryManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -14,7 +15,6 @@ import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceInterface.CallMarketPlaceInterface;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterface.SocialNetworkInterface;
-import com.poorlycodedbyafrench.bottezosselltotwitter.MainForm.ConfigurationMenu;
 import java.util.Collections;
 import java.util.HashMap;
 import twitter4j.TwitterException;
@@ -101,18 +101,22 @@ public class SalesToSocialNetwork implements Runnable {
                 }
             }
             
+            //Get only the new one
+            List<Sale> filteredList = SalesHistoryManager.getSalesHistoryManager().checkNewSales(allNewSell, this.mode);
+            SalesHistoryManager.getSalesHistoryManager().removeOldestSales(this.mode);
+            
             //sort all the sales depend of configuration setting
-            Collections.sort(allNewSell);
+            Collections.sort(filteredList);
             
             //Set the last successful refresh
-            BotLastRefresh.getLastRefresh().setLastRefresh(allNewSell, mode);
+            BotLastRefresh.getLastRefresh().setLastRefresh(filteredList, mode);
             
             HashMap<Sale, String> messageSaver = new HashMap<Sale,String>();
             for (SocialNetworkInterface oneSocialNetwork : this.socialNetworks){
                 
                 try {
-                    oneSocialNetwork.send(allNewSell, this.mode, messageSaver);
-                    model.insertRow(0, new Object[]{oneSocialNetwork.getName().toString(),"OK" ,allNewSell.size()});
+                    oneSocialNetwork.send(filteredList, this.mode, messageSaver);
+                    model.insertRow(0, new Object[]{oneSocialNetwork.getName().toString(),"OK" ,filteredList.size()});
                 } catch (TwitterException ex) {
                     model.insertRow(0, new Object[]{oneSocialNetwork.getName().toString(),"Error : unable to send a tweet" ,ex.getMessage()});
                     LogManager.getLogManager().writeLog(SalesToSocialNetwork.class.getName(), ex);

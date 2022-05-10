@@ -27,6 +27,7 @@ import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceInterface.
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Address;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 /**
  * Call OBJKT Api
@@ -48,10 +49,10 @@ public class CallObjkt implements CallMarketPlaceInterface {
         List<Sale> objktSale = new ArrayList<Sale>();
         Instant previousUTCHour;
         if(mode == 0){
-            previousUTCHour = BotLastRefresh.getLastRefresh().getLastSucessfullSaleRefresh();
+            previousUTCHour = BotLastRefresh.getLastRefresh().getLastSucessfullSaleRefresh().minus(1, ChronoUnit.HOURS);
         }
         else {
-            previousUTCHour = BotLastRefresh.getLastRefresh().getLastSucessfullStatRefresh();
+            previousUTCHour = BotLastRefresh.getLastRefresh().getLastSucessfullStatRefresh().minus(1, ChronoUnit.HOURS);
         }
         
         for (String contract : contracts){
@@ -141,6 +142,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
                     Long id = token.get("token_id").getAsLong(); 
                     String timestamp = "";
                     double price = 0;
+                    Long idtransaction;
                     
                     String buyerAdress = "";
                     String buyerDomain = null;
@@ -157,6 +159,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
                                 JsonObject transaction = (JsonObject) t;
                                 price = transaction.get("price").getAsDouble()/1000000.0;
                                 timestamp = transaction.get("timestamp").getAsString();
+                                idtransaction = transaction.get("id").getAsLong();
                                 
                                 buyerAdress = transaction.getAsJsonObject("buyer").get("address").getAsString();
                                 sellerAdress = transaction.getAsJsonObject("seller").get("address").getAsString();
@@ -169,7 +172,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
                                 }
                                 
                                 
-                                sellList.add(new Sale(tokenname, id, price, SaleType.ListedSale, this.getName(), path,  OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs));
+                                sellList.add(new Sale(tokenname, id, price, SaleType.ListedSale, this.getName(), path,  OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs, idtransaction));
                             }  
                             break;
                         case 1 :
@@ -178,6 +181,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
                                 JsonObject offer = (JsonObject) t;
                                 price = offer.get("price").getAsDouble()/1000000.0;
                                 timestamp = offer.get("update_timestamp").getAsString();
+                                idtransaction = offer.get("id").getAsLong();
                                 
                                 buyerAdress = offer.getAsJsonObject("buyer").get("address").getAsString();                              
                                 sellerAdress = offer.getAsJsonObject("seller").get("address").getAsString();
@@ -189,7 +193,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
                                     sellerDomain = offer.getAsJsonObject("seller").get("tzdomain").getAsString();
                                 }
                                 
-                                sellList.add(new Sale(tokenname, id, price, SaleType.Offer, this.getName(), path,  OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs));
+                                sellList.add(new Sale(tokenname, id, price, SaleType.Offer, this.getName(), path,  OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs, idtransaction));
                             }
                             break;
                         case 3 :
@@ -198,6 +202,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
                                 JsonObject englishAuction = (JsonObject) t;
                                 price = englishAuction.get("highest_bid").getAsDouble()/1000000.0;
                                 timestamp = englishAuction.get("end_time").getAsString();
+                                idtransaction = englishAuction.get("id").getAsLong();
                                 
                                 buyerAdress = englishAuction.getAsJsonObject("highest_bidder").get("address").getAsString();
                                 sellerAdress = englishAuction.getAsJsonObject("seller").get("address").getAsString();
@@ -209,7 +214,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
                                     sellerDomain = englishAuction.getAsJsonObject("seller").get("tzdomain").getAsString();
                                 }
                                 
-                                sellList.add(new Sale(tokenname, id, price, SaleType.EnglishAuction, this.getName(), path,  OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs));
+                                sellList.add(new Sale(tokenname, id, price, SaleType.EnglishAuction, this.getName(), path,  OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs, idtransaction));
                             }
                             break;
                             
@@ -224,6 +229,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
                 JsonObject success_dutch_auction = (JsonObject) c;
                 String timestamp = success_dutch_auction.get("timestamp").getAsString();
                 double price = success_dutch_auction.get("price").getAsDouble()/1000000.0;
+                Long idtransaction = success_dutch_auction.get("id").getAsLong();
                 
                 String buyerAdress = success_dutch_auction.getAsJsonObject("buyer").get("address").getAsString();
                 String buyerDomain = null;
@@ -249,8 +255,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
                 Long id = success_dutch_auction.getAsJsonObject("token").get("token_id").getAsLong();
                 String tokenname = success_dutch_auction.getAsJsonObject("token").get("name").getAsString();
                 String ipfs = success_dutch_auction.getAsJsonObject("token").get("display_uri").getAsString();
-                sellList.add(new Sale(tokenname, id, price, SaleType.DutchAuction, this.getName(), path,  OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs));
-
+                sellList.add(new Sale(tokenname, id, price, SaleType.DutchAuction, this.getName(), path,  OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs, idtransaction));
             }
         }
         return sellList;
