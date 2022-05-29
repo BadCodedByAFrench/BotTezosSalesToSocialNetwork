@@ -47,10 +47,16 @@ public class SalesToSocialNetwork implements Runnable {
         
     private int mode;
     
+    private HashMap<String, List<String>> sellerFilter;
+    
+    private HashMap<String, List<String>> itemFilter;
+    
     public SalesToSocialNetwork(DefaultTableModel model, int mode) {
         this.newSell = new ArrayList<Sale>();
         this.marketplaces = new ArrayList<CallMarketPlaceInterface>();
         this.socialNetworks = new ArrayList<SocialNetworkInterface>();
+        this.sellerFilter = new HashMap<String, List<String>>();
+        this.itemFilter = new HashMap<String, List<String>>();
         
         this.model = model;
         this.mode = mode;
@@ -64,7 +70,13 @@ public class SalesToSocialNetwork implements Runnable {
         this.socialNetworks = socialNetworks;
     }
 
-    
+    public void setSellerFilter(HashMap<String, List<String>> sellerFilter) {
+        this.sellerFilter = sellerFilter;
+    }
+
+    public void setItemFilter(HashMap<String, List<String>> itemFilter) {
+        this.itemFilter = itemFilter;
+    }
     
     /**
      * if the bot is active
@@ -102,7 +114,7 @@ public class SalesToSocialNetwork implements Runnable {
             }
             
             //Get only the new one
-            List<Sale> filteredList = SalesHistoryManager.getSalesHistoryManager().checkNewSales(allNewSell, this.mode);
+            List<Sale> filteredList = SalesHistoryManager.getSalesHistoryManager().checkNewSales(allNewSell, this.mode, sellerFilter, itemFilter);
             SalesHistoryManager.getSalesHistoryManager().removeOldestSales(this.mode);
             
             //sort all the sales depend of configuration setting

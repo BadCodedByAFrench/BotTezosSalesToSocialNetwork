@@ -34,15 +34,29 @@ public class SalesHistoryManager {
         return salesHistoryManager;
     }
     
-    public List<Sale> checkNewSales(List<Sale> newSalesList, int mode){
+    public List<Sale> checkNewSales(List<Sale> newSalesList, int mode, HashMap<String, List<String>> sellerFilter, HashMap<String, List<String>> itemFilter){
         
         List<Sale> saleToShow = new ArrayList<Sale>();
         
         if (mode == 0){
             for(Sale aSale : newSalesList){
-                if(!statHistory.containsKey(aSale.getIdtransaction()) && aSale.getTimestamp().isAfter(BotLastRefresh.getLastRefresh().getStartTime())){
-                    saleToShow.add(aSale);
-                    statHistory.put(aSale.getIdtransaction(), aSale);
+                if(!statHistory.containsKey(aSale.getIdtransaction()) && aSale.getTimestamp().isAfter(BotLastRefresh.getLastRefresh().getStartTime()) ){
+                    
+                    boolean sellerCheck =true;
+                    boolean itemCheck = true;
+                    
+                    if(!sellerFilter.get(aSale.getContract()).isEmpty() && !sellerFilter.get(aSale.getContract()).contains(aSale.getSeller().getAdress())){
+                        sellerCheck = false;
+                    }
+                    
+                    if( !itemFilter.get(aSale.getContract()).isEmpty() && !itemFilter.get(aSale.getContract()).contains(aSale.getId().toString())){
+                        itemCheck = false;
+                    }
+                    
+                    if(itemCheck && sellerCheck){
+                        saleToShow.add(aSale);
+                        statHistory.put(aSale.getIdtransaction(), aSale);
+                    }
                 }
             }
         }
