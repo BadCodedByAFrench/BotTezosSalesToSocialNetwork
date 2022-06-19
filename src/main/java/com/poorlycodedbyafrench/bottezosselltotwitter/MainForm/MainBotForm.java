@@ -166,22 +166,20 @@ public class MainBotForm extends javax.swing.JFrame {
         }
 
         if (stateStart) {
-            if (dtb.getRowCount() <= 1) {
+            
+            if (dtb.getRowCount() <= 0) {
                 btn_remove_contract.setEnabled(false);
             } else {
                 btn_remove_contract.setEnabled(true);
             }
-            
+                        
             if(tbl_contracts.getSelectedRowCount() == 1){
                 String contract = (String) dtb.getDataVector().get(tbl_contracts.getSelectedRow()).get(0);
                 
                 if(!contract.isBlank()){
-                    tbl_seller.setEnabled(true);
                     btn_add_seller.setEnabled(true);
-
-                    tbl_item.setEnabled(true);
                     btn_add_item.setEnabled(true);
-
+                    
                     if (tbl_seller.getRowCount() <= 0) {
                         btn_remove_seller.setEnabled(false);
                     } else {
@@ -201,12 +199,29 @@ public class MainBotForm extends javax.swing.JFrame {
                     }
                 }
                 else{
-                    tbl_seller.setEnabled(false);
                     btn_add_seller.setEnabled(false);
                     btn_remove_seller.setEnabled(false);
-                    tbl_item.setEnabled(false);
                     btn_add_item.setEnabled(false);
                     btn_remove_item.setEnabled(false);
+                }
+                
+                if (tbl_seller.isEditing()){
+                    tbl_contracts.setEnabled(false);
+                    tbl_item.setEnabled(false);
+                    tbl_marketplace.setEnabled(false);
+                }else if (tbl_contracts.isEditing()){
+                    tbl_seller.setEnabled(false);
+                    tbl_item.setEnabled(false);
+                    tbl_marketplace.setEnabled(false);
+                }else if (tbl_item.isEditing()){
+                    tbl_contracts.setEnabled(false);
+                    tbl_seller.setEnabled(false);
+                    tbl_marketplace.setEnabled(false);
+                }else{
+                    tbl_contracts.setEnabled(true);
+                    tbl_seller.setEnabled(true);
+                    tbl_marketplace.setEnabled(true);
+                    tbl_item.setEnabled(true);
                 }
             }
             else{
@@ -221,7 +236,7 @@ public class MainBotForm extends javax.swing.JFrame {
             
             
 
-            if (dtb.getRowCount() >= 12) {
+            if (dtb.getRowCount() >= 12 || tbl_marketplace.getSelectedRowCount() != 1) {
                 btn_add_contract.setEnabled(false);
             } else {
                 btn_add_contract.setEnabled(true);
@@ -852,32 +867,52 @@ public class MainBotForm extends javax.swing.JFrame {
         if ("tableCellEditor".equals(evt.getPropertyName()))
         {
             if (!tbl_contracts.isEditing()){
+            
                 String contract = (String) dtb.getDataVector().get(tbl_contracts.getSelectedRow()).get(0);
                 
                 Vector<Vector> contractsData = dtb.getDataVector();
                 
                 int isUnique = 0;
+                ArrayList<String> currentContracts = new ArrayList<String>();
                 
                 for (Vector v : contractsData) {
 
                     if (v.get(0).toString().equals(contract)) {
                         isUnique++;
                     }
+                    currentContracts.add(v.get(0).toString().trim());
                 }
                 
                 
-                if( !contract.isBlank() && isUnique == 1){
+                if(!contract.isBlank() && isUnique == 1){
                     
                     MarketPlace currentmp = marketplaces.get( dtbMP.getDataVector().get(tbl_marketplace.getSelectedRow()).get(0));
-
-                    currentmp.addContract(contract);
+                    
+                    ArrayList<String> contractsToRemove = new ArrayList<String>();
+                    
+                    for(String oneContract : currentmp.getContracts()){
+                        if(!currentContracts.contains(oneContract)){
+                            contractsToRemove.add(oneContract);
+                        }
+                    }
+                    
+                    for(String contractToRemove : contractsToRemove){
+                        currentmp.removeContract(contractToRemove);
+                    }
+                    
+                    for (String oneCurrentContracts : currentContracts) {
+                        if(!currentmp.getContracts().contains(oneCurrentContracts)){
+                            currentmp.addContract(oneCurrentContracts);
+                        }
+                    }
+                    
+                    
                     
                 }else{
                     dtb.removeRow(tbl_contracts.getSelectedRow());
                 }
-                
-                setStateComponent(true);
             }
+            setStateComponent(true);
         }
     }//GEN-LAST:event_tbl_contractsPropertyChange
 
@@ -885,6 +920,7 @@ public class MainBotForm extends javax.swing.JFrame {
         if ("tableCellEditor".equals(evt.getPropertyName()))
         {
             if (!tbl_seller.isEditing()){
+            
                 MarketPlace currentmp = marketplaces.get( dtbMP.getDataVector().get(tbl_marketplace.getSelectedRow()).get(0));
                 String contract = (String) dtb.getDataVector().get(tbl_contracts.getSelectedRow()).get(0);
                 
@@ -908,6 +944,7 @@ public class MainBotForm extends javax.swing.JFrame {
         if ("tableCellEditor".equals(evt.getPropertyName()))
         {
             if (!tbl_item.isEditing()){
+                
                 MarketPlace currentmp = marketplaces.get( dtbMP.getDataVector().get(tbl_marketplace.getSelectedRow()).get(0));
                 String contract = (String) dtb.getDataVector().get(tbl_contracts.getSelectedRow()).get(0);
                 
