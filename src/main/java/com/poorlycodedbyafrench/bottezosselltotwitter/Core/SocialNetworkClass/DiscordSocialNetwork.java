@@ -64,9 +64,21 @@ public class DiscordSocialNetwork implements SocialNetworkInterface {
      * @throws LoginException
      * @throws InterruptedException 
      */
-    public void instanceDiscord(String token, String channelName, DefaultTableModel model) throws LoginException, InterruptedException {
+    public void instanceDiscord(String token, String channelName, DefaultTableModel model) throws LoginException, InterruptedException, Exception {
         jda = JDABuilder.createDefault(token.trim()).build().awaitReady();
-        textChannel = jda.getTextChannelsByName(channelName.trim(), true).get(0);
+        List<TextChannel> allTextChannels = jda.getTextChannels();
+        
+        for(TextChannel oneTextChannel : allTextChannels ){
+            
+            if(textChannel == null && oneTextChannel.getName().toLowerCase().contains(channelName.trim().toLowerCase())){
+                textChannel = oneTextChannel;
+            }
+        }
+        
+        if(textChannel == null){
+            throw new Exception("The channel do not exist");
+        }
+        
         this.model = model;
     }
 

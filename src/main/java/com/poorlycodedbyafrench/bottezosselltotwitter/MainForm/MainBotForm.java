@@ -309,7 +309,7 @@ public class MainBotForm extends javax.swing.JFrame {
         btn_add1.setText("Add");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(820, 450));
+        setPreferredSize(new java.awt.Dimension(900, 450));
 
         lbl_twitter_public_consumer_key.setText("Public consumer key");
 
@@ -1100,7 +1100,7 @@ public class MainBotForm extends javax.swing.JFrame {
     /**
      * Update the data of Marketplace and SocialNetwork
      */
-    private void updateData() throws LoginException, InterruptedException {
+    private void updateData() throws LoginException, InterruptedException, Exception {
 
         HashMap<MarketPlaceEnum, MarketPlace> mpsToKeep = new HashMap<MarketPlaceEnum, MarketPlace>();
         
