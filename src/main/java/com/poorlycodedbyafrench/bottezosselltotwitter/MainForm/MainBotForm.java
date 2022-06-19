@@ -4,14 +4,16 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.MainForm;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.ApiRunnable.SalesToSocialNetwork;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotConfiguration;
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.LastRefresh;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.LogManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.CallTeia;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.CallObjkt;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.MarketPlace;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceInterface.CallMarketPlaceInterface;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterface.SocialNetworkInterface;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,8 @@ import javax.swing.table.DefaultTableModel;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass.DiscordSocialNetwork;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass.TwitterSocialNetwork;
 import java.awt.Dialog;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Collections;
@@ -28,8 +32,11 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import javax.security.auth.login.LoginException;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import org.ini4j.Wini;
 
 /**
  * Main form of the application
@@ -131,7 +138,11 @@ public class MainBotForm extends javax.swing.JFrame {
         tbl_seller.setEnabled(stateStart);
         tbl_item.setEnabled(stateStart);
         tbl_marketplace.setEnabled(stateStart);
-                
+        btn_import.setEnabled(stateStart);
+        btn_export.setEnabled(stateStart);
+        cb_stat.setEnabled(stateStart);
+        cb_sales.setEnabled(stateStart);
+        
         cb_twitter.setEnabled(stateStart);
         if (cb_twitter.isSelected() && cb_twitter.isEnabled()) {
             pwd_twitter_public_consumer_key.setEnabled(stateStart);
@@ -940,11 +951,19 @@ public class MainBotForm extends javax.swing.JFrame {
     }//GEN-LAST:event_tbl_marketplaceMouseClicked
 
     private void btn_importActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_importActionPerformed
-        // TODO add your handling code here:
+        try {
+            this.importFile();
+        } catch (Exception ex) {
+            LogManager.getLogManager().writeLog(MainBotForm.class.getName(), ex);
+        }
     }//GEN-LAST:event_btn_importActionPerformed
 
     private void btn_exportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_exportActionPerformed
-        // TODO add your handling code here:
+        try {
+            this.export();
+        } catch (Exception ex) {
+            LogManager.getLogManager().writeLog(MainBotForm.class.getName(), ex);
+        }
     }//GEN-LAST:event_btn_exportActionPerformed
 
     private void addRow(JTable tableToAdd){
@@ -1123,7 +1142,81 @@ public class MainBotForm extends javax.swing.JFrame {
             scheduledFutureStat.cancel(true);
         }
     }
+    
+    /**
+     * Export data into an ini file
+     */
+    private void export() throws IOException, Exception{
+        
+        
+        Gson gson = new Gson();
+        
+        Wini ini = new Wini();
+        
+        ini.put("MainWindow", "version", 1);
+        ini.put("MainWindow", "marketplaces", gson.toJson(marketplaces));
+        
+        JFileChooser chooser = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                "INI file", "ini");
+        chooser.setFileFilter(filter);
+        int returnVal = chooser.showOpenDialog(null);
+        if(returnVal == JFileChooser.APPROVE_OPTION) {
+            
+            String saveFile = chooser.getSelectedFile().getAbsolutePath();
+            if(!saveFile.toLowerCase().endsWith(".ini"))
+            {
+                saveFile += ".ini";
+            }
+            ini.store(new File(saveFile));
+        }
+    }
+    
+    private void importFile() throws IOException, Exception {
+        
+        Gson gson = new Gson();
+        java.lang.reflect.Type empHashMapType = new TypeToken<HashMap<MarketPlaceEnum, MarketPlace>>() {}.getType();
+        
+        JFileChooser chooser = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                "INI file", "ini");
+        chooser.setFileFilter(filter);
+        int returnVal = chooser.showOpenDialog(null);
+        if(returnVal == JFileChooser.APPROVE_OPTION && chooser.getSelectedFile().getAbsolutePath().toLowerCase().endsWith(".ini")) {
+            Wini ini = new Wini(chooser.getSelectedFile());
 
+            int version = ini.get("MainWindow", "version", int.class);
+            String json = ini.get("MainWindow", "marketplaces", String.class);
+            
+            marketplaces.clear();
+            ((DefaultTableModel) tbl_contracts.getModel()).setRowCount(0);
+            ((DefaultTableModel) tbl_seller.getModel()).setRowCount(0);
+            ((DefaultTableModel) tbl_item.getModel()).setRowCount(0);
+            
+            HashMap <MarketPlaceEnum, MarketPlace> mps = gson.fromJson(json, empHashMapType);
+            
+            for (MarketPlaceEnum mp : mps.keySet()){
+                                
+                CallMarketPlaceInterface cmpi = null;
+                if(mp == MarketPlaceEnum.Objkt){
+                    cmpi = new CallObjkt();
+                }
+                else if(mp == MarketPlaceEnum.Teia){
+                    cmpi = new CallTeia();
+                }
+                
+                if(cmpi != null){
+                    marketplaces.put(mp, new MarketPlace(mp, cmpi));
+                    MarketPlace newMp = marketplaces.get(mp);
+                    newMp.setContracts(mps.get(mp).getContracts());
+                    newMp.setItemList(mps.get(mp).getItemList());
+                    newMp.setSellerList(mps.get(mp).getSellerList());
+                }
+            }
+        }
+    }
+    
+    
     /**
      * @param args the command line arguments
      */

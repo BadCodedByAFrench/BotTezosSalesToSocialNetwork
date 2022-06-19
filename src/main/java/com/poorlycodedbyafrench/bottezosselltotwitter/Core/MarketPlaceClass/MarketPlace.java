@@ -26,9 +26,9 @@ public class MarketPlace {
     
     private HashMap<String, List<String>> itemList;
 
-    private CallMarketPlaceInterface calledMarketPlace;
+    private transient CallMarketPlaceInterface calledMarketPlace;
     
-    private LastRefresh lastrefresh;
+    private transient LastRefresh lastrefresh;
     
     public MarketPlace(MarketPlaceEnum marketplace, CallMarketPlaceInterface calledMarketPlace) {
         this.marketplace = marketplace;
@@ -100,6 +100,18 @@ public class MarketPlace {
     
     public void resetLastRefresh(){
         this.lastrefresh.resetRefresh();
+    }
+
+    public void setContracts(List<String> contracts) {
+        this.contracts = contracts;
+    }
+
+    public void setSellerList(HashMap<String, List<String>> sellerList) {
+        this.sellerList = sellerList;
+    }
+
+    public void setItemList(HashMap<String, List<String>> itemList) {
+        this.itemList = itemList;
     }
     
     public void setLastRefresh(List<Sale> newSales, int mode){
