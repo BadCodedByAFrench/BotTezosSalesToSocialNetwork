@@ -41,7 +41,7 @@ public class SalesHistoryManager {
         
         if (mode == 0){
             for(Sale aSale : newSalesList){
-                if(!statHistory.containsKey(aSale.getIdtransaction()) /*&& aSale.getTimestamp().isAfter(marketplaces.get(aSale.getMarketplace()).getLastrefresh().getStartTime())*/){
+                if(!statHistory.containsKey(aSale.getIdtransaction()) && aSale.getTimestamp().isAfter(marketplaces.get(aSale.getMarketplace()).getLastrefresh().getStartTime())){
                     
                     boolean sellerCheck =true;
                     boolean itemCheck = true;

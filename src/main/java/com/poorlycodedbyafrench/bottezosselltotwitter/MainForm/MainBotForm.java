@@ -1046,9 +1046,11 @@ public class MainBotForm extends javax.swing.JFrame {
 
         Vector<Vector> contractsData = dtb.getDataVector();
 
+        boolean atleastoneFill = false;
         
         for(MarketPlace mp : marketplaces.values()){
             if(mp.getContracts().size() > 0){
+                atleastoneFill = true;
                 for(String contract : mp.getContracts()){
                     if(contract.isBlank()){
                         isDataCorrect = false;
@@ -1057,6 +1059,10 @@ public class MainBotForm extends javax.swing.JFrame {
             }
         }   
 
+        if(!atleastoneFill){
+            isDataCorrect = false;
+        }
+        
         if (cb_twitter.isSelected()) {
             if (new String(pwd_twitter_public_consumer_key.getPassword()).isBlank()) {
                 isDataCorrect = false;

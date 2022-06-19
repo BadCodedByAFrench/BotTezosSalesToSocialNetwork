@@ -131,11 +131,13 @@ public class MarketPlace {
                 }
             }
             
-            if (mode == 1 && lasttimeStamp.isAfter(lastrefresh.getLastSucessfullStatRefresh())){
-                lastrefresh.setLastSucessfullStatRefresh(lasttimeStamp);
-            }
-            else if(lasttimeStamp.isAfter(lastrefresh.getLastSucessfullSaleRefresh())){
-                lastrefresh.setLastSucessfullSaleRefresh(lasttimeStamp);
+            if(lasttimeStamp != null){
+                if (mode == 1 && lasttimeStamp.isAfter(lastrefresh.getLastSucessfullStatRefresh())){
+                    lastrefresh.setLastSucessfullStatRefresh(lasttimeStamp);
+                }
+                else if(lasttimeStamp.isAfter(lastrefresh.getLastSucessfullSaleRefresh())){
+                    lastrefresh.setLastSucessfullSaleRefresh(lasttimeStamp);
+                }
             }
         }
     }
