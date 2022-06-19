@@ -8,10 +8,8 @@ package com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum;
  *
  * @author david
  */
-public enum MarketPlace {
-    Objkt,
-    HicEtNunc,
-    Kalamint,
-    ByteBlocks,
-    Rarible;
+public enum SocialNetworkEnum {
+    Twitter,
+    Discord,
+    Telegram;
 }

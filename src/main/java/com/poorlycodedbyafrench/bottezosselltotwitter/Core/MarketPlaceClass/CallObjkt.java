@@ -7,9 +7,8 @@ package com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotLastRefresh;
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlace;
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SaleType;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SaleTypeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
 import java.io.IOException;
 import java.net.URI;
@@ -35,31 +34,30 @@ import java.time.temporal.ChronoUnit;
  */
 public class CallObjkt implements CallMarketPlaceInterface {
     
-    private List<String> contracts;
-    private MarketPlace name;
+    private MarketPlaceEnum name;
 
+    
+    
     public CallObjkt() {
-        this.name = MarketPlace.Objkt;
+        this.name = MarketPlaceEnum.Objkt;
     }
 
     
     @Override
-    public List<Sale> query(int mode)throws IOException, URISyntaxException, InterruptedException{
+    public List<Sale> query(int mode, List<String> contracts, LastRefresh lastrefresh)throws IOException, URISyntaxException, InterruptedException{
         
         List<Sale> objktSale = new ArrayList<Sale>();
         Instant previousUTCHour;
         if(mode == 0){
-            previousUTCHour = BotLastRefresh.getLastRefresh().getLastSucessfullSaleRefresh().minus(1, ChronoUnit.HOURS);
+            previousUTCHour = lastrefresh.getLastSucessfullSaleRefresh().minus(1, ChronoUnit.HOURS);
         }
         else {
-            previousUTCHour = BotLastRefresh.getLastRefresh().getLastSucessfullStatRefresh().minus(1, ChronoUnit.HOURS);
+            previousUTCHour = lastrefresh.getLastSucessfullStatRefresh().minus(1, ChronoUnit.HOURS);
         }
         
-        for (String contract : contracts){
-            for(int i = 0; i<4; i++){
-                String responseJson = sendRequest(i, contract, previousUTCHour);
-                objktSale.addAll(analyseJson(responseJson, i, contract));
-            }
+        for(int i = 0; i<4; i++){
+            String responseJson = sendRequest(i, contracts, previousUTCHour);
+            objktSale.addAll(analyseJson(responseJson, i));
         }
             
         return objktSale;
@@ -72,22 +70,32 @@ public class CallObjkt implements CallMarketPlaceInterface {
      * @throws InterruptedException
      * @throws URISyntaxException 
      */
-    private String sendRequest(int requestCase, String contract, Instant previousUTCHour) throws IOException, InterruptedException, URISyntaxException{
+    private String sendRequest(int requestCase, List<String> contracts, Instant previousUTCHour) throws IOException, InterruptedException, URISyntaxException{
           
         String POST_PARAMS = "";
        
+        String buildIn = "";
+        
+        for(String contract : contracts){
+            if(!buildIn.equals("")){
+                buildIn += ",";
+            }
+            buildIn += "\\\"" + contract + "\\\"";
+            
+        }
+        
         switch(requestCase){
             case 0 : 
-                POST_PARAMS = "{ \"query\" : \"query MyQuery {  fa(where: {contract: {_eq: \\\""+contract+"\\\"}}) { collection_id  name path  tokens(where: {fulfilled_asks: {timestamp: {_gt: \\\"" + previousUTCHour.toString() + "\\\"}}}, order_by: {timestamp: desc}) {      name   token_id  display_uri  fulfilled_asks(where: {timestamp: {_gt: \\\"" + previousUTCHour.toString() + "\\\"}}) {        id        timestamp        price      buyer {     address   tzdomain }  seller {   address   tzdomain }    }    }  }}\"}";
+                POST_PARAMS = "{ \"query\" : \"query MyQuery {  fa(where: {contract: {_in: [ "+buildIn+" ] }}) { contract collection_id  name path  tokens(where: {fulfilled_asks: {timestamp: {_gt: \\\"" + previousUTCHour.toString() + "\\\"}}}, order_by: {timestamp: desc}) {      name   token_id  display_uri  fulfilled_asks(where: {timestamp: {_gt: \\\"" + previousUTCHour.toString() + "\\\"}}) {        id        timestamp        price      buyer {     address   tzdomain }  seller {   address   tzdomain }    }    }  }}\"}";
                 break;
             case 1 :
-                POST_PARAMS = "{ \"query\" : \"query MyQuery {  fa(where: {contract: {_eq: \\\""+contract+"\\\"}}) { collection_id  name path  tokens (where: { offers: {_and: {update_timestamp: {_gt: \\\"" + previousUTCHour.toString() + "\\\"}, status: {_eq: \\\"concluded\\\"}}}}) {      name   token_id display_uri  offers(where: {_and: {status: {_eq: \\\"concluded\\\"}}, update_timestamp: {_gt: \\\""+ previousUTCHour.toString() +"\\\"}})  {        id        update_timestamp        price   buyer {    address   tzdomain }  seller {   address   tzdomain }    }    }  }}\"}";
+                POST_PARAMS = "{ \"query\" : \"query MyQuery {  fa(where: {contract: {_in: [ "+buildIn+" ]}}) { contract collection_id  name path  tokens (where: { offers: {_and: {update_timestamp: {_gt: \\\"" + previousUTCHour.toString() + "\\\"}, status: {_eq: \\\"concluded\\\"}}}}) {      name   token_id display_uri  offers(where: {_and: {status: {_eq: \\\"concluded\\\"}}, update_timestamp: {_gt: \\\""+ previousUTCHour.toString() +"\\\"}})  {        id        update_timestamp        price   buyer {    address   tzdomain }  seller {   address   tzdomain }    }    }  }}\"}";
                 break;
             case 2 :
-                POST_PARAMS = "{ \"query\" : \"query MyQuery {  obj_fulfilled_dutch(where: {_and: {dutch_auction: {fa: {contract: {_eq: \\\"" + contract + "\\\"}}, timestamp: {_gt: \\\"" + previousUTCHour.toString() + "\\\"}}}}) {    price    id    timestamp  buyer {    address   tzdomain }  seller {   address   tzdomain }   token {      token_id    name display_uri  }  dutch_auction {      fa {   name     path      }    }  }}\"}";
+                POST_PARAMS = "{ \"query\" : \"query MyQuery {  obj_fulfilled_dutch(where: {_and: {dutch_auction: {fa: {contract: {_in: [ "+buildIn+" ]}}, timestamp: {_gt: \\\"" + previousUTCHour.toString() + "\\\"}}}}) {    price    id    timestamp  buyer {    address   tzdomain }  seller {   address   tzdomain }   token {      token_id    name display_uri  }  dutch_auction {      fa {   name     path  contract    }    }  }}\"}";
                 break;
             case 3 :
-                POST_PARAMS =" { \"query\" : \"query MyQuery {  fa(where: {contract: {_eq: \\\""+contract+"\\\"}}) {    collection_id    name path    tokens(where: {english_auctions: {highest_bid: {_gt: \\\"0\\\"}, end_time: {_gt: \\\""+ previousUTCHour.toString() +"\\\"}, status: {_eq: \\\"concluded\\\"}}}) {      name      token_id   display_uri   english_auctions(where: {highest_bid: {_gt: \\\"0\\\"}, end_time: {_gt: \\\""+ previousUTCHour.toString() +"\\\"}, status: {_eq: \\\"concluded\\\"}}) {        highest_bid        id        end_time  highest_bidder {   address   tzdomain }  seller {   address   tzdomain }    }    }  }} \"}";
+                POST_PARAMS =" { \"query\" : \"query MyQuery {  fa(where: {contract: {_in: [ "+buildIn+" ]}}) { contract   collection_id    name path    tokens(where: {english_auctions: {highest_bid: {_gt: \\\"0\\\"}, end_time: {_gt: \\\""+ previousUTCHour.toString() +"\\\"}, status: {_eq: \\\"concluded\\\"}}}) {      name      token_id   display_uri   english_auctions(where: {highest_bid: {_gt: \\\"0\\\"}, end_time: {_gt: \\\""+ previousUTCHour.toString() +"\\\"}, status: {_eq: \\\"concluded\\\"}}) {        highest_bid        id        end_time  highest_bidder {   address   tzdomain }  seller {   address   tzdomain }    }    }  }} \"}";
                 break;
         }
         
@@ -112,7 +120,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
      * @param responseJson
      * @return 
      */
-    private List<Sale> analyseJson(String responseJson, int requestCase, String contract){
+    private List<Sale> analyseJson(String responseJson, int requestCase){
         List<Sale> sellList = new ArrayList<Sale>();
         
         DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter
@@ -132,7 +140,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
                 }
 
                 String collectionName = contractJSON.get("name").getAsString();
-                
+                String contract = contractJSON.get("contract").getAsString();
                 JsonArray allNewSellToken = contractJSON.getAsJsonArray("tokens");
 
                 for(Object s : allNewSellToken){
@@ -172,7 +180,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
                                 }
                                 
                                 
-                                sellList.add(new Sale(tokenname, id, price, SaleType.ListedSale, this.getName(), path,  OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs, idtransaction));
+                                sellList.add(new Sale(tokenname, id, price, SaleTypeEnum.ListedSale, this.getName(), path,  OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs, idtransaction));
                             }  
                             break;
                         case 1 :
@@ -193,7 +201,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
                                     sellerDomain = offer.getAsJsonObject("seller").get("tzdomain").getAsString();
                                 }
                                 
-                                sellList.add(new Sale(tokenname, id, price, SaleType.Offer, this.getName(), path,  OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs, idtransaction));
+                                sellList.add(new Sale(tokenname, id, price, SaleTypeEnum.Offer, this.getName(), path,  OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs, idtransaction));
                             }
                             break;
                         case 3 :
@@ -214,7 +222,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
                                     sellerDomain = englishAuction.getAsJsonObject("seller").get("tzdomain").getAsString();
                                 }
                                 
-                                sellList.add(new Sale(tokenname, id, price, SaleType.EnglishAuction, this.getName(), path,  OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs, idtransaction));
+                                sellList.add(new Sale(tokenname, id, price, SaleTypeEnum.EnglishAuction, this.getName(), path,  OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs, idtransaction));
                             }
                             break;
                             
@@ -246,6 +254,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
                 }
                                 
                 String path = null;
+                String contract = success_dutch_auction.getAsJsonObject("dutch_auction").getAsJsonObject("fa").get("contract").getAsString();
                 if(!success_dutch_auction.getAsJsonObject("dutch_auction").getAsJsonObject("fa").get("path").isJsonNull()){
                     path = success_dutch_auction.getAsJsonObject("dutch_auction").getAsJsonObject("fa").get("path").getAsString();
                 }
@@ -255,22 +264,14 @@ public class CallObjkt implements CallMarketPlaceInterface {
                 Long id = success_dutch_auction.getAsJsonObject("token").get("token_id").getAsLong();
                 String tokenname = success_dutch_auction.getAsJsonObject("token").get("name").getAsString();
                 String ipfs = success_dutch_auction.getAsJsonObject("token").get("display_uri").getAsString();
-                sellList.add(new Sale(tokenname, id, price, SaleType.DutchAuction, this.getName(), path,  OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs, idtransaction));
+                sellList.add(new Sale(tokenname, id, price, SaleTypeEnum.DutchAuction, this.getName(), path,  OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs, idtransaction));
             }
         }
         return sellList;
     }
 
-    public List<String> getContracts() {
-        return contracts;
-    }
-
-    public void setContracts(List<String> contracts) {
-        this.contracts = contracts;
-    }
-
     @Override
-    public MarketPlace getName() {
+    public MarketPlaceEnum getName() {
         return name;
     }
     

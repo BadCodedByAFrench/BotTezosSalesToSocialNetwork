@@ -8,15 +8,16 @@ package com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum;
  *
  * @author david
  */
-public enum SaleType {
+public enum SaleTypeEnum {
     ListedSale("Listed sale"),
     Offer("Offer"),
     EnglishAuction("English auction"),
-    DutchAuction("Dutch auction");
+    DutchAuction("Dutch auction"),
+    Unknown("Unknown");
     
     private String type;
     
-    SaleType(String type){
+    SaleTypeEnum(String type){
         this.type = type;
     }
     

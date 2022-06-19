@@ -4,7 +4,7 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales;
 
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlace;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,10 +28,10 @@ public class Contract {
     
     private double max;
 
-    private List<MarketPlace> marketplace;
+    private List<MarketPlaceEnum> marketplace;
     
     public Contract(Sale firstSale) {
-        this.marketplace = new ArrayList<MarketPlace>();
+        this.marketplace = new ArrayList<MarketPlaceEnum>();
         this.marketplace.add(firstSale.getMarketplace());
         this.contract = firstSale.getContract();
         this.name = firstSale.getCollectionName();
@@ -87,7 +87,7 @@ public class Contract {
         }
     }
 
-    public List<MarketPlace> getMarketplace() {
+    public List<MarketPlaceEnum> getMarketplace() {
         return marketplace;
     }
     

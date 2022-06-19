@@ -4,13 +4,13 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterface;
 
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetwork;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetworkEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
 import java.util.HashMap;
 import java.util.List;
 
 /**
- * Interface that should be use by all of the SocialNetwork
+ * Interface that should be use by all of the SocialNetworkEnum
  * @author david
  */
 public interface SocialNetworkInterface {
@@ -26,7 +26,7 @@ public interface SocialNetworkInterface {
      * Get the name of the social network
      * @return 
      */
-    public SocialNetwork getName();
+    public SocialNetworkEnum getName();
     
     /**
      * Function to say that the bot is starting

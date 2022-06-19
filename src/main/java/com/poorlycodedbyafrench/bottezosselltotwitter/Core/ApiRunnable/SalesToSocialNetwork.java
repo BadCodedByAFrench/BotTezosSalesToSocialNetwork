@@ -4,16 +4,17 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.ApiRunnable;
 
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotLastRefresh;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.LastRefresh;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.LogManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.SalesHistoryManager;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.MarketPlace;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceInterface.CallMarketPlaceInterface;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterface.SocialNetworkInterface;
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,7 +34,7 @@ public class SalesToSocialNetwork implements Runnable {
     /**
      * List of all the marketplace
      */
-    private List<CallMarketPlaceInterface> marketplaces;
+    private HashMap<MarketPlaceEnum, MarketPlace> marketplaces;
     
     /**
      * List of all the social network
@@ -47,22 +48,16 @@ public class SalesToSocialNetwork implements Runnable {
         
     private int mode;
     
-    private HashMap<String, List<String>> sellerFilter;
-    
-    private HashMap<String, List<String>> itemFilter;
-    
     public SalesToSocialNetwork(DefaultTableModel model, int mode) {
         this.newSell = new ArrayList<Sale>();
-        this.marketplaces = new ArrayList<CallMarketPlaceInterface>();
+        this.marketplaces = new HashMap<MarketPlaceEnum, MarketPlace>();
         this.socialNetworks = new ArrayList<SocialNetworkInterface>();
-        this.sellerFilter = new HashMap<String, List<String>>();
-        this.itemFilter = new HashMap<String, List<String>>();
         
         this.model = model;
         this.mode = mode;
     }
 
-    public void setMarketplaces(List<CallMarketPlaceInterface> marketplaces) {
+    public void setMarketplaces(HashMap<MarketPlaceEnum, MarketPlace> marketplaces) {
         this.marketplaces = marketplaces;
     }
 
@@ -70,14 +65,6 @@ public class SalesToSocialNetwork implements Runnable {
         this.socialNetworks = socialNetworks;
     }
 
-    public void setSellerFilter(HashMap<String, List<String>> sellerFilter) {
-        this.sellerFilter = sellerFilter;
-    }
-
-    public void setItemFilter(HashMap<String, List<String>> itemFilter) {
-        this.itemFilter = itemFilter;
-    }
-    
     /**
      * if the bot is active
      * We get all the sale from marketplace
@@ -92,40 +79,42 @@ public class SalesToSocialNetwork implements Runnable {
             }
             
             List<Sale> allNewSell = new ArrayList<Sale>();
-            for(CallMarketPlaceInterface oneMarkeplace : marketplaces){
+            for(MarketPlace oneMarkeplace : marketplaces.values()){
 
                 try {
                     numberOfSale = allNewSell.size();
-                    allNewSell.addAll(oneMarkeplace.query(mode));
-                    model.insertRow(0, new Object[]{oneMarkeplace.getName().toString(),"OK" ,allNewSell.size() - numberOfSale });
+                    allNewSell.addAll(oneMarkeplace.getCalledMarketPlace().query(mode, oneMarkeplace.getContracts(), oneMarkeplace.getLastrefresh()));
+                    model.insertRow(0, new Object[]{oneMarkeplace.getMarketplace().toString(),"OK" ,allNewSell.size() - numberOfSale });
                 } catch (IOException ex) {
-                    model.insertRow(0, new Object[]{oneMarkeplace.getName().toString(),"Error : network issue" ,ex.getMessage()});
+                    model.insertRow(0, new Object[]{oneMarkeplace.getMarketplace().toString(),"Error : network issue" ,ex.getMessage()});
                     LogManager.getLogManager().writeLog(SalesToSocialNetwork.class.getName(), ex);
                 } catch (URISyntaxException ex) {
-                    model.insertRow(0, new Object[]{oneMarkeplace.getName().toString(),"Error : URI issue" ,ex.getMessage()});
+                    model.insertRow(0, new Object[]{oneMarkeplace.getMarketplace().toString(),"Error : URI issue" ,ex.getMessage()});
                     LogManager.getLogManager().writeLog(SalesToSocialNetwork.class.getName(), ex);
                 } catch (InterruptedException ex) {
-                    model.insertRow(0, new Object[]{oneMarkeplace.getName().toString(),"Error : interrupted issue" ,ex.getMessage()});
+                    model.insertRow(0, new Object[]{oneMarkeplace.getMarketplace().toString(),"Error : interrupted issue" ,ex.getMessage()});
                     LogManager.getLogManager().writeLog(SalesToSocialNetwork.class.getName(), ex);
                 } catch (Exception ex) {
-                    model.insertRow(0, new Object[]{oneMarkeplace.getName().toString(),"Error : unable to get sale" ,ex.getMessage()});
+                    model.insertRow(0, new Object[]{oneMarkeplace.getMarketplace().toString(),"Error : unable to get sale" ,ex.getMessage()});
                     LogManager.getLogManager().writeLog(SalesToSocialNetwork.class.getName(), ex);
                 }
             }
             
             //Get only the new one
-            List<Sale> filteredList = SalesHistoryManager.getSalesHistoryManager().checkNewSales(allNewSell, this.mode, sellerFilter, itemFilter);
-            SalesHistoryManager.getSalesHistoryManager().removeOldestSales(this.mode);
+            List<Sale> filteredList = SalesHistoryManager.getSalesHistoryManager().checkNewSales(allNewSell, this.mode, marketplaces);
+            SalesHistoryManager.getSalesHistoryManager().removeOldestSales(this.mode, marketplaces);
             
             //sort all the sales depend of configuration setting
             Collections.sort(filteredList);
             
             //Set the last successful refresh
-            BotLastRefresh.getLastRefresh().setLastRefresh(filteredList, mode);
+            for(MarketPlace oneMarkeplace : marketplaces.values()){
+                oneMarkeplace.setLastRefresh(filteredList, mode);
+            }
+            
             
             HashMap<Sale, String> messageSaver = new HashMap<Sale,String>();
             for (SocialNetworkInterface oneSocialNetwork : this.socialNetworks){
-                
                 try {
                     oneSocialNetwork.send(filteredList, this.mode, messageSaver);
                     model.insertRow(0, new Object[]{oneSocialNetwork.getName().toString(),"OK" ,filteredList.size()});

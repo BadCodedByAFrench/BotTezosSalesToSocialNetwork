@@ -4,8 +4,9 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration;
 
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.MarketPlace;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,22 +35,22 @@ public class SalesHistoryManager {
         return salesHistoryManager;
     }
     
-    public List<Sale> checkNewSales(List<Sale> newSalesList, int mode, HashMap<String, List<String>> sellerFilter, HashMap<String, List<String>> itemFilter){
+    public List<Sale> checkNewSales(List<Sale> newSalesList, int mode, HashMap<MarketPlaceEnum,MarketPlace> marketplaces){
         
         List<Sale> saleToShow = new ArrayList<Sale>();
         
         if (mode == 0){
             for(Sale aSale : newSalesList){
-                if(!statHistory.containsKey(aSale.getIdtransaction()) && aSale.getTimestamp().isAfter(BotLastRefresh.getLastRefresh().getStartTime()) ){
+                if(!statHistory.containsKey(aSale.getIdtransaction()) /*&& aSale.getTimestamp().isAfter(marketplaces.get(aSale.getMarketplace()).getLastrefresh().getStartTime())*/){
                     
                     boolean sellerCheck =true;
                     boolean itemCheck = true;
                     
-                    if(!sellerFilter.get(aSale.getContract()).isEmpty() && !sellerFilter.get(aSale.getContract()).contains(aSale.getSeller().getAdress())){
+                    if(!marketplaces.get(aSale.getMarketplace()).getSellerList().get(aSale.getContract()).isEmpty()  && !marketplaces.get(aSale.getMarketplace()).getSellerList().get(aSale.getContract()).contains(aSale.getSeller().getAdress()) ){
                         sellerCheck = false;
                     }
                     
-                    if( !itemFilter.get(aSale.getContract()).isEmpty() && !itemFilter.get(aSale.getContract()).contains(aSale.getId().toString())){
+                    if(!marketplaces.get(aSale.getMarketplace()).getItemList().get(aSale.getContract()).isEmpty() && !marketplaces.get(aSale.getMarketplace()).getItemList().get(aSale.getContract()).contains(aSale.getId().toString())){
                         itemCheck = false;
                     }
                     
@@ -62,7 +63,7 @@ public class SalesHistoryManager {
         }
         else if (mode == 1 ){
             for(Sale aSale : newSalesList){
-                if(!salesHistory.containsKey(aSale.getIdtransaction()) && aSale.getTimestamp().isAfter(BotLastRefresh.getLastRefresh().getStartTime())){
+                if(!salesHistory.containsKey(aSale.getIdtransaction()) && aSale.getTimestamp().isAfter(marketplaces.get(aSale.getMarketplace()).getLastrefresh().getStartTime())){
                     saleToShow.add(aSale);
                     salesHistory.put(aSale.getIdtransaction(), aSale);
                 }
@@ -73,12 +74,12 @@ public class SalesHistoryManager {
         return saleToShow;
     }
     
-    public void removeOldestSales(int mode){
+    public void removeOldestSales(int mode, HashMap<MarketPlaceEnum,MarketPlace> marketplaces){
         List<Long> idsToDelete = new ArrayList<Long>();
         
         if(mode == 1){
             for(Sale aSale : statHistory.values()){
-                if(aSale.getTimestamp().isBefore(BotLastRefresh.getLastRefresh().getLastSucessfullStatRefresh())){
+                if(aSale.getTimestamp().isBefore(marketplaces.get(aSale.getMarketplace()).getLastrefresh().getLastSucessfullStatRefresh())){
                     idsToDelete.add(aSale.getIdtransaction());
                 }
             }
@@ -89,7 +90,7 @@ public class SalesHistoryManager {
         }
         else if (mode == 0){
             for(Sale aSale : salesHistory.values()){
-                if(aSale.getTimestamp().isBefore(BotLastRefresh.getLastRefresh().getLastSucessfullSaleRefresh())){
+                if(aSale.getTimestamp().isBefore(marketplaces.get(aSale.getMarketplace()).getLastrefresh().getLastSucessfullSaleRefresh())){
                     idsToDelete.add(aSale.getIdtransaction());
                 }
             }

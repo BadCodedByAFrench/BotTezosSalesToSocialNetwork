@@ -5,8 +5,8 @@
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales;
 
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotConfiguration;
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlace;
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SaleType;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SaleTypeEnum;
 import java.time.Instant;
 
 /**
@@ -34,13 +34,13 @@ public class Sale implements Comparable<Sale> {
      * Type of the sale (listed / offer / english auction / dutch auction)
      * Could be replace by an Enum
      */
-    private SaleType type;
+    private SaleTypeEnum type;
     
     /**
      * Marketplace of the sale
      * Could be replace by an Enum
      */
-    private MarketPlace marketplace;
+    private MarketPlaceEnum marketplace;
 
     /**
      * The path of a contract on Objkt
@@ -82,7 +82,7 @@ public class Sale implements Comparable<Sale> {
      */
     private Long idtransaction;
     
-    public Sale(String name, Long id, double price, SaleType type, MarketPlace marketplace, String pathname, Instant timestamp, String contract, String collectionName, Address buyer, Address seller, String ipfs, Long idtransaction) {
+    public Sale(String name, Long id, double price, SaleTypeEnum type, MarketPlaceEnum marketplace, String pathname, Instant timestamp, String contract, String collectionName, Address buyer, Address seller, String ipfs, Long idtransaction) {
         this.name = name;
         this.id = id;
         this.price = price;
@@ -111,11 +111,11 @@ public class Sale implements Comparable<Sale> {
         return price;
     }    
 
-    public SaleType getType() {
+    public SaleTypeEnum getType() {
         return type;
     }
 
-    public MarketPlace getMarketplace() {
+    public MarketPlaceEnum getMarketplace() {
         return marketplace;
     }
 

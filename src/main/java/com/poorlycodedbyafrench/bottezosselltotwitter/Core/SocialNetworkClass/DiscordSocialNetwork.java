@@ -6,7 +6,7 @@ package com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass;
 
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotConfiguration;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.NetworkMessageManager;
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetwork;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetworkEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Contract;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterface.SocialNetworkInterface;
@@ -34,7 +34,7 @@ public class DiscordSocialNetwork implements SocialNetworkInterface {
     /**
      * Name of the social network
      */
-    private SocialNetwork name;
+    private SocialNetworkEnum name;
 
     /**
      * Class that connect to Discord API
@@ -53,7 +53,7 @@ public class DiscordSocialNetwork implements SocialNetworkInterface {
 
     
     public DiscordSocialNetwork() {
-        name = SocialNetwork.Discord;
+        name = SocialNetworkEnum.Discord;
     }
 
     /**
@@ -127,7 +127,7 @@ public class DiscordSocialNetwork implements SocialNetworkInterface {
     }
 
     @Override
-    public SocialNetwork getName() {
+    public SocialNetworkEnum getName() {
         return name;
     }
 

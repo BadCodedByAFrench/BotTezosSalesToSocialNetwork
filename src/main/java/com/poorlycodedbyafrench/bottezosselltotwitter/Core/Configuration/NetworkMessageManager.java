@@ -4,7 +4,8 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration;
 
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlace;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SaleTypeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Contract;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
 import java.text.DecimalFormat;
@@ -92,13 +93,17 @@ public class NetworkMessageManager {
             status += "\nAverage price : " + df.format(contract.getAvg()).replace(',', '.');
         }
 
-        if (contract.getMarketplace().contains(MarketPlace.Objkt)) {
+        if (contract.getMarketplace().contains(MarketPlaceEnum.Objkt)) {
             status += "\nObjkt Link : ";
             if (contract.getPath() == null) {
                 status += " https://objkt.com/collection/" + contract.getContract();
             } else {
                 status += " https://objkt.com/collection/" + contract.getPath();
             }
+        }
+        else if (contract.getMarketplace().contains(MarketPlaceEnum.Teia)) {
+            status += "\nTeia Link : ";
+            status += " https://teia.art/tz/" + contract.getContract();
         }
 
         if (BotConfiguration.getConfiguration().getHashtags().size() > 0) {
@@ -109,7 +114,7 @@ public class NetworkMessageManager {
             status += "#" + hashtag + " ";
         }
 
-        for (MarketPlace m : contract.getMarketplace()) {
+        for (MarketPlaceEnum m : contract.getMarketplace()) {
             status += " #" + m.toString();
         }
 
@@ -138,7 +143,7 @@ public class NetworkMessageManager {
             status += BotConfiguration.getConfiguration().getSentences().get(rand.nextInt(BotConfiguration.getConfiguration().getSentences().size()));
         }
 
-        if (BotConfiguration.getConfiguration().isSaleType()) {
+        if (BotConfiguration.getConfiguration().isSaleType() && aSale.getType() != SaleTypeEnum.Unknown) {
             status += " : " + aSale.getType().getType();
         }
 
@@ -146,8 +151,8 @@ public class NetworkMessageManager {
 
         if (BotConfiguration.getConfiguration().isAdress()) {
 
-            String buyerAdress = aSale.getBuyer().getTezdomain() != null ? aSale.getBuyer().getTezdomain() : aSale.getBuyer().getAdress();
-            String sellerAdress = aSale.getSeller().getTezdomain() != null ? aSale.getSeller().getTezdomain() : aSale.getSeller().getAdress();
+            String buyerAdress = aSale.getBuyer().getTezdomain() == null || aSale.getBuyer().getTezdomain().isBlank() ? aSale.getBuyer().getAdress() : aSale.getBuyer().getTezdomain();
+            String sellerAdress = aSale.getSeller().getTezdomain() == null || aSale.getSeller().getTezdomain().isBlank() ? aSale.getSeller().getAdress() : aSale.getSeller().getTezdomain();
 
             if (buyerAdress.length() > 10) {
                 buyerAdress = buyerAdress.substring(0, 4) + ".." + buyerAdress.substring(buyerAdress.length() - 4, buyerAdress.length());
@@ -162,13 +167,16 @@ public class NetworkMessageManager {
 
         }
 
-        if (aSale.getMarketplace() == MarketPlace.Objkt) {
+        if (aSale.getMarketplace() == MarketPlaceEnum.Objkt) {
             if (aSale.getPathname() == null) {
                 status += " \nhttps://objkt.com/asset/" + aSale.getContract() + "/" + aSale.getId();
             } else {
                 status += " \nhttps://objkt.com/asset/" + aSale.getPathname() + "/" + aSale.getId();
             }
 
+        }
+        else if (aSale.getMarketplace() == MarketPlaceEnum.Teia) {
+            status += " \nhttps://teia.art/objkt/" + aSale.getId();
         }
 
         status += "\n" + aSale.getTimestamp().toString().substring(5, 7) + "-" + aSale.getTimestamp().toString().substring(8, 10) + "-" + aSale.getTimestamp().toString().substring(0, 4) + " at " + aSale.getTimestamp().toString().substring(11, 16) + " UTC";

@@ -7,7 +7,7 @@ package com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotConfiguration;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.LogManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.NetworkMessageManager;
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetwork;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetworkEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Contract;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
 import java.util.List;
@@ -47,10 +47,10 @@ public class TwitterSocialNetwork implements SocialNetworkInterface {
     /**
      * Name of the social network
      */
-    private SocialNetwork name;
+    private SocialNetworkEnum name;
 
     public TwitterSocialNetwork() {
-        name = SocialNetwork.Twitter;
+        name = SocialNetworkEnum.Twitter;
     }
 
     /**
@@ -149,7 +149,7 @@ public class TwitterSocialNetwork implements SocialNetworkInterface {
     }
 
     @Override
-    public SocialNetwork getName() {
+    public SocialNetworkEnum getName() {
         return name;
     }
 

@@ -4,12 +4,13 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceInterface;
 
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlace;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.LastRefresh;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
 import java.util.List;
 
 /**
- * Interface that should be use by all of the MarketPlace
+ * Interface that should be use by all of the MarketPlaceEnum
  * @author david
  */
 public interface CallMarketPlaceInterface {
@@ -19,12 +20,12 @@ public interface CallMarketPlaceInterface {
      * @return
      * @throws Exception
      */
-    public List<Sale> query(int mode) throws Exception;
+    public List<Sale> query(int mode, List<String> contracts, LastRefresh lastrefresh) throws Exception;
     
     /**
      * Get the name of the marketplace
      * @return 
      */
-    public MarketPlace getName();
+    public MarketPlaceEnum getName();
     
 }
