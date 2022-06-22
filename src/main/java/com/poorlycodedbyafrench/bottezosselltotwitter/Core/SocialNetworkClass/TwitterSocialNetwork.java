@@ -126,7 +126,10 @@ public class TwitterSocialNetwork implements SocialNetworkInterface {
                         urlConn.setDoOutput(true);
 
                         InputStream ipfsMedia = urlConn.getInputStream();
-                        UploadedMedia media = twitterInstance.uploadMedia(aSale.getPathname(), ipfsMedia);
+                        
+                        String ipfsName = aSale.getPathname() == null ? aSale.getName() : aSale.getPathname();
+                        
+                        UploadedMedia media = twitterInstance.uploadMedia(ipfsName, ipfsMedia);
                         long mediaId = media.getMediaId();
 
                         newStatus.setMediaIds(mediaId);
