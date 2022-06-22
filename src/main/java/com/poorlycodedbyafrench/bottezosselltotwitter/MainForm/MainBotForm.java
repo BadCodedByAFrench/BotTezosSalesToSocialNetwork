@@ -231,12 +231,9 @@ public class MainBotForm extends javax.swing.JFrame {
                 tbl_item.setEnabled(false);
                 btn_add_item.setEnabled(false);
                 btn_remove_item.setEnabled(false);
-            }
-            
-            
-            
+            }         
 
-            if (dtb.getRowCount() >= 12 || tbl_marketplace.getSelectedRowCount() != 1) {
+            if (tbl_marketplace.getSelectedRowCount() != 1) {
                 btn_add_contract.setEnabled(false);
             } else {
                 btn_add_contract.setEnabled(true);
