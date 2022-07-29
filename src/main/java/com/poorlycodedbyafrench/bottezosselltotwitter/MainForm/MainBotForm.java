@@ -10,6 +10,7 @@ import com.poorlycodedbyafrench.bottezosselltotwitter.Core.ApiRunnable.SalesToSo
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotConfiguration;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.LogManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.CallFxhash;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.CallTeia;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.CallObjkt;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.MarketPlace;
@@ -108,6 +109,7 @@ public class MainBotForm extends javax.swing.JFrame {
         marketplaces = new HashMap<MarketPlaceEnum, MarketPlace>();
         marketplaces.put(MarketPlaceEnum.Objkt, new MarketPlace(MarketPlaceEnum.Objkt, new CallObjkt()));
         marketplaces.put(MarketPlaceEnum.Teia, new MarketPlace(MarketPlaceEnum.Teia, new CallTeia()));
+        marketplaces.put(MarketPlaceEnum.fxhash, new MarketPlace(MarketPlaceEnum.fxhash, new CallFxhash()));
         
         for(MarketPlaceEnum mp : marketplaces.keySet()){
             dtbMP.addRow(new Object[]{mp});
@@ -1243,6 +1245,9 @@ public class MainBotForm extends javax.swing.JFrame {
                 }
                 else if(mp == MarketPlaceEnum.Teia){
                     cmpi = new CallTeia();
+                }
+                else if(mp == MarketPlaceEnum.fxhash){
+                    cmpi = new CallFxhash();
                 }
                 
                 if(cmpi != null){

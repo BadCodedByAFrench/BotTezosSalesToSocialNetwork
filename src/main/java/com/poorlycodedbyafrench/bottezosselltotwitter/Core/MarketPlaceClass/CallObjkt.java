@@ -150,7 +150,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
                     Long id = token.get("token_id").getAsLong(); 
                     String timestamp = "";
                     double price = 0;
-                    Long idtransaction;
+                    String idtransaction;
                     
                     String buyerAdress = "";
                     String buyerDomain = null;
@@ -167,7 +167,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
                                 JsonObject transaction = (JsonObject) t;
                                 price = transaction.get("price").getAsDouble()/1000000.0;
                                 timestamp = transaction.get("timestamp").getAsString();
-                                idtransaction = transaction.get("id").getAsLong();
+                                idtransaction = transaction.get("id").getAsString();
                                 
                                 buyerAdress = transaction.getAsJsonObject("buyer").get("address").getAsString();
                                 sellerAdress = transaction.getAsJsonObject("seller").get("address").getAsString();
@@ -189,7 +189,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
                                 JsonObject offer = (JsonObject) t;
                                 price = offer.get("price").getAsDouble()/1000000.0;
                                 timestamp = offer.get("update_timestamp").getAsString();
-                                idtransaction = offer.get("id").getAsLong();
+                                idtransaction = offer.get("id").getAsString();
                                 
                                 buyerAdress = offer.getAsJsonObject("buyer").get("address").getAsString();                              
                                 sellerAdress = offer.getAsJsonObject("seller").get("address").getAsString();
@@ -210,7 +210,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
                                 JsonObject englishAuction = (JsonObject) t;
                                 price = englishAuction.get("highest_bid").getAsDouble()/1000000.0;
                                 timestamp = englishAuction.get("end_time").getAsString();
-                                idtransaction = englishAuction.get("id").getAsLong();
+                                idtransaction = englishAuction.get("id").getAsString();
                                 
                                 buyerAdress = englishAuction.getAsJsonObject("highest_bidder").get("address").getAsString();
                                 sellerAdress = englishAuction.getAsJsonObject("seller").get("address").getAsString();
@@ -237,7 +237,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
                 JsonObject success_dutch_auction = (JsonObject) c;
                 String timestamp = success_dutch_auction.get("timestamp").getAsString();
                 double price = success_dutch_auction.get("price").getAsDouble()/1000000.0;
-                Long idtransaction = success_dutch_auction.get("id").getAsLong();
+                String idtransaction = success_dutch_auction.get("id").getAsString();
                 
                 String buyerAdress = success_dutch_auction.getAsJsonObject("buyer").get("address").getAsString();
                 String buyerDomain = null;

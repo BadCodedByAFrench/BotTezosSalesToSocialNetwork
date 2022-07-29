@@ -117,7 +117,7 @@ public class CallTeia implements CallMarketPlaceInterface{
                 Long id = trade.get("token_id").getAsLong(); 
                 String timestamp = trade.get("timestamp").getAsString();
 
-                Long idtransaction = trade.get("swap_id").getAsLong();
+                String idtransaction = trade.get("swap_id").getAsString();
                 
                 
                 JsonObject seller = (JsonObject) trade.getAsJsonObject("seller");

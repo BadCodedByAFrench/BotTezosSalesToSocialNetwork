@@ -17,14 +17,14 @@ import java.util.List;
  */
 public class SalesHistoryManager {
     
-    private HashMap<Long, Sale> salesHistory;
-    private HashMap<Long, Sale> statHistory;
+    private HashMap<String, Sale> salesHistory;
+    private HashMap<String, Sale> statHistory;
     
     private static SalesHistoryManager salesHistoryManager;
     
     private SalesHistoryManager(){
-        salesHistory = new HashMap<Long, Sale>();
-        statHistory = new HashMap<Long, Sale>();
+        salesHistory = new HashMap<String, Sale>();
+        statHistory = new HashMap<String, Sale>();
     }
     
     public static SalesHistoryManager getSalesHistoryManager(){
@@ -75,7 +75,7 @@ public class SalesHistoryManager {
     }
     
     public void removeOldestSales(int mode, HashMap<MarketPlaceEnum,MarketPlace> marketplaces){
-        List<Long> idsToDelete = new ArrayList<Long>();
+        List<String> idsToDelete = new ArrayList<String>();
         
         if(mode == 1){
             for(Sale aSale : statHistory.values()){
@@ -84,7 +84,7 @@ public class SalesHistoryManager {
                 }
             }
 
-            for(Long id : idsToDelete){
+            for(String id : idsToDelete){
                 statHistory.remove(id);
             }
         }
@@ -95,7 +95,7 @@ public class SalesHistoryManager {
                 }
             }
 
-            for(Long id : idsToDelete){
+            for(String id : idsToDelete){
                 salesHistory.remove(id);
             }
         }

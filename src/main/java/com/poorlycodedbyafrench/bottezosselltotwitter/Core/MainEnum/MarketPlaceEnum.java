@@ -13,5 +13,6 @@ public enum MarketPlaceEnum {
     Teia,
     Kalamint,
     ByteBlocks,
+    fxhash,
     Rarible;
 }

@@ -13,6 +13,8 @@ public enum SaleTypeEnum {
     Offer("Offer"),
     EnglishAuction("English auction"),
     DutchAuction("Dutch auction"),
+    Auction("Auction"),
+    Mint("Mint"),
     Unknown("Unknown");
     
     private String type;

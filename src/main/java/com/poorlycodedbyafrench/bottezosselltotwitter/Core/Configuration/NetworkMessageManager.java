@@ -105,6 +105,11 @@ public class NetworkMessageManager {
             status += "\nTeia Link : ";
             status += " https://teia.art/tz/" + contract.getContract();
         }
+        else if (contract.getMarketplace().contains(MarketPlaceEnum.fxhash)) {
+            status += "\nFxHash Link : ";
+            status += " https://www.fxhash.xyz/generative/" + contract.getContract();
+        }
+        
 
         if (BotConfiguration.getConfiguration().getHashtags().size() > 0) {
             status += "\n";
@@ -177,6 +182,9 @@ public class NetworkMessageManager {
         }
         else if (aSale.getMarketplace() == MarketPlaceEnum.Teia) {
             status += " \nhttps://teia.art/objkt/" + aSale.getId();
+        }
+        else if (aSale.getMarketplace() == MarketPlaceEnum.fxhash) {
+            status += " \nhttps://www.fxhash.xyz/gentk/" + aSale.getId();
         }
 
         status += "\n" + aSale.getTimestamp().toString().substring(5, 7) + "-" + aSale.getTimestamp().toString().substring(8, 10) + "-" + aSale.getTimestamp().toString().substring(0, 4) + " at " + aSale.getTimestamp().toString().substring(11, 16) + " UTC";

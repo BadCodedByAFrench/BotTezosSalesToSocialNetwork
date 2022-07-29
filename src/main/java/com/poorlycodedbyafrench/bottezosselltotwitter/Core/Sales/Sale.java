@@ -80,9 +80,9 @@ public class Sale implements Comparable<Sale> {
     /**
      * Id of the transaction
      */
-    private Long idtransaction;
+    private String idtransaction;
     
-    public Sale(String name, Long id, double price, SaleTypeEnum type, MarketPlaceEnum marketplace, String pathname, Instant timestamp, String contract, String collectionName, Address buyer, Address seller, String ipfs, Long idtransaction) {
+    public Sale(String name, Long id, double price, SaleTypeEnum type, MarketPlaceEnum marketplace, String pathname, Instant timestamp, String contract, String collectionName, Address buyer, Address seller, String ipfs, String idtransaction) {
         this.name = name;
         this.id = id;
         this.price = price;
@@ -147,7 +147,7 @@ public class Sale implements Comparable<Sale> {
         return ipfs;
     }
 
-    public Long getIdtransaction() {
+    public String getIdtransaction() {
         return idtransaction;
     }
 
