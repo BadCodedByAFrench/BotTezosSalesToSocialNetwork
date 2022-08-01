@@ -60,7 +60,7 @@ public class MainBotForm extends javax.swing.JFrame {
      * Table that contains the contracts
      */
     private DefaultTableModel dtb;
-    
+
     /**
      * Table that contains the marketPlace
      */
@@ -83,8 +83,8 @@ public class MainBotForm extends javax.swing.JFrame {
 
     private ScheduledFuture<?> scheduledFutureSales;
     private ScheduledFuture<?> scheduledFutureStat;
-    
-        /**
+
+    /**
      * List of all tje marketplaces where we will find sales
      */
     private HashMap<MarketPlaceEnum, MarketPlace> marketplaces;
@@ -100,21 +100,20 @@ public class MainBotForm extends javax.swing.JFrame {
         model.setRowCount(0);
 
         dtb = (DefaultTableModel) tbl_contracts.getModel();
-        
+
         dtbMP = (DefaultTableModel) tbl_marketplace.getModel();
 
-        
         setStateComponent(true);
 
         marketplaces = new HashMap<MarketPlaceEnum, MarketPlace>();
         marketplaces.put(MarketPlaceEnum.Objkt, new MarketPlace(MarketPlaceEnum.Objkt, new CallObjkt()));
         marketplaces.put(MarketPlaceEnum.Teia, new MarketPlace(MarketPlaceEnum.Teia, new CallTeia()));
         marketplaces.put(MarketPlaceEnum.fxhash, new MarketPlace(MarketPlaceEnum.fxhash, new CallFxhash()));
-        
-        for(MarketPlaceEnum mp : marketplaces.keySet()){
+
+        for (MarketPlaceEnum mp : marketplaces.keySet()) {
             dtbMP.addRow(new Object[]{mp});
         }
-        
+
         socialNetworks = new ArrayList<SocialNetworkInterface>();
 
         apiHandlerSales = new SalesToSocialNetwork(model, 0);
@@ -122,7 +121,7 @@ public class MainBotForm extends javax.swing.JFrame {
 
         executor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(1);
         executor.setRemoveOnCancelPolicy(true);
-        
+
         tbl_contracts.putClientProperty("terminateEditOnFocusLost", true);
         tbl_seller.putClientProperty("terminateEditOnFocusLost", true);
         tbl_item.putClientProperty("terminateEditOnFocusLost", true);
@@ -144,7 +143,7 @@ public class MainBotForm extends javax.swing.JFrame {
         btn_export.setEnabled(stateStart);
         cb_stat.setEnabled(stateStart);
         cb_sales.setEnabled(stateStart);
-        
+
         cb_twitter.setEnabled(stateStart);
         if (cb_twitter.isSelected() && cb_twitter.isEnabled()) {
             pwd_twitter_public_consumer_key.setEnabled(stateStart);
@@ -168,19 +167,20 @@ public class MainBotForm extends javax.swing.JFrame {
         }
 
         if (stateStart) {
-            
+
             if (dtb.getRowCount() <= 0) {
                 btn_remove_contract.setEnabled(false);
             } else {
                 btn_remove_contract.setEnabled(true);
             }
-                        
-            if(tbl_contracts.getSelectedRowCount() == 1){
+
+            if (tbl_contracts.getSelectedRowCount() == 1) {
                 String contract = (String) dtb.getDataVector().get(tbl_contracts.getSelectedRow()).get(0);
-                
-                if(!contract.isBlank()){
+
+                if (!contract.isBlank()) {
                     btn_add_seller.setEnabled(true);
                     btn_add_item.setEnabled(true);
+                    tb_royalty_wallet.setEnabled(true);
                     
                     if (tbl_seller.getRowCount() <= 0) {
                         btn_remove_seller.setEnabled(false);
@@ -193,47 +193,55 @@ public class MainBotForm extends javax.swing.JFrame {
                     } else {
                         btn_remove_item.setEnabled(true);
                     }
-                    
-                    if(tbl_seller.isEditing() || tbl_item.isEditing()){
+
+                    if (tbl_seller.isEditing() || tbl_item.isEditing() || tb_royalty_wallet.isFocusOwner()) {
                         tbl_contracts.setEnabled(false);
-                    }else{
+                    } else {
                         tbl_contracts.setEnabled(true);
                     }
-                }
-                else{
+                } else {
                     btn_add_seller.setEnabled(false);
                     btn_remove_seller.setEnabled(false);
                     btn_add_item.setEnabled(false);
                     btn_remove_item.setEnabled(false);
+                    tb_royalty_wallet.setEnabled(false);
                 }
-                
-                if (tbl_seller.isEditing()){
+
+                if (tbl_seller.isEditing()) {
                     tbl_contracts.setEnabled(false);
                     tbl_item.setEnabled(false);
                     tbl_marketplace.setEnabled(false);
-                }else if (tbl_contracts.isEditing()){
+                    tb_royalty_wallet.setEnabled(false);
+                } else if (tbl_contracts.isEditing()) {
                     tbl_seller.setEnabled(false);
                     tbl_item.setEnabled(false);
                     tbl_marketplace.setEnabled(false);
-                }else if (tbl_item.isEditing()){
+                    tb_royalty_wallet.setEnabled(false);
+                } else if (tbl_item.isEditing()) {
                     tbl_contracts.setEnabled(false);
                     tbl_seller.setEnabled(false);
                     tbl_marketplace.setEnabled(false);
-                }else{
+                    tb_royalty_wallet.setEnabled(false);
+                } else if (tb_royalty_wallet.isFocusOwner()) {
+                    tbl_contracts.setEnabled(false);
+                    tbl_seller.setEnabled(false);
+                    tbl_marketplace.setEnabled(false);
+                    tbl_item.setEnabled(false);
+                } else {
                     tbl_contracts.setEnabled(true);
                     tbl_seller.setEnabled(true);
                     tbl_marketplace.setEnabled(true);
                     tbl_item.setEnabled(true);
                 }
-            }
-            else{
+            } else {
                 tbl_seller.setEnabled(false);
                 btn_add_seller.setEnabled(false);
                 btn_remove_seller.setEnabled(false);
                 tbl_item.setEnabled(false);
                 btn_add_item.setEnabled(false);
                 btn_remove_item.setEnabled(false);
-            }         
+                tb_royalty_wallet.setEnabled(false);
+            }
 
             if (tbl_marketplace.getSelectedRowCount() != 1) {
                 btn_add_contract.setEnabled(false);
@@ -250,6 +258,7 @@ public class MainBotForm extends javax.swing.JFrame {
             tbl_item.setEnabled(false);
             btn_add_item.setEnabled(false);
             btn_remove_item.setEnabled(false);
+            tb_royalty_wallet.setEnabled(false);
         }
 
         btn_stop.setEnabled(!stateStart);
@@ -304,11 +313,12 @@ public class MainBotForm extends javax.swing.JFrame {
         tbl_marketplace = new javax.swing.JTable();
         btn_import = new javax.swing.JButton();
         btn_export = new javax.swing.JButton();
+        lbl_royalty_wallet = new javax.swing.JLabel();
+        tb_royalty_wallet = new javax.swing.JTextField();
 
         btn_add1.setText("Add");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(900, 450));
 
         lbl_twitter_public_consumer_key.setText("Public consumer key");
 
@@ -543,42 +553,22 @@ public class MainBotForm extends javax.swing.JFrame {
             }
         });
 
+        lbl_royalty_wallet.setText("Royalty wallet");
+
+        tb_royalty_wallet.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                tb_royalty_walletFocusLost(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(10, 10, 10)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btn_start)
-                                .addGap(41, 41, 41)
-                                .addComponent(btn_stop))
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btn_add_contract, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btn_remove_contract))
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btn_add_seller, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(59, 59, 59)
-                                .addComponent(btn_remove_seller)
-                                .addGap(18, 18, 18)
-                                .addComponent(btn_add_item, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btn_remove_item))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(BTN_License)
@@ -627,8 +617,43 @@ public class MainBotForm extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(cb_discord)
                                     .addComponent(cb_sales)
-                                    .addComponent(btn_export))))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                                    .addComponent(btn_export)))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(btn_start)
+                                        .addGap(41, 41, 41)
+                                        .addComponent(btn_stop))
+                                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(btn_add_contract, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 122, Short.MAX_VALUE)
+                                        .addComponent(btn_remove_contract))
+                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(btn_add_seller, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(59, 59, 59)
+                                        .addComponent(btn_remove_seller)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(btn_add_item, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btn_remove_item))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(lbl_royalty_wallet)
+                                .addGap(18, 18, 18)
+                                .addComponent(tb_royalty_wallet, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -649,7 +674,11 @@ public class MainBotForm extends javax.swing.JFrame {
                     .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(6, 6, 6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbl_royalty_wallet)
+                    .addComponent(tb_royalty_wallet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -672,8 +701,7 @@ public class MainBotForm extends javax.swing.JFrame {
                                 .addGap(2, 2, 2)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(txt_discord_channel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lbl_discord_channel))))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                                    .addComponent(lbl_discord_channel)))))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
@@ -699,7 +727,8 @@ public class MainBotForm extends javax.swing.JFrame {
                                     .addComponent(BTN_Configuration))
                                 .addGap(15, 15, 15)
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(15, Short.MAX_VALUE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 1, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
 
         lbl_twitter_public_consumer_key.getAccessibleContext().setAccessibleName("lbl_twitter_login");
@@ -725,15 +754,15 @@ public class MainBotForm extends javax.swing.JFrame {
      */
 
     private void btn_remove_contractActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_remove_contractActionPerformed
-        
-        MarketPlace currentmp = marketplaces.get( dtbMP.getDataVector().get(tbl_marketplace.getSelectedRow()).get(0));
-        
-        for(int index : tbl_contracts.getSelectedRows()){
+
+        MarketPlace currentmp = marketplaces.get(dtbMP.getDataVector().get(tbl_marketplace.getSelectedRow()).get(0));
+
+        for (int index : tbl_contracts.getSelectedRows()) {
             currentmp.removeContract((String) dtb.getDataVector().get(tbl_contracts.getSelectedRow()).get(0));
         }
-        
+
         this.removeRow(tbl_contracts);
-        
+
         ((DefaultTableModel) tbl_seller.getModel()).setRowCount(0);
         ((DefaultTableModel) tbl_item.getModel()).setRowCount(0);
     }//GEN-LAST:event_btn_remove_contractActionPerformed
@@ -807,11 +836,11 @@ public class MainBotForm extends javax.swing.JFrame {
     }//GEN-LAST:event_cb_twitterActionPerformed
 
     private void btn_remove_sellerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_remove_sellerActionPerformed
-       for(int index : tbl_seller.getSelectedRows()){
-            removeInHashMap((String)((DefaultTableModel) tbl_seller.getModel()).getDataVector().get(index).get(0), 0);
-       }
-       
-       this.removeRow(tbl_seller);
+        for (int index : tbl_seller.getSelectedRows()) {
+            removeInHashMap((String) ((DefaultTableModel) tbl_seller.getModel()).getDataVector().get(index).get(0), 0);
+        }
+
+        this.removeRow(tbl_seller);
     }//GEN-LAST:event_btn_remove_sellerActionPerformed
 
     private void btn_add_sellerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_add_sellerActionPerformed
@@ -819,10 +848,10 @@ public class MainBotForm extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_add_sellerActionPerformed
 
     private void btn_remove_itemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_remove_itemActionPerformed
-        for(int index : tbl_item.getSelectedRows()){
-            removeInHashMap((String)((DefaultTableModel) tbl_item.getModel()).getDataVector().get(index).get(0), 1);
+        for (int index : tbl_item.getSelectedRows()) {
+            removeInHashMap((String) ((DefaultTableModel) tbl_item.getModel()).getDataVector().get(index).get(0), 1);
         }
-        
+
         this.removeRow(tbl_item);
     }//GEN-LAST:event_btn_remove_itemActionPerformed
 
@@ -831,30 +860,32 @@ public class MainBotForm extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_add_itemActionPerformed
 
     private void tbl_contractsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_contractsMouseClicked
-        
-        if(tbl_contracts.isEnabled()){
+
+        if (tbl_contracts.isEnabled()) {
             ((DefaultTableModel) tbl_seller.getModel()).setRowCount(0);
             ((DefaultTableModel) tbl_item.getModel()).setRowCount(0);
 
-            if(tbl_contracts.getSelectedRowCount() == 1){
+            if (tbl_contracts.getSelectedRowCount() == 1) {
 
-                MarketPlace currentmp = marketplaces.get( dtbMP.getDataVector().get(tbl_marketplace.getSelectedRow()).get(0));
+                MarketPlace currentmp = marketplaces.get(dtbMP.getDataVector().get(tbl_marketplace.getSelectedRow()).get(0));
                 String contract = (String) dtb.getDataVector().get(tbl_contracts.getSelectedRow()).get(0);
-                
+
                 HashMap<String, List<String>> sellerList = currentmp.getSellerList();
-                if(sellerList.containsKey(contract)){
-                    for(String oneSeller : sellerList.get(contract)){
+                if (sellerList.containsKey(contract)) {
+                    for (String oneSeller : sellerList.get(contract)) {
                         ((DefaultTableModel) tbl_seller.getModel()).addRow(new Object[]{oneSeller});
                     }
                 }
-                
+
                 HashMap<String, List<String>> itemList = currentmp.getItemList();
-                
-                if(itemList.containsKey(contract)){
-                    for(String item : itemList.get(contract)){
+
+                if (itemList.containsKey(contract)) {
+                    for (String item : itemList.get(contract)) {
                         ((DefaultTableModel) tbl_item.getModel()).addRow(new Object[]{item});
                     }
                 }
+
+                tb_royalty_wallet.setText(currentmp.getRoyaltywallet().get(contract));
             }
 
             setStateComponent(true);
@@ -863,17 +894,16 @@ public class MainBotForm extends javax.swing.JFrame {
 
     private void tbl_contractsPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tbl_contractsPropertyChange
 
-        if ("tableCellEditor".equals(evt.getPropertyName()))
-        {
-            if (!tbl_contracts.isEditing()){
-            
+        if ("tableCellEditor".equals(evt.getPropertyName())) {
+            if (!tbl_contracts.isEditing()) {
+
                 String contract = (String) dtb.getDataVector().get(tbl_contracts.getSelectedRow()).get(0);
-                
+
                 Vector<Vector> contractsData = dtb.getDataVector();
-                
+
                 int isUnique = 0;
                 ArrayList<String> currentContracts = new ArrayList<String>();
-                
+
                 for (Vector v : contractsData) {
 
                     if (v.get(0).toString().equals(contract)) {
@@ -881,33 +911,30 @@ public class MainBotForm extends javax.swing.JFrame {
                     }
                     currentContracts.add(v.get(0).toString().trim());
                 }
-                
-                
-                if(!contract.isBlank() && isUnique == 1){
-                    
-                    MarketPlace currentmp = marketplaces.get( dtbMP.getDataVector().get(tbl_marketplace.getSelectedRow()).get(0));
-                    
+
+                if (!contract.isBlank() && isUnique == 1) {
+
+                    MarketPlace currentmp = marketplaces.get(dtbMP.getDataVector().get(tbl_marketplace.getSelectedRow()).get(0));
+
                     ArrayList<String> contractsToRemove = new ArrayList<String>();
-                    
-                    for(String oneContract : currentmp.getContracts()){
-                        if(!currentContracts.contains(oneContract)){
+
+                    for (String oneContract : currentmp.getContracts()) {
+                        if (!currentContracts.contains(oneContract)) {
                             contractsToRemove.add(oneContract);
                         }
                     }
-                    
-                    for(String contractToRemove : contractsToRemove){
+
+                    for (String contractToRemove : contractsToRemove) {
                         currentmp.removeContract(contractToRemove);
                     }
-                    
+
                     for (String oneCurrentContracts : currentContracts) {
-                        if(!currentmp.getContracts().contains(oneCurrentContracts)){
+                        if (!currentmp.getContracts().contains(oneCurrentContracts)) {
                             currentmp.addContract(oneCurrentContracts);
                         }
                     }
-                    
-                    
-                    
-                }else{
+
+                } else {
                     dtb.removeRow(tbl_contracts.getSelectedRow());
                 }
             }
@@ -916,21 +943,20 @@ public class MainBotForm extends javax.swing.JFrame {
     }//GEN-LAST:event_tbl_contractsPropertyChange
 
     private void tbl_sellerPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tbl_sellerPropertyChange
-        if ("tableCellEditor".equals(evt.getPropertyName()))
-        {
-            if (!tbl_seller.isEditing()){
-            
-                MarketPlace currentmp = marketplaces.get( dtbMP.getDataVector().get(tbl_marketplace.getSelectedRow()).get(0));
+        if ("tableCellEditor".equals(evt.getPropertyName())) {
+            if (!tbl_seller.isEditing()) {
+
+                MarketPlace currentmp = marketplaces.get(dtbMP.getDataVector().get(tbl_marketplace.getSelectedRow()).get(0));
                 String contract = (String) dtb.getDataVector().get(tbl_contracts.getSelectedRow()).get(0);
-                
+
                 HashMap<String, List<String>> sellerList = currentmp.getSellerList();
-                
+
                 sellerList.get(contract).clear();
-                
-                for(Vector v : ((DefaultTableModel)tbl_seller.getModel()).getDataVector()){
+
+                for (Vector v : ((DefaultTableModel) tbl_seller.getModel()).getDataVector()) {
                     String seller = (String) v.get(0);
-                
-                    if(!seller.isBlank()){
+
+                    if (!seller.isBlank()) {
                         currentmp.addFilter(contract, seller.trim(), 0);
                     }
                 }
@@ -940,21 +966,20 @@ public class MainBotForm extends javax.swing.JFrame {
     }//GEN-LAST:event_tbl_sellerPropertyChange
 
     private void tbl_itemPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tbl_itemPropertyChange
-        if ("tableCellEditor".equals(evt.getPropertyName()))
-        {
-            if (!tbl_item.isEditing()){
-                
-                MarketPlace currentmp = marketplaces.get( dtbMP.getDataVector().get(tbl_marketplace.getSelectedRow()).get(0));
+        if ("tableCellEditor".equals(evt.getPropertyName())) {
+            if (!tbl_item.isEditing()) {
+
+                MarketPlace currentmp = marketplaces.get(dtbMP.getDataVector().get(tbl_marketplace.getSelectedRow()).get(0));
                 String contract = (String) dtb.getDataVector().get(tbl_contracts.getSelectedRow()).get(0);
-                
+
                 HashMap<String, List<String>> itemList = currentmp.getItemList();
-                
+
                 itemList.get(contract).clear();
-                
-                for(Vector v : ((DefaultTableModel)tbl_item.getModel()).getDataVector()){
+
+                for (Vector v : ((DefaultTableModel) tbl_item.getModel()).getDataVector()) {
                     String item = (String) v.get(0);
-                
-                    if(!item.isBlank()){
+
+                    if (!item.isBlank()) {
                         currentmp.addFilter(contract, item.trim(), 1);
                     }
                 }
@@ -964,20 +989,21 @@ public class MainBotForm extends javax.swing.JFrame {
     }//GEN-LAST:event_tbl_itemPropertyChange
 
     private void tbl_marketplaceMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_marketplaceMouseClicked
-        if(tbl_marketplace.isEnabled()){
+        if (tbl_marketplace.isEnabled()) {
             ((DefaultTableModel) tbl_contracts.getModel()).setRowCount(0);
             ((DefaultTableModel) tbl_seller.getModel()).setRowCount(0);
             ((DefaultTableModel) tbl_item.getModel()).setRowCount(0);
+            tb_royalty_wallet.setText("");
 
-            if(tbl_marketplace.getSelectedRowCount() == 1){
+            if (tbl_marketplace.getSelectedRowCount() == 1) {
 
                 MarketPlace currentmp = marketplaces.get(dtbMP.getDataVector().get(tbl_marketplace.getSelectedRow()).get(0));
-                
-                for(String contract : currentmp.getContracts()){
+
+                for (String contract : currentmp.getContracts()) {
                     dtb.addRow(new Object[]{contract});
                 }
-                
-                if(dtb.getRowCount() == 0){
+
+                if (dtb.getRowCount() == 0) {
                     dtb.addRow(new Object[]{""});
                 }
             }
@@ -1002,20 +1028,31 @@ public class MainBotForm extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btn_exportActionPerformed
 
-    private void addRow(JTable tableToAdd){
+    private void tb_royalty_walletFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tb_royalty_walletFocusLost
+        MarketPlace currentmp = marketplaces.get(dtbMP.getDataVector().get(tbl_marketplace.getSelectedRow()).get(0));
+        String contract = (String) dtb.getDataVector().get(tbl_contracts.getSelectedRow()).get(0);
+
+        HashMap<String, String> royaltyWallet = currentmp.getRoyaltywallet();
+
+        royaltyWallet.put(contract, tb_royalty_wallet.getText().trim());
+
+        setStateComponent(true);
+    }//GEN-LAST:event_tb_royalty_walletFocusLost
+
+    private void addRow(JTable tableToAdd) {
         ((DefaultTableModel) tableToAdd.getModel()).addRow(new Object[]{""});
         setStateComponent(true);
     }
-    
-    private void removeInHashMap(String filterToRemove, int hashMapToRemove){
+
+    private void removeInHashMap(String filterToRemove, int hashMapToRemove) {
         MarketPlace currentmp = marketplaces.get(dtbMP.getDataVector().get(tbl_marketplace.getSelectedRow()).get(0));
-        if(!filterToRemove.isBlank()){
+        if (!filterToRemove.isBlank()) {
             currentmp.removeFilter((String) dtb.getDataVector().get(tbl_contracts.getSelectedRow()).get(0), filterToRemove, hashMapToRemove);
         }
     }
-    
-    private void removeRow(JTable tableToRemove){
-        DefaultTableModel dtbTable = (DefaultTableModel)tableToRemove.getModel();
+
+    private void removeRow(JTable tableToRemove) {
+        DefaultTableModel dtbTable = (DefaultTableModel) tableToRemove.getModel();
         if (tableToRemove.getSelectedRows().length != 0) {
 
             int[] allIndex = tableToRemove.getSelectedRows();
@@ -1033,7 +1070,7 @@ public class MainBotForm extends javax.swing.JFrame {
 
         setStateComponent(true);
     }
-    
+
     /**
      * Check if the field are fill
      *
@@ -1046,22 +1083,22 @@ public class MainBotForm extends javax.swing.JFrame {
         Vector<Vector> contractsData = dtb.getDataVector();
 
         boolean atleastoneFill = false;
-        
-        for(MarketPlace mp : marketplaces.values()){
-            if(mp.getContracts().size() > 0){
+
+        for (MarketPlace mp : marketplaces.values()) {
+            if (mp.getContracts().size() > 0) {
                 atleastoneFill = true;
-                for(String contract : mp.getContracts()){
-                    if(contract.isBlank()){
+                for (String contract : mp.getContracts()) {
+                    if (contract.isBlank()) {
                         isDataCorrect = false;
                     }
                 }
             }
-        }   
+        }
 
-        if(!atleastoneFill){
+        if (!atleastoneFill) {
             isDataCorrect = false;
         }
-        
+
         if (cb_twitter.isSelected()) {
             if (new String(pwd_twitter_public_consumer_key.getPassword()).isBlank()) {
                 isDataCorrect = false;
@@ -1108,14 +1145,14 @@ public class MainBotForm extends javax.swing.JFrame {
     private void updateData() throws LoginException, InterruptedException, Exception {
 
         HashMap<MarketPlaceEnum, MarketPlace> mpsToKeep = new HashMap<MarketPlaceEnum, MarketPlace>();
-        
-        for(MarketPlace mp : marketplaces.values()){
-            if(mp.getContracts().size()>0){
+
+        for (MarketPlace mp : marketplaces.values()) {
+            if (mp.getContracts().size() > 0) {
                 mp.resetLastRefresh();
                 mpsToKeep.put(mp.getMarketplace(), mp);
             }
         }
-        
+
         socialNetworks.clear();
 
         if (cb_discord.isSelected()) {
@@ -1184,84 +1221,89 @@ public class MainBotForm extends javax.swing.JFrame {
             scheduledFutureStat.cancel(true);
         }
     }
-    
+
     /**
      * Export data into an ini file
      */
-    private void export() throws IOException, Exception{
-        
-        
+    private void export() throws IOException, Exception {
+
         Gson gson = new Gson();
-        
+
         Wini ini = new Wini();
-        
-        ini.put("MainWindow", "version", 1);
+
+        ini.put("MainWindow", "version", 2);
         ini.put("MainWindow", "marketplaces", gson.toJson(marketplaces));
-        
+
         JFileChooser chooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter(
                 "INI file", "ini");
         chooser.setFileFilter(filter);
         int returnVal = chooser.showOpenDialog(null);
-        if(returnVal == JFileChooser.APPROVE_OPTION) {
-            
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+
             String saveFile = chooser.getSelectedFile().getAbsolutePath();
-            if(!saveFile.toLowerCase().endsWith(".ini"))
-            {
+            if (!saveFile.toLowerCase().endsWith(".ini")) {
                 saveFile += ".ini";
             }
             ini.store(new File(saveFile));
         }
     }
-    
+
     private void importFile() throws IOException, Exception {
-        
+
         Gson gson = new Gson();
-        java.lang.reflect.Type empHashMapType = new TypeToken<HashMap<MarketPlaceEnum, MarketPlace>>() {}.getType();
-        
+        java.lang.reflect.Type empHashMapType = new TypeToken<HashMap<MarketPlaceEnum, MarketPlace>>() {
+        }.getType();
+
         JFileChooser chooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter(
                 "INI file", "ini");
         chooser.setFileFilter(filter);
         int returnVal = chooser.showOpenDialog(null);
-        if(returnVal == JFileChooser.APPROVE_OPTION && chooser.getSelectedFile().getAbsolutePath().toLowerCase().endsWith(".ini")) {
+        if (returnVal == JFileChooser.APPROVE_OPTION && chooser.getSelectedFile().getAbsolutePath().toLowerCase().endsWith(".ini")) {
             Wini ini = new Wini(chooser.getSelectedFile());
 
             int version = ini.get("MainWindow", "version", int.class);
             String json = ini.get("MainWindow", "marketplaces", String.class);
-            
+
             marketplaces.clear();
             ((DefaultTableModel) tbl_contracts.getModel()).setRowCount(0);
             ((DefaultTableModel) tbl_seller.getModel()).setRowCount(0);
             ((DefaultTableModel) tbl_item.getModel()).setRowCount(0);
-            
-            HashMap <MarketPlaceEnum, MarketPlace> mps = gson.fromJson(json, empHashMapType);
-            
-            for (MarketPlaceEnum mp : mps.keySet()){
-                                
+
+            HashMap<MarketPlaceEnum, MarketPlace> mps = gson.fromJson(json, empHashMapType);
+
+            for (MarketPlaceEnum mp : mps.keySet()) {
+
                 CallMarketPlaceInterface cmpi = null;
-                if(mp == MarketPlaceEnum.Objkt){
+                if (mp == MarketPlaceEnum.Objkt) {
                     cmpi = new CallObjkt();
-                }
-                else if(mp == MarketPlaceEnum.Teia){
+                } else if (mp == MarketPlaceEnum.Teia) {
                     cmpi = new CallTeia();
-                }
-                else if(mp == MarketPlaceEnum.fxhash){
+                } else if (mp == MarketPlaceEnum.fxhash) {
                     cmpi = new CallFxhash();
                 }
-                
-                if(cmpi != null){
+
+                if (cmpi != null) {
                     marketplaces.put(mp, new MarketPlace(mp, cmpi));
                     MarketPlace newMp = marketplaces.get(mp);
                     newMp.setContracts(mps.get(mp).getContracts());
                     newMp.setItemList(mps.get(mp).getItemList());
                     newMp.setSellerList(mps.get(mp).getSellerList());
+
+                    if (version >= 2) {
+                        newMp.setRoyaltywallet(mps.get(mp).getRoyaltywallet());
+                    }
+
                 }
+            }
+
+            if (version < 2) {
+                marketplaces.put(MarketPlaceEnum.fxhash, new MarketPlace(MarketPlaceEnum.fxhash, new CallFxhash()));
             }
         }
     }
-    
-    
+
     /**
      * @param args the command line arguments
      */
@@ -1323,6 +1365,7 @@ public class MainBotForm extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JLabel lbl_discord_channel;
     private javax.swing.JLabel lbl_discord_token;
+    private javax.swing.JLabel lbl_royalty_wallet;
     private javax.swing.JLabel lbl_twitter_access_key;
     private javax.swing.JLabel lbl_twitter_private_consumer_key;
     private javax.swing.JLabel lbl_twitter_private_key;
@@ -1332,6 +1375,7 @@ public class MainBotForm extends javax.swing.JFrame {
     private javax.swing.JPasswordField pwd_twitter_private_key;
     private javax.swing.JPasswordField pwd_twitter_public_consumer_key;
     private javax.swing.JPasswordField pwd_twitter_public_key;
+    private javax.swing.JTextField tb_royalty_wallet;
     private javax.swing.JTable tbl_contracts;
     private javax.swing.JTable tbl_item;
     private javax.swing.JTable tbl_marketplace;

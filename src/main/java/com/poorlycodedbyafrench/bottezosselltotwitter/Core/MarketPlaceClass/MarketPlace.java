@@ -25,6 +25,8 @@ public class MarketPlace {
     private HashMap<String, List<String>> sellerList;
     
     private HashMap<String, List<String>> itemList;
+    
+    private HashMap<String, String> royaltywallet;
 
     private transient CallMarketPlaceInterface calledMarketPlace;
     
@@ -38,6 +40,7 @@ public class MarketPlace {
         contracts = new ArrayList<String>();
         sellerList = new HashMap<String, List<String>>();
         itemList = new HashMap<String, List<String>>();
+        royaltywallet = new HashMap<String, String>();
     }
 
     public MarketPlaceEnum getMarketplace() {
@@ -71,6 +74,7 @@ public class MarketPlace {
             contracts.add(contract);
             sellerList.put(contract, new ArrayList<String>());
             itemList.put(contract, new ArrayList<String>());
+            royaltywallet.put(contract, new String());
         }
     }
     
@@ -79,6 +83,7 @@ public class MarketPlace {
             contracts.remove(contract);
             sellerList.remove(contract);
             itemList.remove(contract);
+            royaltywallet.remove(contract);
         }
     }
 
@@ -112,6 +117,14 @@ public class MarketPlace {
 
     public void setItemList(HashMap<String, List<String>> itemList) {
         this.itemList = itemList;
+    }
+
+    public HashMap<String, String> getRoyaltywallet() {
+        return royaltywallet;
+    }
+
+    public void setRoyaltywallet(HashMap<String, String> royaltywallet) {
+        this.royaltywallet = royaltywallet;
     }
     
     public void setLastRefresh(List<Sale> newSales, int mode){

@@ -6,13 +6,23 @@ package com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration;
 
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SaleTypeEnum;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.MarketPlace;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Contract;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.text.DecimalFormat;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Manager that create the message from the sales
@@ -69,7 +79,7 @@ public class NetworkMessageManager {
      * @param countAvoidTwitterDuplicate
      * @return 
      */
-    public String createStatMessage(Contract contract, DecimalFormat df, Instant previousUTCHour, int countAvoidTwitterDuplicate) {
+    public String createStatMessage(Contract contract, DecimalFormat df, Instant previousUTCHour, int countAvoidTwitterDuplicate, HashMap<String, Long> balance) {
 
         String status = "";
 
@@ -92,7 +102,13 @@ public class NetworkMessageManager {
         if (BotConfiguration.getConfiguration().isAvgPriceStat()) {
             status += "\nAverage price : " + df.format(contract.getAvg()).replace(',', '.');
         }
-
+        
+        if(BotConfiguration.getConfiguration().isRoyaltywalletstat() && balance != null){
+            if(balance.containsKey(contract.getContract())){
+                status += "\n"+BotConfiguration.getConfiguration().getNameroyaltywallet()+" : " + df.format(balance.get(contract.getContract())/1000000.0).replace(',', '.') + " XTZ";
+            }
+        }
+        
         if (contract.getMarketplace().contains(MarketPlaceEnum.Objkt)) {
             status += "\nObjkt Link : ";
             if (contract.getPath() == null) {
@@ -138,7 +154,7 @@ public class NetworkMessageManager {
      * @param countAvoidTwitterDuplicate
      * @return 
      */
-    public String createSaleMessage(Sale aSale, DecimalFormat df, Random rand, int countAvoidTwitterDuplicate) {
+    public String createSaleMessage(Sale aSale, DecimalFormat df, Random rand, int countAvoidTwitterDuplicate, HashMap<String, Long> balance) {
         String status = "";
         if (BotConfiguration.getConfiguration().isSecurityIdSales()) {
             status += countAvoidTwitterDuplicate + " ";
@@ -171,6 +187,13 @@ public class NetworkMessageManager {
             status += "\nSeller : " + sellerAdress;
 
         }
+        
+        if(BotConfiguration.getConfiguration().isRoyaltywalletsale() && balance != null){
+            if(balance.containsKey(aSale.getContract())){
+                status += "\n"+BotConfiguration.getConfiguration().getNameroyaltywallet()+" : " + df.format(balance.get(aSale.getContract())/1000000.0).replace(',', '.') + " XTZ";
+            }
+        }
+        
 
         if (aSale.getMarketplace() == MarketPlaceEnum.Objkt) {
             if (aSale.getPathname() == null) {
@@ -204,5 +227,41 @@ public class NetworkMessageManager {
         }
 
         return status;
+    }
+    
+    public HashMap<String, Long> getBalanceRoyaltyWallet (HashMap<MarketPlaceEnum, MarketPlace> marketplaces, List<Sale> saleList) throws MalformedURLException, IOException, InterruptedException{
+        HashMap<String, Long> balance = new HashMap<String, Long>();
+        
+        String stringurl = "https://api.tzkt.io/v1/accounts/replaceaddress/balance";
+        
+        List<String> allContractsPresent = new ArrayList<String>();
+        
+        for(Sale aSale : saleList){
+            
+            if(!allContractsPresent.contains(aSale.getContract())){
+                allContractsPresent.add(aSale.getContract());
+            }
+        }
+        
+        for(MarketPlace mp : marketplaces.values()){
+            for(String contract : mp.getContracts()){
+                if(allContractsPresent.contains(contract) && mp.getRoyaltywallet().containsKey(contract) && !mp.getRoyaltywallet().get(contract).isBlank()){
+                    
+                    HttpClient client = HttpClient.newHttpClient();
+                    
+                    HttpRequest request = HttpRequest.newBuilder(
+                            URI.create(stringurl.replace("replaceaddress", mp.getRoyaltywallet().get(contract))))
+                            .build();
+                            
+                    String response = client.send(request, HttpResponse.BodyHandlers.ofString()).body();
+                    
+                    balance.put(contract, Long.parseLong(response));
+                    TimeUnit.SECONDS.sleep(1);
+                }
+            }            
+        }
+        
+        
+        return balance;
     }
 }

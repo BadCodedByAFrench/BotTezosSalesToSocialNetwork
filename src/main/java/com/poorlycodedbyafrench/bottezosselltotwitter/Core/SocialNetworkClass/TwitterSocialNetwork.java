@@ -7,7 +7,9 @@ package com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotConfiguration;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.LogManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.NetworkMessageManager;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetworkEnum;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.MarketPlace;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Contract;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
 import java.util.List;
@@ -83,7 +85,7 @@ public class TwitterSocialNetwork implements SocialNetworkInterface {
     }
 
     @Override
-    public synchronized void send(List<Sale> newSales, int mode, HashMap<Sale, String> messageSaver) throws TwitterException, InterruptedException, MalformedURLException, IOException {
+    public synchronized void send(List<Sale> newSales, int mode, HashMap<Sale, String> messageSaver, HashMap<String, Long> balances) throws TwitterException, InterruptedException, MalformedURLException, IOException {
         int countAvoidTwitterDuplicate = 1;
         DecimalFormat df = new DecimalFormat("##.00");
 
@@ -92,7 +94,7 @@ public class TwitterSocialNetwork implements SocialNetworkInterface {
         if (mode == 1) {
             for (Contract contract : NetworkMessageManager.getMessageManager().createContractList(newSales)) {
 
-                Status newTweet = twitterInstance.updateStatus(NetworkMessageManager.getMessageManager().createStatMessage(contract, df, previousUTCHour, countAvoidTwitterDuplicate));
+                Status newTweet = twitterInstance.updateStatus(NetworkMessageManager.getMessageManager().createStatMessage(contract, df, previousUTCHour, countAvoidTwitterDuplicate, balances));
 
                 TimeUnit.MINUTES.sleep(1);
 
@@ -111,7 +113,7 @@ public class TwitterSocialNetwork implements SocialNetworkInterface {
                     message = messageSaver.get(aSale);
                 }
                 else{
-                    message = NetworkMessageManager.getMessageManager().createSaleMessage(aSale, df, rand, countAvoidTwitterDuplicate);
+                    message = NetworkMessageManager.getMessageManager().createSaleMessage(aSale, df, rand, countAvoidTwitterDuplicate, balances);
                     messageSaver.put(aSale, message);
                 }
                 

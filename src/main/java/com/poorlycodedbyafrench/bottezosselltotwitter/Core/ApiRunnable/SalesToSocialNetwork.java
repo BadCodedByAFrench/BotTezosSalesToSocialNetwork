@@ -6,6 +6,7 @@ package com.poorlycodedbyafrench.bottezosselltotwitter.Core.ApiRunnable;
 
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.LastRefresh;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.LogManager;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.NetworkMessageManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.SalesHistoryManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.MarketPlace;
@@ -18,6 +19,8 @@ import javax.swing.table.DefaultTableModel;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterface.SocialNetworkInterface;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import twitter4j.TwitterException;
 
 /**
@@ -112,11 +115,21 @@ public class SalesToSocialNetwork implements Runnable {
                 oneMarkeplace.setLastRefresh(filteredList, mode);
             }
             
+            HashMap<String, Long> balance = null;
+            try {
+                balance = NetworkMessageManager.getMessageManager().getBalanceRoyaltyWallet(marketplaces,filteredList);
+            } catch (IOException ex) {
+                model.insertRow(0, new Object[]{"Royalty","Error : unable to get royalty" ,ex.getMessage()});
+                LogManager.getLogManager().writeLog(SalesToSocialNetwork.class.getName(), ex);
+            } catch (InterruptedException ex) {
+                model.insertRow(0, new Object[]{"Royalty","Error : unable to get royalty" ,ex.getMessage()});
+                LogManager.getLogManager().writeLog(SalesToSocialNetwork.class.getName(), ex);
+            }
             
             HashMap<Sale, String> messageSaver = new HashMap<Sale,String>();
             for (SocialNetworkInterface oneSocialNetwork : this.socialNetworks){
                 try {
-                    oneSocialNetwork.send(filteredList, this.mode, messageSaver);
+                    oneSocialNetwork.send(filteredList, this.mode, messageSaver, balance);
                     model.insertRow(0, new Object[]{oneSocialNetwork.getName().toString(),"OK" ,filteredList.size()});
                 } catch (TwitterException ex) {
                     model.insertRow(0, new Object[]{oneSocialNetwork.getName().toString(),"Error : unable to send a tweet" ,ex.getMessage()});

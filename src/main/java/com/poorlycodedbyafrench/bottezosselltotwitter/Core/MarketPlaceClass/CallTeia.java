@@ -139,7 +139,7 @@ public class CallTeia implements CallMarketPlaceInterface{
                 }
                 
                 JsonObject swap = (JsonObject) trade.getAsJsonObject("swap");
-                double price = swap.get("price").getAsDouble()/1000000.0;;
+                double price = swap.get("price").getAsDouble()/1000000.0;
                 
                 JsonObject token = (JsonObject) swap.getAsJsonObject("token");
                                  

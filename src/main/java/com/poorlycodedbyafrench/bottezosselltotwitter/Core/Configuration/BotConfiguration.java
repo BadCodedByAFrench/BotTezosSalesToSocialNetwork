@@ -99,6 +99,23 @@ public class BotConfiguration {
     private List<String> hashtags;
 
     /**
+     * Show royalty wallet in sale message
+     */
+    
+    private boolean royaltywalletsale;
+    
+    /**
+     * Show royalty wallet in sale message
+     */
+    
+    private boolean royaltywalletstat;
+    
+    /**
+     * Name show in messages for royalty wallet
+     */
+    private String nameroyaltywallet;
+    
+    /**
      * Random singleton
      */
     private static BotConfiguration configuration;
@@ -119,6 +136,10 @@ public class BotConfiguration {
         this.minPriceStat = true;
         this.maxPriceStat = true;
         
+        this.royaltywalletsale = true;
+        this.royaltywalletstat = true;
+        this.nameroyaltywallet = "Wallet balance";
+        
         sentences = new ArrayList<String>();
         sentences.add("YeeHaw another sale!");
         sentences.add("Boom another one sold");
@@ -137,6 +158,8 @@ public class BotConfiguration {
         
         Wini ini = new Wini();
         
+        ini.put("BotConfig", "version", 3);
+        
         ini.put("BotConfig", "refreshSales", refreshSales);
         ini.put("BotConfig", "refreshSalesTime", refreshSalesTime);
         ini.put("BotConfig", "securityIdSales", securityIdSales);
@@ -152,6 +175,14 @@ public class BotConfiguration {
         ini.put("BotConfig", "maxPriceStat", maxPriceStat);
         ini.put("BotConfig", "sentences", String.join("#&#", sentences));
         ini.put("BotConfig", "hashtags", String.join("#&#", hashtags));
+        
+        
+        //version 2
+        ini.put("BotConfig", "royaltywalletsale", royaltywalletsale);
+        ini.put("BotConfig", "royaltywalletstat", royaltywalletstat);
+        
+        //version 3
+        ini.put("BotConfig", "nameroyaltywallet", nameroyaltywallet);
         
         JFileChooser chooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter(
@@ -178,7 +209,9 @@ public class BotConfiguration {
         int returnVal = chooser.showOpenDialog(null);
         if(returnVal == JFileChooser.APPROVE_OPTION && chooser.getSelectedFile().getAbsolutePath().toLowerCase().endsWith(".ini")) {
             Wini ini = new Wini(chooser.getSelectedFile());
-
+            
+            Integer version = ini.get("BotConfig","version", Integer.class);
+            
             this.refreshSales = ini.get("BotConfig", "refreshSales", TimeUnit.class);
             this.refreshSalesTime = ini.get("BotConfig", "refreshSalesTime", int.class);
             this.securityIdSales = ini.get("BotConfig", "securityIdSales", boolean.class);
@@ -209,6 +242,16 @@ public class BotConfiguration {
             else{
                 this.hashtags = new ArrayList<> (Arrays.asList(fileHashtags.split("#&#"))); 
             }
+            
+            if (version != null) {
+                this.royaltywalletsale = ini.get("BotConfig", "royaltywalletsale", boolean.class);
+                this.royaltywalletstat = ini.get("BotConfig", "royaltywalletstat", boolean.class);
+                
+                if(version > 2){
+                    this.nameroyaltywallet = ini.get("BotConfig", "nameroyaltywallet", String.class);
+                }
+            }
+            
         }
     }
     
@@ -339,6 +382,28 @@ public class BotConfiguration {
     public void setIpfs(boolean ipfs) {
         this.ipfs = ipfs;
     }
-    
-    
+
+    public boolean isRoyaltywalletsale() {
+        return royaltywalletsale;
+    }
+
+    public void setRoyaltywalletsale(boolean royaltywalletsale) {
+        this.royaltywalletsale = royaltywalletsale;
+    }
+
+    public boolean isRoyaltywalletstat() {
+        return royaltywalletstat;
+    }
+
+    public void setRoyaltywalletstat(boolean royaltywalletstat) {
+        this.royaltywalletstat = royaltywalletstat;
+    }
+
+    public String getNameroyaltywallet() {
+        return nameroyaltywallet;
+    }
+
+    public void setNameroyaltywallet(String nameroyaltywallet) {
+        this.nameroyaltywallet = nameroyaltywallet;
+    }
 }

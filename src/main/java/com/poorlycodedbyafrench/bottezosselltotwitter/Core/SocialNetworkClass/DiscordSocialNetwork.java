@@ -6,7 +6,9 @@ package com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass;
 
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotConfiguration;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.NetworkMessageManager;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetworkEnum;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.MarketPlace;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Contract;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterface.SocialNetworkInterface;
@@ -83,7 +85,7 @@ public class DiscordSocialNetwork implements SocialNetworkInterface {
     }
 
     @Override
-    public synchronized void send(List<Sale> newSales, int mode, HashMap<Sale, String> messageSaver) throws Exception {
+    public synchronized void send(List<Sale> newSales, int mode, HashMap<Sale, String> messageSaver, HashMap<String, Long> balances) throws Exception {
         int countAvoidTwitterDuplicate = 1;
         DecimalFormat df = new DecimalFormat("##.00");
 
@@ -95,7 +97,7 @@ public class DiscordSocialNetwork implements SocialNetworkInterface {
             for (Contract contract : NetworkMessageManager.getMessageManager().createContractList(newSales)) {
 
                 eb.setTitle("Stat for " + contract.getName());
-                eb.setDescription(NetworkMessageManager.getMessageManager().createStatMessage(contract, df, previousUTCHour, countAvoidTwitterDuplicate));
+                eb.setDescription(NetworkMessageManager.getMessageManager().createStatMessage(contract, df, previousUTCHour, countAvoidTwitterDuplicate, balances));
                 eb.setColor(Color.RED);
                 textChannel.sendMessageEmbeds(eb.build()).queue();
 
@@ -116,7 +118,7 @@ public class DiscordSocialNetwork implements SocialNetworkInterface {
                     message = messageSaver.get(aSale);
                 }
                 else{
-                    message = NetworkMessageManager.getMessageManager().createSaleMessage(aSale, df, rand, countAvoidTwitterDuplicate);
+                    message = NetworkMessageManager.getMessageManager().createSaleMessage(aSale, df, rand, countAvoidTwitterDuplicate, balances);
                     messageSaver.put(aSale, message);
                 }
                 

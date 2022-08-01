@@ -109,6 +109,12 @@ public class ConfigurationMenu extends javax.swing.JPanel {
         cb_IPFS_sales = new javax.swing.JCheckBox();
         btn_Export = new javax.swing.JButton();
         btn_import = new javax.swing.JButton();
+        lbl_royalty_wallet_sales = new javax.swing.JLabel();
+        cb_royalty_wallet_sales = new javax.swing.JCheckBox();
+        lbl_royalty_wallet_stat = new javax.swing.JLabel();
+        cb_royalty_wallet_stat = new javax.swing.JCheckBox();
+        lbl_name_royalty_wallet = new javax.swing.JLabel();
+        tb_name_royalty_wallet = new javax.swing.JTextField();
 
         tbl_sentences.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -244,6 +250,18 @@ public class ConfigurationMenu extends javax.swing.JPanel {
             }
         });
 
+        lbl_royalty_wallet_sales.setText("Royalty wallet");
+
+        cb_royalty_wallet_sales.setText("Show");
+
+        lbl_royalty_wallet_stat.setText("Royalty wallet");
+
+        cb_royalty_wallet_stat.setText("Show");
+
+        lbl_name_royalty_wallet.setText("Name of the label for royalty wallet");
+
+        tb_name_royalty_wallet.setText("Wallet balance");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -251,177 +269,187 @@ public class ConfigurationMenu extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(118, 118, 118)
                 .addComponent(lbl_sales1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lbl_stat)
-                .addGap(151, 151, 151))
+                .addGap(339, 339, 339)
+                .addComponent(lbl_stat))
             .addGroup(layout.createSequentialGroup()
                 .addGap(30, 30, 30)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addComponent(lbl_refresh_sales)
+                .addGap(18, 18, 18)
+                .addComponent(txt_refresh_sales, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12)
+                .addComponent(combo_refresh_sales, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(46, 46, 46)
+                .addComponent(lbl_refresh_stat)
+                .addGap(18, 18, 18)
+                .addComponent(txt_refresh_stats, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6)
+                .addComponent(combo_refresh_stat, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(30, 30, 30)
+                .addComponent(lbl_id_sales)
+                .addGap(190, 190, 190)
+                .addComponent(cb_id_sales)
+                .addGap(47, 47, 47)
+                .addComponent(lbl_id_stat)
+                .addGap(186, 186, 186)
+                .addComponent(cb_id_stat))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(30, 30, 30)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lbl_order_sales)
+                    .addComponent(lbl_type_sales)
+                    .addComponent(lbl_buyer_sales)
+                    .addComponent(lbl_IPFS_sales))
+                .addGap(125, 125, 125)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(combo_order_sales, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(lbl_IPFS_sales)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(cb_IPFS_sales))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(lbl_refresh_sales)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(txt_refresh_sales, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addComponent(lbl_id_sales)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(lbl_buyer_sales)
-                                        .addGap(11, 11, 11))
-                                    .addComponent(lbl_type_sales)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(lbl_order_sales)
-                                        .addGap(4, 4, 4))))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(combo_refresh_sales, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(cb_adress_sales)
-                                .addComponent(cb_id_sales)
-                                .addComponent(cb_type_sales)
-                                .addComponent(combo_order_sales, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(btn_add_sentence, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(btn_remove_sentence)))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(lbl_avg_stat)
-                                .addComponent(lbl_id_stat)
-                                .addComponent(lbl_max_stat)
-                                .addComponent(min_avg_stat))
-                            .addComponent(lbl_refresh_stat))
+                        .addGap(55, 55, 55)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(151, 151, 151)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(cb_max_stat, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(cb_avg_stat, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(cb_id_stat, javax.swing.GroupLayout.Alignment.TRAILING)))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addComponent(txt_refresh_stats, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(combo_refresh_stat, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(cb_min_stat, javax.swing.GroupLayout.Alignment.TRAILING)))))
+                            .addComponent(cb_type_sales)
+                            .addComponent(cb_adress_sales)
+                            .addComponent(cb_IPFS_sales))))
+                .addGap(45, 45, 45)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lbl_avg_stat)
+                    .addComponent(min_avg_stat)
+                    .addComponent(lbl_max_stat)
+                    .addComponent(lbl_royalty_wallet_stat))
+                .addGap(156, 156, 156)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cb_avg_stat)
+                    .addComponent(cb_min_stat)
+                    .addComponent(cb_max_stat)
+                    .addComponent(cb_royalty_wallet_stat)))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(30, 30, 30)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btn_add_sentence, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_remove_sentence))
+                .addGap(111, 111, 111)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btn_add_hashtag, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_remove_hashtag)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(1, 1, 1)
-                        .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btn_add_hashtag, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btn_remove_hashtag)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGap(0, 3, Short.MAX_VALUE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addComponent(btn_save, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(btn_reset))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addComponent(btn_import)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(btn_Export)))))))
-                .addContainerGap())
+                        .addGap(6, 6, 6)
+                        .addComponent(btn_save, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6)
+                        .addComponent(btn_reset))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addComponent(btn_import)
+                        .addGap(6, 6, 6)
+                        .addComponent(btn_Export))))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(30, 30, 30)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(lbl_name_royalty_wallet)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lbl_royalty_wallet_sales)
+                        .addGap(156, 156, 156)
+                        .addComponent(cb_royalty_wallet_sales, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addComponent(tb_name_royalty_wallet, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGap(11, 11, 11)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lbl_sales1)
                     .addComponent(lbl_stat))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txt_refresh_stats, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(combo_refresh_stat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lbl_refresh_stat))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(31, 31, 31)
-                                .addComponent(lbl_avg_stat))
-                            .addComponent(lbl_id_stat)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(cb_id_stat)
-                                .addGap(12, 12, 12)
-                                .addComponent(cb_avg_stat)))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(min_avg_stat)
-                            .addComponent(cb_min_stat))
-                        .addGap(13, 13, 13)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lbl_max_stat)
-                            .addComponent(cb_max_stat))
+                        .addGap(6, 6, 6)
+                        .addComponent(lbl_refresh_sales))
+                    .addComponent(txt_refresh_sales, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
                         .addGap(1, 1, 1)
+                        .addComponent(combo_refresh_sales, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(lbl_refresh_stat))
+                    .addComponent(txt_refresh_stats, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(1, 1, 1)
+                        .addComponent(combo_refresh_stat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(6, 6, 6)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lbl_id_sales)
+                    .addComponent(cb_id_sales)
+                    .addComponent(lbl_id_stat)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(1, 1, 1)
+                        .addComponent(cb_id_stat)))
+                .addGap(2, 2, 2)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(lbl_order_sales)
+                        .addGap(4, 4, 4)
+                        .addComponent(lbl_type_sales)
+                        .addGap(4, 4, 4)
+                        .addComponent(lbl_buyer_sales)
+                        .addGap(4, 4, 4)
+                        .addComponent(lbl_IPFS_sales))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addComponent(combo_order_sales, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(1, 1, 1)
+                        .addComponent(cb_type_sales)
+                        .addGap(2, 2, 2)
+                        .addComponent(cb_adress_sales)
+                        .addGap(2, 2, 2)
                         .addComponent(cb_IPFS_sales))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txt_refresh_sales, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(combo_refresh_sales, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lbl_refresh_sales))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cb_id_sales)
-                            .addComponent(lbl_id_sales))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(combo_order_sales, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cb_type_sales)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(cb_adress_sales))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(4, 4, 4)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(57, 57, 57)
-                                        .addComponent(lbl_buyer_sales))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(lbl_order_sales)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(lbl_type_sales)))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lbl_IPFS_sales)))
-                .addGap(19, 19, 19)
+                        .addComponent(lbl_avg_stat)
+                        .addGap(4, 4, 4)
+                        .addComponent(min_avg_stat)
+                        .addGap(4, 4, 4)
+                        .addComponent(lbl_max_stat)
+                        .addGap(4, 4, 4)
+                        .addComponent(lbl_royalty_wallet_stat))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(cb_avg_stat)
+                        .addGap(2, 2, 2)
+                        .addComponent(cb_min_stat)
+                        .addGap(2, 2, 2)
+                        .addComponent(cb_max_stat)
+                        .addGap(2, 2, 2)
+                        .addComponent(cb_royalty_wallet_stat)))
+                .addGap(2, 2, 2)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(btn_add_sentence)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(btn_remove_sentence)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(btn_add_hashtag)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(btn_remove_hashtag)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(btn_save)
-                                .addComponent(btn_reset))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(btn_Export)
-                                .addComponent(btn_import)))
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(11, 11, 11)))))
+                    .addComponent(lbl_royalty_wallet_sales)
+                    .addComponent(cb_royalty_wallet_sales))
+                .addGap(2, 2, 2)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbl_name_royalty_wallet)
+                    .addComponent(tb_name_royalty_wallet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btn_add_sentence)
+                        .addGap(12, 12, 12)
+                        .addComponent(btn_remove_sentence))
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btn_add_hashtag)
+                        .addGap(12, 12, 12)
+                        .addComponent(btn_remove_hashtag)
+                        .addGap(114, 114, 114)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btn_save)
+                            .addComponent(btn_reset))
+                        .addGap(6, 6, 6)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btn_import)
+                            .addComponent(btn_Export)))))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -533,6 +561,10 @@ public class ConfigurationMenu extends javax.swing.JPanel {
 
             BotConfiguration.getConfiguration().setSentences(sentences);
             BotConfiguration.getConfiguration().setHashtags(hashtags);
+            
+            BotConfiguration.getConfiguration().setRoyaltywalletsale(this.cb_royalty_wallet_sales.isSelected());
+            BotConfiguration.getConfiguration().setRoyaltywalletstat(this.cb_royalty_wallet_stat.isSelected());
+            BotConfiguration.getConfiguration().setNameroyaltywallet(this.tb_name_royalty_wallet.getText().trim());
         }
         else{
             JOptionPane.showMessageDialog(null, "Check if there's a sentence and/or hashtag empty, please be sure to unselect in both tables \nPlease not put 0 in any of the number field", "Empty field", JOptionPane.WARNING_MESSAGE);
@@ -601,7 +633,10 @@ public class ConfigurationMenu extends javax.swing.JPanel {
             ((DefaultTableModel)this.tbl_hashtags.getModel()).addRow(new Object[]{s});
         }
         
+        this.cb_royalty_wallet_sales.setSelected(BotConfiguration.getConfiguration().isRoyaltywalletsale());
+        this.cb_royalty_wallet_stat.setSelected(BotConfiguration.getConfiguration().isRoyaltywalletstat());
         
+        this.tb_name_royalty_wallet.setText(BotConfiguration.getConfiguration().getNameroyaltywallet());
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_Export;
@@ -619,6 +654,8 @@ public class ConfigurationMenu extends javax.swing.JPanel {
     private javax.swing.JCheckBox cb_id_stat;
     private javax.swing.JCheckBox cb_max_stat;
     private javax.swing.JCheckBox cb_min_stat;
+    private javax.swing.JCheckBox cb_royalty_wallet_sales;
+    private javax.swing.JCheckBox cb_royalty_wallet_stat;
     private javax.swing.JCheckBox cb_type_sales;
     private javax.swing.JComboBox<String> combo_order_sales;
     private javax.swing.JComboBox<String> combo_refresh_sales;
@@ -631,13 +668,17 @@ public class ConfigurationMenu extends javax.swing.JPanel {
     private javax.swing.JLabel lbl_id_sales;
     private javax.swing.JLabel lbl_id_stat;
     private javax.swing.JLabel lbl_max_stat;
+    private javax.swing.JLabel lbl_name_royalty_wallet;
     private javax.swing.JLabel lbl_order_sales;
     private javax.swing.JLabel lbl_refresh_sales;
     private javax.swing.JLabel lbl_refresh_stat;
+    private javax.swing.JLabel lbl_royalty_wallet_sales;
+    private javax.swing.JLabel lbl_royalty_wallet_stat;
     private javax.swing.JLabel lbl_sales1;
     private javax.swing.JLabel lbl_stat;
     private javax.swing.JLabel lbl_type_sales;
     private javax.swing.JLabel min_avg_stat;
+    private javax.swing.JTextField tb_name_royalty_wallet;
     private javax.swing.JTable tbl_hashtags;
     private javax.swing.JTable tbl_sentences;
     private javax.swing.JTextField txt_refresh_sales;
