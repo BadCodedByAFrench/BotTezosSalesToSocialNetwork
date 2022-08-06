@@ -164,6 +164,12 @@ public class CallObjkt implements CallMarketPlaceInterface {
                         case 0 :
                             JsonArray allNewTrasacts = token.getAsJsonArray("fulfilled_asks");
                             for(Object t : allNewTrasacts){
+                                
+                                buyerAdress = "";
+                                buyerDomain = null;
+                                sellerAdress = "";
+                                sellerDomain = null;
+                                
                                 JsonObject transaction = (JsonObject) t;
                                 price = transaction.get("price").getAsDouble()/1000000.0;
                                 timestamp = transaction.get("timestamp").getAsString();
@@ -186,6 +192,12 @@ public class CallObjkt implements CallMarketPlaceInterface {
                         case 1 :
                             JsonArray allNewOffer = token.getAsJsonArray("offers");
                             for(Object t : allNewOffer){
+                                
+                                buyerAdress = "";
+                                buyerDomain = null;
+                                sellerAdress = "";
+                                sellerDomain = null;
+                                
                                 JsonObject offer = (JsonObject) t;
                                 price = offer.get("price").getAsDouble()/1000000.0;
                                 timestamp = offer.get("update_timestamp").getAsString();
@@ -207,6 +219,12 @@ public class CallObjkt implements CallMarketPlaceInterface {
                         case 3 :
                             JsonArray allNewEnglishAuction = token.getAsJsonArray("english_auctions");
                             for(Object t : allNewEnglishAuction){
+                                
+                                buyerAdress = "";
+                                buyerDomain = null;
+                                sellerAdress = "";
+                                sellerDomain = null;
+                                
                                 JsonObject englishAuction = (JsonObject) t;
                                 price = englishAuction.get("highest_bid").getAsDouble()/1000000.0;
                                 timestamp = englishAuction.get("end_time").getAsString();
