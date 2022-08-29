@@ -102,7 +102,7 @@ public class TwitterSocialNetwork implements SocialNetworkInterface {
                 countAvoidTwitterDuplicate++;
             }
         }
-        if (mode == 0) {
+        else if (mode == 0) {
 
             Random rand = new Random();
             for (Sale aSale : newSales) {
