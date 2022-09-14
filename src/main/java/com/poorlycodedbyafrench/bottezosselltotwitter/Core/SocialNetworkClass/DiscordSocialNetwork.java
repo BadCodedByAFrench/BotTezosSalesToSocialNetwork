@@ -6,6 +6,7 @@ package com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass;
 
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotConfiguration;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.NetworkMessageManager;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetworkEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.MarketPlace;
@@ -85,7 +86,7 @@ public class DiscordSocialNetwork implements SocialNetworkInterface {
     }
 
     @Override
-    public synchronized void send(List<Sale> newSales, int mode, HashMap<Sale, String> messageSaver, HashMap<String, Long> balances) throws Exception {
+    public synchronized void send(List<Sale> newSales, BotModeEnum mode, HashMap<Sale, String> messageSaver, HashMap<String, Long> balances) throws Exception {
         int countAvoidTwitterDuplicate = 1;
         DecimalFormat df = new DecimalFormat("##.00");
 
@@ -93,7 +94,7 @@ public class DiscordSocialNetwork implements SocialNetworkInterface {
 
         EmbedBuilder eb = new EmbedBuilder();
 
-        if (mode == 1) {
+        if (mode == BotModeEnum.Stat) {
             for (Contract contract : NetworkMessageManager.getMessageManager().createContractList(newSales)) {
 
                 eb.setTitle("Stat for " + contract.getName());
@@ -107,7 +108,7 @@ public class DiscordSocialNetwork implements SocialNetworkInterface {
                 countAvoidTwitterDuplicate++;
             }
         }
-        else if (mode == 0) {
+        else if (mode == BotModeEnum.Sale) {
 
             Random rand = new Random();
             for (Sale aSale : newSales) {

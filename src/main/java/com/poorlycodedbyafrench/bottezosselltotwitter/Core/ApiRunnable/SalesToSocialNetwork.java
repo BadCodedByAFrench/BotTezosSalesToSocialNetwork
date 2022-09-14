@@ -4,11 +4,11 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.ApiRunnable;
 
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.LastRefresh;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.LogManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.NetworkMessageManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.SalesHistoryManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.MarketPlace;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
 import java.io.IOException;
@@ -19,8 +19,6 @@ import javax.swing.table.DefaultTableModel;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterface.SocialNetworkInterface;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import twitter4j.TwitterException;
 
 /**
@@ -29,10 +27,6 @@ import twitter4j.TwitterException;
  */
 public class SalesToSocialNetwork implements Runnable {
 
-    /**
-     * List of current sale
-     */
-    private List<Sale> newSell;
     
     /**
      * List of all the marketplace
@@ -49,10 +43,9 @@ public class SalesToSocialNetwork implements Runnable {
      */
     private DefaultTableModel model;
         
-    private int mode;
+    private BotModeEnum mode;
     
-    public SalesToSocialNetwork(DefaultTableModel model, int mode) {
-        this.newSell = new ArrayList<Sale>();
+    public SalesToSocialNetwork(DefaultTableModel model, BotModeEnum mode) {
         this.marketplaces = new HashMap<MarketPlaceEnum, MarketPlace>();
         this.socialNetworks = new ArrayList<SocialNetworkInterface>();
         
@@ -77,35 +70,41 @@ public class SalesToSocialNetwork implements Runnable {
     public void run() {
         long numberOfSale = 0;
         
-            if (model.getRowCount() >= 1000){
-                model.setRowCount(500);
+            if (model.getRowCount() >= 100){
+                model.setRowCount(10);
             }
             
-            List<Sale> allNewSell = new ArrayList<Sale>();
+            HashMap<String, Sale> allNewSell = new HashMap<String, Sale>();
+            List<MarketPlaceEnum> errorMarketPlaceToIgnore = new ArrayList<MarketPlaceEnum>();
+            
             for(MarketPlace oneMarkeplace : marketplaces.values()){
 
                 try {
                     numberOfSale = allNewSell.size();
-                    allNewSell.addAll(oneMarkeplace.getCalledMarketPlace().query(mode, oneMarkeplace.getContracts(), oneMarkeplace.getLastrefresh()));
+                    allNewSell.putAll(oneMarkeplace.getCalledMarketPlace().query(mode, oneMarkeplace.getContracts(), oneMarkeplace.getLastrefresh()));
                     model.insertRow(0, new Object[]{oneMarkeplace.getMarketplace().toString(),"OK" ,allNewSell.size() - numberOfSale });
                 } catch (IOException ex) {
                     model.insertRow(0, new Object[]{oneMarkeplace.getMarketplace().toString(),"Error : network issue" ,ex.getMessage()});
+                    errorMarketPlaceToIgnore.add(oneMarkeplace.getMarketplace());
                     LogManager.getLogManager().writeLog(SalesToSocialNetwork.class.getName(), ex);
                 } catch (URISyntaxException ex) {
                     model.insertRow(0, new Object[]{oneMarkeplace.getMarketplace().toString(),"Error : URI issue" ,ex.getMessage()});
+                    errorMarketPlaceToIgnore.add(oneMarkeplace.getMarketplace());
                     LogManager.getLogManager().writeLog(SalesToSocialNetwork.class.getName(), ex);
                 } catch (InterruptedException ex) {
                     model.insertRow(0, new Object[]{oneMarkeplace.getMarketplace().toString(),"Error : interrupted issue" ,ex.getMessage()});
+                    errorMarketPlaceToIgnore.add(oneMarkeplace.getMarketplace());
                     LogManager.getLogManager().writeLog(SalesToSocialNetwork.class.getName(), ex);
                 } catch (Exception ex) {
                     model.insertRow(0, new Object[]{oneMarkeplace.getMarketplace().toString(),"Error : unable to get sale" ,ex.getMessage()});
+                    errorMarketPlaceToIgnore.add(oneMarkeplace.getMarketplace());
                     LogManager.getLogManager().writeLog(SalesToSocialNetwork.class.getName(), ex);
                 }
             }
             
             //Get only the new one
-            List<Sale> filteredList = SalesHistoryManager.getSalesHistoryManager().checkNewSales(allNewSell, this.mode, marketplaces);
-            SalesHistoryManager.getSalesHistoryManager().removeOldestSales(this.mode, marketplaces);
+            List<Sale> filteredList = SalesHistoryManager.getSalesHistoryManager().checkNewSales(allNewSell.values(), this.mode, marketplaces);
+            SalesHistoryManager.getSalesHistoryManager().removeOldestSales(this.mode, marketplaces, allNewSell, errorMarketPlaceToIgnore);
             
             //sort all the sales depend of configuration setting
             Collections.sort(filteredList);

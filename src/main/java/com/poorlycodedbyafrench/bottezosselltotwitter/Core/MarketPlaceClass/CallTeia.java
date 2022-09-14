@@ -7,6 +7,7 @@ package com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SaleTypeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceInterface.CallMarketPlaceInterface;
@@ -25,6 +26,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import static java.time.temporal.ChronoUnit.SECONDS;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -40,10 +42,10 @@ public class CallTeia implements CallMarketPlaceInterface{
     }
     
     @Override
-    public List<Sale> query(int mode, List<String> contracts, LastRefresh lastrefresh) throws Exception {
-        List<Sale> HENSale = new ArrayList<Sale>();
+    public HashMap<String, Sale> query(BotModeEnum mode, List<String> contracts, LastRefresh lastrefresh) throws Exception {
+        HashMap<String, Sale> HENSale = new HashMap<String, Sale>();
         Instant previousUTCHour;
-        if(mode == 0){
+        if(mode == BotModeEnum.Sale){
             previousUTCHour = lastrefresh.getLastSucessfullSaleRefresh().minus(1, ChronoUnit.HOURS);
         }
         else {
@@ -51,7 +53,7 @@ public class CallTeia implements CallMarketPlaceInterface{
         }
         
         String responseJson = sendRequest(contracts, previousUTCHour);
-        HENSale.addAll(analyseJson(responseJson));
+        HENSale.putAll(analyseJson(responseJson));
             
         return HENSale;
     }
@@ -99,8 +101,8 @@ public class CallTeia implements CallMarketPlaceInterface{
      * @param responseJson
      * @return 
      */
-    private List<Sale> analyseJson(String responseJson){
-        List<Sale> sellList = new ArrayList<Sale>();
+    private HashMap<String, Sale> analyseJson(String responseJson){
+        HashMap<String, Sale> sellList = new HashMap<String, Sale>();
         
         DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter
             .ofPattern("uuuu-MM-dd'T'HH:mm:ssz");
@@ -155,7 +157,7 @@ public class CallTeia implements CallMarketPlaceInterface{
                 }
                 
                 
-                sellList.add(new Sale(tokenname, id, price, SaleTypeEnum.Unknown, this.getName(), path,  OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs, idtransaction));
+                sellList.put(idtransaction, new Sale(tokenname, id, price, SaleTypeEnum.Unknown, this.getName(), path,  OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs, idtransaction));
                 
             }
             

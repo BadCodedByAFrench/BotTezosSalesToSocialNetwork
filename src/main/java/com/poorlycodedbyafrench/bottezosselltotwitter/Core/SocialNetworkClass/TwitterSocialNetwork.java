@@ -7,6 +7,7 @@ package com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotConfiguration;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.LogManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.NetworkMessageManager;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetworkEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.MarketPlace;
@@ -85,13 +86,13 @@ public class TwitterSocialNetwork implements SocialNetworkInterface {
     }
 
     @Override
-    public synchronized void send(List<Sale> newSales, int mode, HashMap<Sale, String> messageSaver, HashMap<String, Long> balances) throws TwitterException, InterruptedException, MalformedURLException, IOException {
+    public synchronized void send(List<Sale> newSales, BotModeEnum mode, HashMap<Sale, String> messageSaver, HashMap<String, Long> balances) throws TwitterException, InterruptedException, MalformedURLException, IOException {
         int countAvoidTwitterDuplicate = 1;
         DecimalFormat df = new DecimalFormat("##.00");
 
         Instant previousUTCHour = Instant.now().minus(BotConfiguration.getConfiguration().getRefreshSalesStats(), ChronoUnit.valueOf(BotConfiguration.getConfiguration().getRefreshStats().toString().toUpperCase()));
 
-        if (mode == 1) {
+        if (mode == BotModeEnum.Stat) {
             for (Contract contract : NetworkMessageManager.getMessageManager().createContractList(newSales)) {
 
                 Status newTweet = twitterInstance.updateStatus(NetworkMessageManager.getMessageManager().createStatMessage(contract, df, previousUTCHour, countAvoidTwitterDuplicate, balances));
@@ -102,7 +103,7 @@ public class TwitterSocialNetwork implements SocialNetworkInterface {
                 countAvoidTwitterDuplicate++;
             }
         }
-        else if (mode == 0) {
+        else if (mode == BotModeEnum.Sale) {
 
             Random rand = new Random();
             for (Sale aSale : newSales) {

@@ -4,6 +4,7 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass;
 
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceInterface.CallMarketPlaceInterface;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
@@ -31,7 +32,7 @@ public class MarketPlace {
     private transient CallMarketPlaceInterface calledMarketPlace;
     
     private transient LastRefresh lastrefresh;
-    
+
     public MarketPlace(MarketPlaceEnum marketplace, CallMarketPlaceInterface calledMarketPlace) {
         this.marketplace = marketplace;
         this.calledMarketPlace = calledMarketPlace;
@@ -127,7 +128,7 @@ public class MarketPlace {
         this.royaltywallet = royaltywallet;
     }
     
-    public void setLastRefresh(List<Sale> newSales, int mode){
+    public void setLastRefresh(List<Sale> newSales, BotModeEnum mode){
         
         if (newSales.size() != 0){
             
@@ -145,7 +146,7 @@ public class MarketPlace {
             }
             
             if(lasttimeStamp != null){
-                if (mode == 1 && lasttimeStamp.isAfter(lastrefresh.getLastSucessfullStatRefresh())){
+                if (mode == BotModeEnum.Stat && lasttimeStamp.isAfter(lastrefresh.getLastSucessfullStatRefresh())){
                     lastrefresh.setLastSucessfullStatRefresh(lasttimeStamp);
                 }
                 else if(lasttimeStamp.isAfter(lastrefresh.getLastSucessfullSaleRefresh())){

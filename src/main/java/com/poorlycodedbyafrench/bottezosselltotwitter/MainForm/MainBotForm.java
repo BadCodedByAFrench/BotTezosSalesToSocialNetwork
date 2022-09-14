@@ -9,6 +9,7 @@ import com.google.gson.reflect.TypeToken;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.ApiRunnable.SalesToSocialNetwork;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotConfiguration;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.LogManager;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.CallFxhash;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.CallTeia;
@@ -116,8 +117,8 @@ public class MainBotForm extends javax.swing.JFrame {
 
         socialNetworks = new ArrayList<SocialNetworkInterface>();
 
-        apiHandlerSales = new SalesToSocialNetwork(model, 0);
-        apiHandlerStat = new SalesToSocialNetwork(model, 1);
+        apiHandlerSales = new SalesToSocialNetwork(model, BotModeEnum.Sale);
+        apiHandlerStat = new SalesToSocialNetwork(model, BotModeEnum.Stat);
 
         executor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(1);
         executor.setRemoveOnCancelPolicy(true);

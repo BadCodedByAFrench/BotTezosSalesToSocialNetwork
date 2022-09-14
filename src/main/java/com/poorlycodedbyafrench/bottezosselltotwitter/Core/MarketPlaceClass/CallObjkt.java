@@ -7,6 +7,7 @@ package com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SaleTypeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
@@ -27,6 +28,7 @@ import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Address;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 
 /**
  * Call OBJKT Api
@@ -44,11 +46,11 @@ public class CallObjkt implements CallMarketPlaceInterface {
 
     
     @Override
-    public List<Sale> query(int mode, List<String> contracts, LastRefresh lastrefresh)throws IOException, URISyntaxException, InterruptedException{
+    public HashMap<String, Sale> query(BotModeEnum mode, List<String> contracts, LastRefresh lastrefresh)throws IOException, URISyntaxException, InterruptedException{
         
-        List<Sale> objktSale = new ArrayList<Sale>();
+        HashMap<String, Sale> objktSale = new HashMap<String, Sale>();
         Instant previousUTCHour;
-        if(mode == 0){
+        if(mode == BotModeEnum.Sale){
             previousUTCHour = lastrefresh.getLastSucessfullSaleRefresh().minus(1, ChronoUnit.HOURS);
         }
         else {
@@ -57,7 +59,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
         
         for(int i = 0; i<4; i++){
             String responseJson = sendRequest(i, contracts, previousUTCHour);
-            objktSale.addAll(analyseJson(responseJson, i));
+            objktSale.putAll(analyseJson(responseJson, i));
         }
             
         return objktSale;
@@ -120,8 +122,8 @@ public class CallObjkt implements CallMarketPlaceInterface {
      * @param responseJson
      * @return 
      */
-    private List<Sale> analyseJson(String responseJson, int requestCase){
-        List<Sale> sellList = new ArrayList<Sale>();
+    private HashMap<String, Sale> analyseJson(String responseJson, int requestCase){
+        HashMap<String, Sale> sellList = new HashMap<String, Sale>();
         
         DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter
             .ofPattern("uuuu-MM-dd'T'HH:mm:ssz");
@@ -186,7 +188,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
                                 }
                                 
                                 
-                                sellList.add(new Sale(tokenname, id, price, SaleTypeEnum.ListedSale, this.getName(), path,  OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs, idtransaction));
+                                sellList.put(idtransaction, new Sale(tokenname, id, price, SaleTypeEnum.ListedSale, this.getName(), path,  OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs, idtransaction));
                             }  
                             break;
                         case 1 :
@@ -213,7 +215,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
                                     sellerDomain = offer.getAsJsonObject("seller").get("tzdomain").getAsString();
                                 }
                                 
-                                sellList.add(new Sale(tokenname, id, price, SaleTypeEnum.Offer, this.getName(), path,  OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs, idtransaction));
+                                sellList.put(idtransaction, new Sale(tokenname, id, price, SaleTypeEnum.Offer, this.getName(), path,  OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs, idtransaction));
                             }
                             break;
                         case 3 :
@@ -240,7 +242,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
                                     sellerDomain = englishAuction.getAsJsonObject("seller").get("tzdomain").getAsString();
                                 }
                                 
-                                sellList.add(new Sale(tokenname, id, price, SaleTypeEnum.EnglishAuction, this.getName(), path,  OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs, idtransaction));
+                                sellList.put(idtransaction, new Sale(tokenname, id, price, SaleTypeEnum.EnglishAuction, this.getName(), path,  OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs, idtransaction));
                             }
                             break;
                             
@@ -282,7 +284,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
                 Long id = success_dutch_auction.getAsJsonObject("token").get("token_id").getAsLong();
                 String tokenname = success_dutch_auction.getAsJsonObject("token").get("name").getAsString();
                 String ipfs = success_dutch_auction.getAsJsonObject("token").get("display_uri").getAsString();
-                sellList.add(new Sale(tokenname, id, price, SaleTypeEnum.DutchAuction, this.getName(), path,  OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs, idtransaction));
+                sellList.put(idtransaction, new Sale(tokenname, id, price, SaleTypeEnum.DutchAuction, this.getName(), path,  OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs, idtransaction));
             }
         }
         return sellList;

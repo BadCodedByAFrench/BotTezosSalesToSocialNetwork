@@ -54,4 +54,11 @@ public class LogManager {
 
         fileLogger.log(Level.SEVERE, className + "\n" + ex.getMessage() + "\n" + sw.toString());
     }
+    
+     public void writeLog(String className, String ex){
+        
+
+        fileLogger.log(Level.SEVERE, className + "\n" + ex + "\n");
+    }
+     
 }

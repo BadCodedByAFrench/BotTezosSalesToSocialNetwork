@@ -4,9 +4,11 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceInterface;
 
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.LastRefresh;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -17,10 +19,14 @@ public interface CallMarketPlaceInterface {
     
     /**
      * Function to get the sales from a marketplace
+     * @param mode
+     * @param contracts
+     * @param lastrefresh
      * @return
-     * @throws Exception
+     * @throws Exception 
      */
-    public List<Sale> query(int mode, List<String> contracts, LastRefresh lastrefresh) throws Exception;
+    
+    public HashMap<String, Sale> query(BotModeEnum mode, List<String> contracts, LastRefresh lastrefresh) throws Exception;
     
     /**
      * Get the name of the marketplace
