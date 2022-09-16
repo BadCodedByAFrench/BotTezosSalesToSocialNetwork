@@ -38,15 +38,8 @@ public class CallFxhash implements CallMarketPlaceInterface {
     @Override
     public HashMap<String, Sale> query(BotModeEnum mode, List<String> contracts, LastRefresh lastrefresh) throws Exception {
         HashMap<String, Sale> fxhashSale = new HashMap<String, Sale>();
-        Instant previousUTCHour;
-        if(mode == BotModeEnum.Sale){
-            previousUTCHour = lastrefresh.getLastSucessfullSaleRefresh().minus(1, ChronoUnit.HOURS);
-        }
-        else {
-            previousUTCHour = lastrefresh.getLastSucessfullStatRefresh().minus(1, ChronoUnit.HOURS);
-        }
         
-        String responseJson = sendRequest(contracts, previousUTCHour);
+        String responseJson = sendRequest(contracts);
         fxhashSale.putAll(analyseJson(responseJson));
             
         return fxhashSale;
@@ -59,7 +52,7 @@ public class CallFxhash implements CallMarketPlaceInterface {
      * @throws InterruptedException
      * @throws URISyntaxException 
      */
-    private String sendRequest(List<String> contracts, Instant previousUTCHour) throws IOException, InterruptedException, URISyntaxException{
+    private String sendRequest(List<String> contracts) throws IOException, InterruptedException, URISyntaxException{
           
         String buildIn = "";
         

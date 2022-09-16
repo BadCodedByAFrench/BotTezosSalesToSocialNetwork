@@ -14,6 +14,7 @@ import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceE
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.CallFxhash;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.CallTeia;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.CallObjkt;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.CallRarible;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.MarketPlace;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceInterface.CallMarketPlaceInterface;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterface.SocialNetworkInterface;
@@ -110,6 +111,7 @@ public class MainBotForm extends javax.swing.JFrame {
         marketplaces.put(MarketPlaceEnum.Objkt, new MarketPlace(MarketPlaceEnum.Objkt, new CallObjkt()));
         marketplaces.put(MarketPlaceEnum.Teia, new MarketPlace(MarketPlaceEnum.Teia, new CallTeia()));
         marketplaces.put(MarketPlaceEnum.fxhash, new MarketPlace(MarketPlaceEnum.fxhash, new CallFxhash()));
+        marketplaces.put(MarketPlaceEnum.Rarible, new MarketPlace(MarketPlaceEnum.Rarible, new CallRarible()));
 
         for (MarketPlaceEnum mp : marketplaces.keySet()) {
             dtbMP.addRow(new Object[]{mp});
@@ -1232,7 +1234,7 @@ public class MainBotForm extends javax.swing.JFrame {
 
         Wini ini = new Wini();
 
-        ini.put("MainWindow", "version", 2);
+        ini.put("MainWindow", "version", 3);
         ini.put("MainWindow", "marketplaces", gson.toJson(marketplaces));
 
         JFileChooser chooser = new JFileChooser();
@@ -1283,6 +1285,8 @@ public class MainBotForm extends javax.swing.JFrame {
                     cmpi = new CallTeia();
                 } else if (mp == MarketPlaceEnum.fxhash) {
                     cmpi = new CallFxhash();
+                } else if (mp == MarketPlaceEnum.Rarible) {
+                    cmpi = new CallRarible();
                 }
 
                 if (cmpi != null) {
@@ -1301,6 +1305,10 @@ public class MainBotForm extends javax.swing.JFrame {
 
             if (version < 2) {
                 marketplaces.put(MarketPlaceEnum.fxhash, new MarketPlace(MarketPlaceEnum.fxhash, new CallFxhash()));
+            }
+            
+            if(version < 3){
+                marketplaces.put(MarketPlaceEnum.Rarible, new MarketPlace(MarketPlaceEnum.Rarible, new CallRarible()));
             }
         }
     }

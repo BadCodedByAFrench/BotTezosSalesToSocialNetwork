@@ -58,6 +58,11 @@ public class NetworkMessageManager {
             for (Contract contract : contracts) {
                 if (contract.getContract().equals(aSale.getContract())) {
                     contract.addSale(aSale);
+                    
+                    if(aSale.getMarketplace() != MarketPlaceEnum.Rarible && contract.getContract().equals(contract.getName())){
+                        contract.setName(aSale.getCollectionName());
+                    }
+                    
                     contractExist = true;
                 }
             }
@@ -86,7 +91,13 @@ public class NetworkMessageManager {
             status += countAvoidTwitterDuplicate + " ";
         }
 
-        status += "Stat for " + contract.getName() + " since " + previousUTCHour.toString().substring(5, 7) + "-" + previousUTCHour.toString().substring(8, 10) + "-" + previousUTCHour.toString().substring(0, 4) + " at " + previousUTCHour.toString().substring(11, 16) + " UTC : ";
+        String name = contract.getName();
+        
+        if(contract.getName().equals(contract.getContract())){
+            name = name.substring(0, 4) + ".." + name.substring(name.length() - 4, name.length());
+        }
+        
+        status += "Stat for " + name + " since " + previousUTCHour.toString().substring(5, 7) + "-" + previousUTCHour.toString().substring(8, 10) + "-" + previousUTCHour.toString().substring(0, 4) + " at " + previousUTCHour.toString().substring(11, 16) + " UTC : ";
         status += "\nNumber of sales : " + contract.getNbSale();
         status += "\nTotal xtz : " + df.format(contract.getTotalprice()).replace(',', '.');
 
@@ -116,13 +127,17 @@ public class NetworkMessageManager {
                 status += " https://objkt.com/collection/" + contract.getPath();
             }
         }
-        else if (contract.getMarketplace().contains(MarketPlaceEnum.Teia)) {
+        if (contract.getMarketplace().contains(MarketPlaceEnum.Teia)) {
             status += "\nTeia Link : ";
             status += " https://teia.art/tz/" + contract.getContract();
         }
-        else if (contract.getMarketplace().contains(MarketPlaceEnum.fxhash)) {
+        if (contract.getMarketplace().contains(MarketPlaceEnum.fxhash)) {
             status += "\nFxHash Link : ";
             status += " https://www.fxhash.xyz/generative/" + contract.getContract();
+        }
+        if (contract.getMarketplace().contains(MarketPlaceEnum.Rarible)) {
+            status += "\nRarible Link : ";
+            status += " https://rarible.com/collection/tezos/" + contract.getContract();
         }
         
 
@@ -207,6 +222,9 @@ public class NetworkMessageManager {
         }
         else if (aSale.getMarketplace() == MarketPlaceEnum.fxhash) {
             status += " \nhttps://www.fxhash.xyz/gentk/" + aSale.getId();
+        }
+        else if (aSale.getMarketplace() == MarketPlaceEnum.Rarible) {
+            status += " \nhttps://rarible.com/token/tezos/" + aSale.getContract() + ":"+aSale.getId() + "?tab=overview";
         }
 
         status += "\n" + aSale.getTimestamp().toString().substring(5, 7) + "-" + aSale.getTimestamp().toString().substring(8, 10) + "-" + aSale.getTimestamp().toString().substring(0, 4) + " at " + aSale.getTimestamp().toString().substring(11, 16) + " UTC";

@@ -94,5 +94,11 @@ public class Contract {
     public double getAvg(){
         return this.totalprice/this.nbSale;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    
     
 }

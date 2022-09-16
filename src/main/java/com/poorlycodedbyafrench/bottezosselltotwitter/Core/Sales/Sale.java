@@ -172,4 +172,14 @@ public class Sale implements Comparable<Sale> {
             return Double.compare(o.getPrice(), this.getPrice());
         }
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setIpfs(String ipfs) {
+        this.ipfs = ipfs;
+    }
+    
+    
 }
