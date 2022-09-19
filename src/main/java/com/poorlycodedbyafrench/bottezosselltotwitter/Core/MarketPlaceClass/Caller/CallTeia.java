@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass;
+package com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.Caller;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -10,6 +10,7 @@ import com.google.gson.JsonParser;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SaleTypeEnum;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.LastRefresh;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceInterface.CallMarketPlaceInterface;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Address;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
@@ -35,29 +36,18 @@ import java.util.List;
  */
 public class CallTeia implements CallMarketPlaceInterface{
 
-    private MarketPlaceEnum name;
-
-    public CallTeia() {
-        this.name = MarketPlaceEnum.Teia;
-    }
+    private BotModeEnum mode;
     
-    @Override
-    public HashMap<String, Sale> query(BotModeEnum mode, List<String> contracts, LastRefresh lastrefresh) throws Exception {
-        HashMap<String, Sale> HENSale = new HashMap<String, Sale>();
-        Instant previousUTCHour;
-        if(mode == BotModeEnum.Sale){
-            previousUTCHour = lastrefresh.getLastSucessfullSaleRefresh().minus(1, ChronoUnit.HOURS);
-        }
-        else {
-            previousUTCHour = lastrefresh.getLastSucessfullStatRefresh().minus(1, ChronoUnit.HOURS);
-        }
-        
-        String responseJson = sendRequest(contracts, previousUTCHour);
-        HENSale.putAll(analyseJson(responseJson));
-            
-        return HENSale;
-    }
+    private List<String> contracts;
+    
+    private LastRefresh lastrefresh;
 
+    public CallTeia(BotModeEnum mode, List<String> contracts, LastRefresh lastrefresh) {
+        this.mode = mode;
+        this.contracts = contracts;
+        this.lastrefresh = lastrefresh;
+    } 
+    
     /**
      * We send the request to get all the sell from the previous hour
      * @return
@@ -166,7 +156,27 @@ public class CallTeia implements CallMarketPlaceInterface{
     
     @Override
     public MarketPlaceEnum getName() {
-        return name;
+        return MarketPlaceEnum.Teia;
+    }
+
+    @Override
+    public HashMap<MarketPlaceEnum,HashMap<String, Sale>> call() throws Exception {
+        HashMap<String, Sale> HENSale = new HashMap<String, Sale>();
+        Instant previousUTCHour;
+        if(mode == BotModeEnum.Sale){
+            previousUTCHour = lastrefresh.getLastSucessfullSaleRefresh().minus(1, ChronoUnit.HOURS);
+        }
+        else {
+            previousUTCHour = lastrefresh.getLastSucessfullStatRefresh().minus(1, ChronoUnit.HOURS);
+        }
+        
+        String responseJson = sendRequest(contracts, previousUTCHour);
+        HENSale.putAll(analyseJson(responseJson));
+            
+        HashMap<MarketPlaceEnum,HashMap<String, Sale>> saleReturn = new HashMap<>();
+        saleReturn.put(MarketPlaceEnum.Teia, HENSale);
+        
+        return saleReturn;
     }
     
 }

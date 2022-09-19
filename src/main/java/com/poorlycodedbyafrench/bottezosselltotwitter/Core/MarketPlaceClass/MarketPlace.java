@@ -12,6 +12,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceInterface.CreatorThreadMarketPlaceInterface;
 
 /**
  *
@@ -29,11 +30,11 @@ public class MarketPlace {
     
     private HashMap<String, String> royaltywallet;
 
-    private transient CallMarketPlaceInterface calledMarketPlace;
+    private transient CreatorThreadMarketPlaceInterface calledMarketPlace;
     
     private transient LastRefresh lastrefresh;
 
-    public MarketPlace(MarketPlaceEnum marketplace, CallMarketPlaceInterface calledMarketPlace) {
+    public MarketPlace(MarketPlaceEnum marketplace, CreatorThreadMarketPlaceInterface calledMarketPlace) {
         this.marketplace = marketplace;
         this.calledMarketPlace = calledMarketPlace;
         this.lastrefresh = new LastRefresh();
@@ -88,7 +89,7 @@ public class MarketPlace {
         }
     }
 
-    public CallMarketPlaceInterface getCalledMarketPlace() {
+    public CreatorThreadMarketPlaceInterface getCalledMarketPlace() {
         return calledMarketPlace;
     }
 

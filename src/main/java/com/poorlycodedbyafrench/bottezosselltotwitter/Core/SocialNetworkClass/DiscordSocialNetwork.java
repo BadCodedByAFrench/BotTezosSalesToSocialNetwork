@@ -4,22 +4,16 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass;
 
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotConfiguration;
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.NetworkMessageManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetworkEnum;
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.MarketPlace;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Contract;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterface.CreatorThreadSocialNetworkInterface;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterface.SocialNetworkInterface;
 import java.awt.Color;
-import java.text.DecimalFormat;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import javax.security.auth.login.LoginException;
 import javax.swing.table.DefaultTableModel;
@@ -85,60 +79,12 @@ public class DiscordSocialNetwork implements SocialNetworkInterface {
         this.model = model;
     }
 
-    @Override
-    public synchronized void send(List<Sale> newSales, BotModeEnum mode, HashMap<Sale, String> messageSaver, HashMap<String, Long> balances) throws Exception {
-        int countAvoidTwitterDuplicate = 1;
-        DecimalFormat df = new DecimalFormat("##.00");
+    public synchronized void send(EmbedBuilder eb) throws Exception {
+                        
+        textChannel.sendMessageEmbeds(eb.build()).queue();
 
-        Instant previousUTCHour = Instant.now().minus(BotConfiguration.getConfiguration().getRefreshSalesStats(), ChronoUnit.valueOf(BotConfiguration.getConfiguration().getRefreshStats().toString().toUpperCase()));
-
-        EmbedBuilder eb = new EmbedBuilder();
-
-        if (mode == BotModeEnum.Stat) {
-            for (Contract contract : NetworkMessageManager.getMessageManager().createContractList(newSales)) {
-
-                eb.setTitle("Stat for " + contract.getName());
-                eb.setDescription(NetworkMessageManager.getMessageManager().createStatMessage(contract, df, previousUTCHour, countAvoidTwitterDuplicate, balances));
-                eb.setColor(Color.RED);
-                textChannel.sendMessageEmbeds(eb.build()).queue();
-
-                TimeUnit.SECONDS.sleep(20);
-
-                //System.out.println(status);
-                countAvoidTwitterDuplicate++;
-            }
-        }
-        else if (mode == BotModeEnum.Sale) {
-
-            Random rand = new Random();
-            for (Sale aSale : newSales) {
-                
-                String message = "";
-                
-                if(messageSaver.containsKey(aSale)){
-                    message = messageSaver.get(aSale);
-                }
-                else{
-                    message = NetworkMessageManager.getMessageManager().createSaleMessage(aSale, df, rand, countAvoidTwitterDuplicate, balances);
-                    messageSaver.put(aSale, message);
-                }
-                
-                eb.setTitle(aSale.getName() + " has been sold for " + df.format(aSale.getPrice()).replace(',', '.') + " XTZ");
-                eb.setDescription(message);
-                eb.setColor(Color.BLUE);
-
-                if (BotConfiguration.getConfiguration().isIpfs()) {    
-                    eb.setImage("https://cloudflare-ipfs.com/" + aSale.getIpfs().replace(":/", ""));
-                }
-                
-                textChannel.sendMessageEmbeds(eb.build()).queue();
-
-                TimeUnit.SECONDS.sleep(20);
-
-                //System.out.println(message);
-                countAvoidTwitterDuplicate++;
-            }
-        }
+        //TimeUnit.SECONDS.sleep(20);
+        TimeUnit.SECONDS.sleep(20);
     }
 
     @Override
@@ -166,5 +112,10 @@ public class DiscordSocialNetwork implements SocialNetworkInterface {
         eb.setColor(Color.black);
 
         textChannel.sendMessageEmbeds(eb.build()).queue();
+    }
+
+    @Override
+    public CreatorThreadSocialNetworkInterface createThreadSocialNetwork(BotModeEnum mode, LinkedHashMap<Sale, String> messageSaver, LinkedHashMap<Contract,String> contracts) {
+        return new ThreadDiscordMessage(mode, messageSaver,  contracts, this);
     }
 }

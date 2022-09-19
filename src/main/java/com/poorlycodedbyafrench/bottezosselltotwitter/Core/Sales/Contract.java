@@ -97,8 +97,7 @@ public class Contract {
 
     public void setName(String name) {
         this.name = name;
-    }
-    
+    }  
     
     
 }

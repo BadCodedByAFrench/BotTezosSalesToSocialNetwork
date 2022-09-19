@@ -13,6 +13,7 @@ import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetwor
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.MarketPlace;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Contract;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterface.CreatorThreadSocialNetworkInterface;
 import java.util.List;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -22,13 +23,8 @@ import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterfac
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.text.DecimalFormat;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.LinkedHashMap;
 import java.util.concurrent.TimeUnit;
 import javax.swing.table.DefaultTableModel;
 import twitter4j.Status;
@@ -85,73 +81,13 @@ public class TwitterSocialNetwork implements SocialNetworkInterface {
         this.model = model;
     }
 
-    @Override
-    public synchronized void send(List<Sale> newSales, BotModeEnum mode, HashMap<Sale, String> messageSaver, HashMap<String, Long> balances) throws TwitterException, InterruptedException, MalformedURLException, IOException {
-        int countAvoidTwitterDuplicate = 1;
-        DecimalFormat df = new DecimalFormat("##.00");
-
-        Instant previousUTCHour = Instant.now().minus(BotConfiguration.getConfiguration().getRefreshSalesStats(), ChronoUnit.valueOf(BotConfiguration.getConfiguration().getRefreshStats().toString().toUpperCase()));
-
-        if (mode == BotModeEnum.Stat) {
-            for (Contract contract : NetworkMessageManager.getMessageManager().createContractList(newSales)) {
-
-                Status newTweet = twitterInstance.updateStatus(NetworkMessageManager.getMessageManager().createStatMessage(contract, df, previousUTCHour, countAvoidTwitterDuplicate, balances));
-
-                TimeUnit.MINUTES.sleep(1);
-
-                //System.out.println(status);
-                countAvoidTwitterDuplicate++;
-            }
-        }
-        else if (mode == BotModeEnum.Sale) {
-
-            Random rand = new Random();
-            for (Sale aSale : newSales) {
-
-                String message = "";
-                
-                if(messageSaver.containsKey(aSale)){
-                    message = messageSaver.get(aSale);
-                }
-                else{
-                    message = NetworkMessageManager.getMessageManager().createSaleMessage(aSale, df, rand, countAvoidTwitterDuplicate, balances);
-                    messageSaver.put(aSale, message);
-                }
-                
-                StatusUpdate newStatus = new StatusUpdate(message);
-                if (BotConfiguration.getConfiguration().isIpfs()) {
-                    try {
-                        URL newURL = new URL("https://cloudflare-ipfs.com/" + aSale.getIpfs().replace(":/", ""));
-                        URLConnection urlConn = newURL.openConnection();
-                        urlConn.setConnectTimeout(10000);
-                        urlConn.setReadTimeout(10000);
-                        urlConn.setAllowUserInteraction(false);
-                        urlConn.setDoOutput(true);
-
-                        InputStream ipfsMedia = urlConn.getInputStream();
-                        
-                        String ipfsName = aSale.getPathname() == null ? aSale.getName() : aSale.getPathname();
-                        
-                        UploadedMedia media = twitterInstance.uploadMedia(ipfsName, ipfsMedia);
-                        long mediaId = media.getMediaId();
-
-                        newStatus.setMediaIds(mediaId);
-                        ipfsMedia.close();
-                        urlConn = null;
-                        newURL = null;
-                    } catch (Exception ex) {
-                        model.insertRow(0, new Object[]{this.getName().toString(), "Error : unable to send a tweet", ex.getMessage()});
-                        LogManager.getLogManager().writeLog(TwitterSocialNetwork.class.getName(), ex);
-                    }
-                }
-                Status newTweet = twitterInstance.updateStatus(newStatus);
-
-                TimeUnit.MINUTES.sleep(1);
-
-                //System.out.println(message);
-                countAvoidTwitterDuplicate++;
-            }
-        }
+    public synchronized void send(StatusUpdate newStatus) throws TwitterException, InterruptedException, MalformedURLException, IOException {
+        Status newTweet = twitterInstance.updateStatus(newStatus);
+        TimeUnit.MINUTES.sleep(1);
+    }
+    
+    public synchronized UploadedMedia uploadAMedia (String ipfsName, InputStream ipfsMedia) throws Exception {
+        return twitterInstance.uploadMedia(ipfsName, ipfsMedia);
     }
 
     @Override
@@ -171,6 +107,11 @@ public class TwitterSocialNetwork implements SocialNetworkInterface {
         Instant currentHour = Instant.now();
 
         twitterInstance.updateStatus(currentHour.toString().substring(5, 7) + "-" + currentHour.toString().substring(8, 10) + "-" + currentHour.toString().substring(0, 4) + " at " + currentHour.toString().substring(11, 16) + " UTC : The bot is no longer running");
+    }
+
+    @Override
+    public CreatorThreadSocialNetworkInterface createThreadSocialNetwork(BotModeEnum mode, LinkedHashMap<Sale, String> messageSaver, LinkedHashMap<Contract, String> contracts) {
+        return new ThreadTwitterMessage(mode, messageSaver,  contracts, this);
     }
 
 }

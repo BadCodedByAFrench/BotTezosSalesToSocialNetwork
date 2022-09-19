@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass;
+package com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.Caller;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -10,6 +10,7 @@ import com.google.gson.JsonParser;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SaleTypeEnum;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.LastRefresh;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
 import java.io.IOException;
 import java.net.URI;
@@ -21,7 +22,6 @@ import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Duration;
 import java.time.Instant;
 import static java.time.temporal.ChronoUnit.SECONDS;
-import java.util.ArrayList;
 import java.util.List;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceInterface.CallMarketPlaceInterface;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Address;
@@ -36,34 +36,17 @@ import java.util.HashMap;
  */
 public class CallObjkt implements CallMarketPlaceInterface {
     
-    private MarketPlaceEnum name;
+    private BotModeEnum mode;
+    
+    private List<String> contracts;
+    
+    private LastRefresh lastrefresh;
 
-    
-    
-    public CallObjkt() {
-        this.name = MarketPlaceEnum.Objkt;
-    }
-
-    
-    @Override
-    public HashMap<String, Sale> query(BotModeEnum mode, List<String> contracts, LastRefresh lastrefresh)throws IOException, URISyntaxException, InterruptedException{
-        
-        HashMap<String, Sale> objktSale = new HashMap<String, Sale>();
-        Instant previousUTCHour;
-        if(mode == BotModeEnum.Sale){
-            previousUTCHour = lastrefresh.getLastSucessfullSaleRefresh().minus(1, ChronoUnit.HOURS);
-        }
-        else {
-            previousUTCHour = lastrefresh.getLastSucessfullStatRefresh().minus(1, ChronoUnit.HOURS);
-        }
-        
-        for(int i = 0; i<4; i++){
-            String responseJson = sendRequest(i, contracts, previousUTCHour);
-            objktSale.putAll(analyseJson(responseJson, i));
-        }
-            
-        return objktSale;
-    }
+    public CallObjkt(BotModeEnum mode, List<String> contracts, LastRefresh lastrefresh) {
+        this.mode = mode;
+        this.contracts = contracts;
+        this.lastrefresh = lastrefresh;
+    }    
     
     /**
      * We send the request to get all the sell from the previous hour
@@ -292,7 +275,29 @@ public class CallObjkt implements CallMarketPlaceInterface {
 
     @Override
     public MarketPlaceEnum getName() {
-        return name;
+        return MarketPlaceEnum.Objkt;
+    }
+
+    @Override
+    public HashMap<MarketPlaceEnum,HashMap<String, Sale>> call() throws Exception {
+        HashMap<String, Sale> objktSale = new HashMap<String, Sale>();
+        Instant previousUTCHour;
+        if(mode == BotModeEnum.Sale){
+            previousUTCHour = lastrefresh.getLastSucessfullSaleRefresh().minus(1, ChronoUnit.HOURS);
+        }
+        else {
+            previousUTCHour = lastrefresh.getLastSucessfullStatRefresh().minus(1, ChronoUnit.HOURS);
+        }
+        
+        for(int i = 0; i<4; i++){
+            String responseJson = sendRequest(i, contracts, previousUTCHour);
+            objktSale.putAll(analyseJson(responseJson, i));
+        }
+            
+        HashMap<MarketPlaceEnum,HashMap<String, Sale>> saleReturn = new HashMap<>();
+        saleReturn.put(MarketPlaceEnum.Objkt, objktSale);
+        
+        return saleReturn;
     }
     
     

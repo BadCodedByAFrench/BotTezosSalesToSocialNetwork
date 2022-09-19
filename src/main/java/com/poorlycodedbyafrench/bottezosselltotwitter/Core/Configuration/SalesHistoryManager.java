@@ -77,12 +77,12 @@ public class SalesHistoryManager {
         return saleToShow;
     }
     
-    public void removeOldestSales(BotModeEnum mode, HashMap<MarketPlaceEnum,MarketPlace> marketplaces, HashMap<String,Sale> allNewSales, List<MarketPlaceEnum> errorMarketPlaceToIgnore){
+    public void removeOldestSales(BotModeEnum mode, HashMap<MarketPlaceEnum,MarketPlace> marketplaces, HashMap<String,Sale> allNewSales, ArrayList<MarketPlaceEnum> finishedMarketPlaceToCheck){
         List<String> idsToDelete = new ArrayList<String>();
         
         if(mode == BotModeEnum.Stat){
             for(Sale aSale : statHistory.values()){ 
-                if(!allNewSales.containsKey(aSale.getIdtransaction()) && !errorMarketPlaceToIgnore.contains(aSale.getMarketplace())){
+                if(!allNewSales.containsKey(aSale.getIdtransaction()) && finishedMarketPlaceToCheck.contains(aSale.getMarketplace())){
                     idsToDelete.add(aSale.getIdtransaction());
                 }
             }
@@ -93,7 +93,7 @@ public class SalesHistoryManager {
         }
         else if (mode == BotModeEnum.Sale){
             for(Sale aSale : salesHistory.values()){
-                if(!allNewSales.containsKey(aSale.getIdtransaction()) && !errorMarketPlaceToIgnore.contains(aSale.getMarketplace())){
+                if(!allNewSales.containsKey(aSale.getIdtransaction()) && finishedMarketPlaceToCheck.contains(aSale.getMarketplace())){
                     idsToDelete.add(aSale.getIdtransaction());
                 }
             }

@@ -5,25 +5,16 @@
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterface;
 
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetworkEnum;
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.MarketPlace;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Contract;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
-import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
 
 /**
  * Interface that should be use by all of the SocialNetworkEnum
  * @author david
  */
 public interface SocialNetworkInterface {
-    
-    /**
-     * Function called to send informations
-     * @param newSales
-     * @throws Exception 
-     */
-    public void send(List<Sale> newSales, BotModeEnum mode, HashMap<Sale, String> messageSaver, HashMap<String, Long> balances) throws Exception;
     
      /**
      * Get the name of the social network
@@ -40,4 +31,6 @@ public interface SocialNetworkInterface {
      * Function to say that the bot is stopping
      */
     public void stop()throws Exception;
+    
+    public CreatorThreadSocialNetworkInterface createThreadSocialNetwork(BotModeEnum mode, LinkedHashMap<Sale, String> messageSaver, LinkedHashMap<Contract,String> contracts);
 }

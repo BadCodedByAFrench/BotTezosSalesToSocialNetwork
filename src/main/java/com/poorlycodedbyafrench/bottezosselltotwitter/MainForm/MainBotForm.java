@@ -11,12 +11,12 @@ import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotConf
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.LogManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.CallFxhash;
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.CallTeia;
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.CallObjkt;
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.CallRarible;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.Creator.CreatorThreadFxhash;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.Creator.CreatorThreadObjkt;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.Creator.CreatorThreadRarible;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.Creator.CreatorThreadTeia;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.MarketPlace;
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceInterface.CallMarketPlaceInterface;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceInterface.CreatorThreadMarketPlaceInterface;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterface.SocialNetworkInterface;
 import java.util.ArrayList;
 import java.util.List;
@@ -108,10 +108,10 @@ public class MainBotForm extends javax.swing.JFrame {
         setStateComponent(true);
 
         marketplaces = new HashMap<MarketPlaceEnum, MarketPlace>();
-        marketplaces.put(MarketPlaceEnum.Objkt, new MarketPlace(MarketPlaceEnum.Objkt, new CallObjkt()));
-        marketplaces.put(MarketPlaceEnum.Teia, new MarketPlace(MarketPlaceEnum.Teia, new CallTeia()));
-        marketplaces.put(MarketPlaceEnum.fxhash, new MarketPlace(MarketPlaceEnum.fxhash, new CallFxhash()));
-        marketplaces.put(MarketPlaceEnum.Rarible, new MarketPlace(MarketPlaceEnum.Rarible, new CallRarible()));
+        marketplaces.put(MarketPlaceEnum.Objkt, new MarketPlace(MarketPlaceEnum.Objkt, new CreatorThreadObjkt()));
+        marketplaces.put(MarketPlaceEnum.Teia, new MarketPlace(MarketPlaceEnum.Teia, new CreatorThreadTeia()));
+        marketplaces.put(MarketPlaceEnum.fxhash, new MarketPlace(MarketPlaceEnum.fxhash, new CreatorThreadFxhash()));
+        marketplaces.put(MarketPlaceEnum.Rarible, new MarketPlace(MarketPlaceEnum.Rarible, new CreatorThreadRarible()));
 
         for (MarketPlaceEnum mp : marketplaces.keySet()) {
             dtbMP.addRow(new Object[]{mp});
@@ -1278,15 +1278,15 @@ public class MainBotForm extends javax.swing.JFrame {
 
             for (MarketPlaceEnum mp : mps.keySet()) {
 
-                CallMarketPlaceInterface cmpi = null;
+                CreatorThreadMarketPlaceInterface cmpi = null;
                 if (mp == MarketPlaceEnum.Objkt) {
-                    cmpi = new CallObjkt();
+                    cmpi = new CreatorThreadObjkt();
                 } else if (mp == MarketPlaceEnum.Teia) {
-                    cmpi = new CallTeia();
+                    cmpi = new CreatorThreadTeia();
                 } else if (mp == MarketPlaceEnum.fxhash) {
-                    cmpi = new CallFxhash();
+                    cmpi = new CreatorThreadFxhash();
                 } else if (mp == MarketPlaceEnum.Rarible) {
-                    cmpi = new CallRarible();
+                    cmpi = new CreatorThreadRarible();
                 }
 
                 if (cmpi != null) {
@@ -1304,11 +1304,11 @@ public class MainBotForm extends javax.swing.JFrame {
             }
 
             if (version < 2) {
-                marketplaces.put(MarketPlaceEnum.fxhash, new MarketPlace(MarketPlaceEnum.fxhash, new CallFxhash()));
+                marketplaces.put(MarketPlaceEnum.fxhash, new MarketPlace(MarketPlaceEnum.fxhash, new CreatorThreadFxhash()));
             }
             
             if(version < 3){
-                marketplaces.put(MarketPlaceEnum.Rarible, new MarketPlace(MarketPlaceEnum.Rarible, new CallRarible()));
+                marketplaces.put(MarketPlaceEnum.Rarible, new MarketPlace(MarketPlaceEnum.Rarible, new CreatorThreadRarible()));
             }
         }
     }
