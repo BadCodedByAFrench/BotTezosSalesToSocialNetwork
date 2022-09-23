@@ -42,12 +42,6 @@ public class DiscordSocialNetwork implements SocialNetworkInterface {
      * Represent the text channel wjhere will send the message
      */
     private TextChannel textChannel;
-
-    /**
-     * Table of main window
-     */
-    private DefaultTableModel model;
-
     
     public DiscordSocialNetwork() {
         name = SocialNetworkEnum.Discord;
@@ -61,7 +55,7 @@ public class DiscordSocialNetwork implements SocialNetworkInterface {
      * @throws LoginException
      * @throws InterruptedException 
      */
-    public void instanceDiscord(String token, String channelName, DefaultTableModel model) throws LoginException, InterruptedException, Exception {
+    public void instanceDiscord(String token, String channelName) throws LoginException, InterruptedException, Exception {
         jda = JDABuilder.createDefault(token.trim()).build().awaitReady();
         List<TextChannel> allTextChannels = jda.getTextChannels();
         
@@ -75,15 +69,12 @@ public class DiscordSocialNetwork implements SocialNetworkInterface {
         if(textChannel == null){
             throw new Exception("The channel do not exist");
         }
-        
-        this.model = model;
     }
 
     public synchronized void send(EmbedBuilder eb) throws Exception {
                         
         textChannel.sendMessageEmbeds(eb.build()).queue();
 
-        //TimeUnit.SECONDS.sleep(20);
         TimeUnit.SECONDS.sleep(20);
     }
 

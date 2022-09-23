@@ -52,10 +52,6 @@ public class TwitterSocialNetwork implements SocialNetworkInterface {
         name = SocialNetworkEnum.Twitter;
     }
 
-    /**
-     * Table of main window
-     */
-    private DefaultTableModel model;
 
     /**
      * We instance the connection with the twitter account and we set up the
@@ -67,7 +63,7 @@ public class TwitterSocialNetwork implements SocialNetworkInterface {
      * @param privateAccessKey
      * @param contract
      */
-    public void instanceTwitter(String publicConsumerKey, String privateConsumerKey, String publicAccessKey, String privateAccessKey, DefaultTableModel model) {
+    public void instanceTwitter(String publicConsumerKey, String privateConsumerKey, String publicAccessKey, String privateAccessKey) {
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setDebugEnabled(true)
                 .setOAuthConsumerKey(publicConsumerKey)
@@ -77,8 +73,6 @@ public class TwitterSocialNetwork implements SocialNetworkInterface {
 
         TwitterFactory tf = new TwitterFactory(cb.build());
         twitterInstance = tf.getInstance();
-
-        this.model = model;
     }
 
     public synchronized void send(StatusUpdate newStatus) throws TwitterException, InterruptedException, MalformedURLException, IOException {

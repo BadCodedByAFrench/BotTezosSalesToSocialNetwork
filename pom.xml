@@ -79,6 +79,11 @@
             <artifactId>AbsoluteLayout</artifactId>
             <version>RELEASE126</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.pengrad</groupId>
+            <artifactId>java-telegram-bot-api</artifactId>
+            <version>6.2.0</version>
+        </dependency>
     </dependencies>
     <name>BotTezosSalesToSocialNetwork</name>
 </project>

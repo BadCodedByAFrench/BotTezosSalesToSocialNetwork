@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import javax.swing.table.DefaultTableModel;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass.DiscordSocialNetwork;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass.TelegramSocialNetwork;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass.TwitterSocialNetwork;
 import java.awt.Dialog;
 import java.io.File;
@@ -169,6 +170,15 @@ public class MainBotForm extends javax.swing.JFrame {
             txt_discord_channel.setEnabled(false);
         }
 
+        cb_telegram.setEnabled(stateStart);
+        if (cb_telegram.isSelected() && cb_telegram.isEnabled()) {
+            pwd_telegram_token.setEnabled(stateStart);
+            txt_telegram_channel.setEnabled(stateStart);
+        } else {
+            pwd_telegram_token.setEnabled(false);
+            txt_telegram_channel.setEnabled(false);
+        }
+        
         if (stateStart) {
 
             if (dtb.getRowCount() <= 0) {
@@ -277,6 +287,10 @@ public class MainBotForm extends javax.swing.JFrame {
     private void initComponents() {
 
         btn_add1 = new javax.swing.JButton();
+        lbl_discord_token1 = new javax.swing.JLabel();
+        pwd_discord_token1 = new javax.swing.JPasswordField();
+        txt_discord_channel1 = new javax.swing.JTextField();
+        lbl_discord_channel1 = new javax.swing.JLabel();
         lbl_twitter_public_consumer_key = new javax.swing.JLabel();
         pwd_twitter_private_consumer_key = new javax.swing.JPasswordField();
         lbl_twitter_private_consumer_key = new javax.swing.JLabel();
@@ -318,14 +332,30 @@ public class MainBotForm extends javax.swing.JFrame {
         btn_export = new javax.swing.JButton();
         lbl_royalty_wallet = new javax.swing.JLabel();
         tb_royalty_wallet = new javax.swing.JTextField();
+        lbl_telegram_token = new javax.swing.JLabel();
+        pwd_telegram_token = new javax.swing.JPasswordField();
+        txt_telegram_channel = new javax.swing.JTextField();
+        lbl_telegram_channel = new javax.swing.JLabel();
+        cb_telegram = new javax.swing.JCheckBox();
 
         btn_add1.setText("Add");
 
+        lbl_discord_token1.setText("Discord token");
+
+        lbl_discord_channel1.setText("Discord channel");
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lbl_twitter_public_consumer_key.setText("Public consumer key");
+        getContentPane().add(lbl_twitter_public_consumer_key, new org.netbeans.lib.awtextra.AbsoluteConstraints(407, 322, -1, -1));
+        lbl_twitter_public_consumer_key.getAccessibleContext().setAccessibleName("lbl_twitter_login");
+
+        getContentPane().add(pwd_twitter_private_consumer_key, new org.netbeans.lib.awtextra.AbsoluteConstraints(533, 348, 74, -1));
 
         lbl_twitter_private_consumer_key.setText("Private consumer key");
+        getContentPane().add(lbl_twitter_private_consumer_key, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 354, -1, -1));
+        lbl_twitter_private_consumer_key.getAccessibleContext().setAccessibleName("lbl_twitter_password");
 
         tbl_status.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -340,7 +370,10 @@ public class MainBotForm extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(tbl_status);
 
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 350, 385, 90));
+
         jLabel1.setText("Request status");
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(139, 313, -1, -1));
 
         btn_start.setText("Start");
         btn_start.addActionListener(new java.awt.event.ActionListener() {
@@ -348,6 +381,7 @@ public class MainBotForm extends javax.swing.JFrame {
                 btn_startActionPerformed(evt);
             }
         });
+        getContentPane().add(btn_start, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
 
         btn_stop.setText("Stop");
         btn_stop.addActionListener(new java.awt.event.ActionListener() {
@@ -355,10 +389,16 @@ public class MainBotForm extends javax.swing.JFrame {
                 btn_stopActionPerformed(evt);
             }
         });
+        getContentPane().add(btn_stop, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 10, -1, -1));
 
         lbl_twitter_access_key.setText("Public Access Key");
+        getContentPane().add(lbl_twitter_access_key, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 388, -1, -1));
 
         lbl_twitter_private_key.setText("Private Access Key");
+        getContentPane().add(lbl_twitter_private_key, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 418, -1, -1));
+        getContentPane().add(pwd_twitter_private_key, new org.netbeans.lib.awtextra.AbsoluteConstraints(533, 412, 74, -1));
+        getContentPane().add(pwd_twitter_public_key, new org.netbeans.lib.awtextra.AbsoluteConstraints(533, 382, 74, -1));
+        getContentPane().add(pwd_twitter_public_consumer_key, new org.netbeans.lib.awtextra.AbsoluteConstraints(533, 316, 74, -1));
 
         BTN_License.setText("Licenses");
         BTN_License.addActionListener(new java.awt.event.ActionListener() {
@@ -366,6 +406,7 @@ public class MainBotForm extends javax.swing.JFrame {
                 BTN_LicenseActionPerformed(evt);
             }
         });
+        getContentPane().add(BTN_License, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 307, -1, -1));
 
         tbl_contracts.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -395,12 +436,15 @@ public class MainBotForm extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(tbl_contracts);
 
+        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 40, 340, 220));
+
         btn_add_contract.setText("Add");
         btn_add_contract.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_add_contractActionPerformed(evt);
             }
         });
+        getContentPane().add(btn_add_contract, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 10, 67, -1));
 
         btn_remove_contract.setText("Remove");
         btn_remove_contract.addActionListener(new java.awt.event.ActionListener() {
@@ -408,10 +452,13 @@ public class MainBotForm extends javax.swing.JFrame {
                 btn_remove_contractActionPerformed(evt);
             }
         });
+        getContentPane().add(btn_remove_contract, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 10, -1, -1));
 
         cb_stat.setText("Stat");
+        getContentPane().add(cb_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(619, 341, -1, -1));
 
         cb_sales.setText("Sales");
+        getContentPane().add(cb_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(723, 341, -1, -1));
 
         BTN_Configuration.setText("Configuration");
         BTN_Configuration.addActionListener(new java.awt.event.ActionListener() {
@@ -419,10 +466,14 @@ public class MainBotForm extends javax.swing.JFrame {
                 BTN_ConfigurationActionPerformed(evt);
             }
         });
+        getContentPane().add(BTN_Configuration, new org.netbeans.lib.awtextra.AbsoluteConstraints(284, 307, -1, -1));
 
         lbl_discord_token.setText("Discord token");
+        getContentPane().add(lbl_discord_token, new org.netbeans.lib.awtextra.AbsoluteConstraints(619, 389, -1, -1));
+        getContentPane().add(pwd_discord_token, new org.netbeans.lib.awtextra.AbsoluteConstraints(723, 383, 74, -1));
 
         lbl_discord_channel.setText("Discord channel");
+        getContentPane().add(lbl_discord_channel, new org.netbeans.lib.awtextra.AbsoluteConstraints(619, 419, -1, -1));
 
         cb_twitter.setText("Twitter");
         cb_twitter.addActionListener(new java.awt.event.ActionListener() {
@@ -430,6 +481,7 @@ public class MainBotForm extends javax.swing.JFrame {
                 cb_twitterActionPerformed(evt);
             }
         });
+        getContentPane().add(cb_twitter, new org.netbeans.lib.awtextra.AbsoluteConstraints(619, 365, -1, -1));
 
         cb_discord.setText("Discord");
         cb_discord.addActionListener(new java.awt.event.ActionListener() {
@@ -437,6 +489,8 @@ public class MainBotForm extends javax.swing.JFrame {
                 cb_discordActionPerformed(evt);
             }
         });
+        getContentPane().add(cb_discord, new org.netbeans.lib.awtextra.AbsoluteConstraints(723, 365, 80, -1));
+        getContentPane().add(txt_discord_channel, new org.netbeans.lib.awtextra.AbsoluteConstraints(723, 413, 74, -1));
 
         tbl_item.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -461,6 +515,8 @@ public class MainBotForm extends javax.swing.JFrame {
         });
         jScrollPane4.setViewportView(tbl_item);
 
+        getContentPane().add(jScrollPane4, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 40, 200, 220));
+
         tbl_seller.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -484,12 +540,15 @@ public class MainBotForm extends javax.swing.JFrame {
         });
         jScrollPane5.setViewportView(tbl_seller);
 
+        getContentPane().add(jScrollPane5, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 40, 230, 220));
+
         btn_remove_seller.setText("Remove");
         btn_remove_seller.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_remove_sellerActionPerformed(evt);
             }
         });
+        getContentPane().add(btn_remove_seller, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 10, -1, -1));
 
         btn_add_seller.setText("Add");
         btn_add_seller.addActionListener(new java.awt.event.ActionListener() {
@@ -497,6 +556,7 @@ public class MainBotForm extends javax.swing.JFrame {
                 btn_add_sellerActionPerformed(evt);
             }
         });
+        getContentPane().add(btn_add_seller, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 10, 67, -1));
 
         btn_remove_item.setText("Remove");
         btn_remove_item.addActionListener(new java.awt.event.ActionListener() {
@@ -504,6 +564,7 @@ public class MainBotForm extends javax.swing.JFrame {
                 btn_remove_itemActionPerformed(evt);
             }
         });
+        getContentPane().add(btn_remove_item, new org.netbeans.lib.awtextra.AbsoluteConstraints(890, 10, -1, -1));
 
         btn_add_item.setText("Add");
         btn_add_item.addActionListener(new java.awt.event.ActionListener() {
@@ -511,6 +572,7 @@ public class MainBotForm extends javax.swing.JFrame {
                 btn_add_itemActionPerformed(evt);
             }
         });
+        getContentPane().add(btn_add_item, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 10, 67, -1));
 
         tbl_marketplace.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -542,12 +604,15 @@ public class MainBotForm extends javax.swing.JFrame {
         });
         jScrollPane3.setViewportView(tbl_marketplace);
 
+        getContentPane().add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 40, 160, 220));
+
         btn_import.setText("Import");
         btn_import.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_importActionPerformed(evt);
             }
         });
+        getContentPane().add(btn_import, new org.netbeans.lib.awtextra.AbsoluteConstraints(619, 307, -1, -1));
 
         btn_export.setText("Export");
         btn_export.addActionListener(new java.awt.event.ActionListener() {
@@ -555,187 +620,33 @@ public class MainBotForm extends javax.swing.JFrame {
                 btn_exportActionPerformed(evt);
             }
         });
+        getContentPane().add(btn_export, new org.netbeans.lib.awtextra.AbsoluteConstraints(723, 307, -1, -1));
 
         lbl_royalty_wallet.setText("Royalty wallet");
+        getContentPane().add(lbl_royalty_wallet, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 272, -1, -1));
 
         tb_royalty_wallet.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 tb_royalty_walletFocusLost(evt);
             }
         });
+        getContentPane().add(tb_royalty_wallet, new org.netbeans.lib.awtextra.AbsoluteConstraints(102, 266, 170, -1));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(BTN_License)
-                                .addGap(50, 50, 50)
-                                .addComponent(jLabel1)
-                                .addGap(61, 61, 61)
-                                .addComponent(BTN_Configuration))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 385, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(lbl_twitter_public_consumer_key)
-                                .addGap(12, 12, 12)
-                                .addComponent(pwd_twitter_public_consumer_key, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(3, 3, 3)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(lbl_twitter_private_consumer_key)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(pwd_twitter_private_consumer_key, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(lbl_twitter_access_key)
-                                            .addComponent(lbl_twitter_private_key))
-                                        .addGap(20, 20, 20)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(pwd_twitter_public_key, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(pwd_twitter_private_key, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                        .addGap(12, 12, 12)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lbl_discord_token)
-                                    .addComponent(lbl_discord_channel))
-                                .addGap(14, 14, 14)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(pwd_discord_token, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txt_discord_channel, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(cb_stat)
-                                    .addComponent(cb_twitter)
-                                    .addComponent(btn_import))
-                                .addGap(41, 41, 41)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(cb_discord)
-                                    .addComponent(cb_sales)
-                                    .addComponent(btn_export)))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(btn_start)
-                                        .addGap(41, 41, 41)
-                                        .addComponent(btn_stop))
-                                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(btn_add_contract, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 122, Short.MAX_VALUE)
-                                        .addComponent(btn_remove_contract))
-                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(btn_add_seller, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(59, 59, 59)
-                                        .addComponent(btn_remove_seller)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(btn_add_item, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(btn_remove_item))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(lbl_royalty_wallet)
-                                .addGap(18, 18, 18)
-                                .addComponent(tb_royalty_wallet, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE)))))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btn_add_item)
-                    .addComponent(btn_remove_item)
-                    .addComponent(btn_remove_seller)
-                    .addComponent(btn_add_seller)
-                    .addComponent(btn_remove_contract)
-                    .addComponent(btn_add_contract)
-                    .addComponent(btn_start)
-                    .addComponent(btn_stop))
-                .addGap(6, 6, 6)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbl_royalty_wallet)
-                    .addComponent(tb_royalty_wallet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btn_export)
-                            .addComponent(btn_import))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cb_stat)
-                            .addComponent(cb_sales))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cb_discord)
-                            .addComponent(cb_twitter))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(lbl_discord_token)
-                                .addGap(36, 36, 36))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(pwd_discord_token, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(2, 2, 2)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(txt_discord_channel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lbl_discord_channel)))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(pwd_twitter_public_consumer_key, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lbl_twitter_public_consumer_key))
-                                .addGap(4, 4, 4)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(pwd_twitter_private_consumer_key, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lbl_twitter_private_consumer_key))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(pwd_twitter_public_key, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lbl_twitter_access_key))
-                                .addGap(2, 2, 2)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(pwd_twitter_private_key, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lbl_twitter_private_key)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel1)
-                                    .addComponent(BTN_License)
-                                    .addComponent(BTN_Configuration))
-                                .addGap(15, 15, 15)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 1, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-        );
+        lbl_telegram_token.setText("Telegram token");
+        getContentPane().add(lbl_telegram_token, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 390, -1, -1));
+        getContentPane().add(pwd_telegram_token, new org.netbeans.lib.awtextra.AbsoluteConstraints(900, 380, 74, -1));
+        getContentPane().add(txt_telegram_channel, new org.netbeans.lib.awtextra.AbsoluteConstraints(900, 410, 74, -1));
 
-        lbl_twitter_public_consumer_key.getAccessibleContext().setAccessibleName("lbl_twitter_login");
-        lbl_twitter_private_consumer_key.getAccessibleContext().setAccessibleName("lbl_twitter_password");
+        lbl_telegram_channel.setText("Telegram channel");
+        getContentPane().add(lbl_telegram_channel, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 420, -1, -1));
+
+        cb_telegram.setText("Telegram");
+        cb_telegram.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cb_telegramActionPerformed(evt);
+            }
+        });
+        getContentPane().add(cb_telegram, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 365, -1, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -1042,6 +953,10 @@ public class MainBotForm extends javax.swing.JFrame {
         setStateComponent(true);
     }//GEN-LAST:event_tb_royalty_walletFocusLost
 
+    private void cb_telegramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_telegramActionPerformed
+        setStateComponent(true);
+    }//GEN-LAST:event_cb_telegramActionPerformed
+
     private void addRow(JTable tableToAdd) {
         ((DefaultTableModel) tableToAdd.getModel()).addRow(new Object[]{""});
         setStateComponent(true);
@@ -1130,8 +1045,20 @@ public class MainBotForm extends javax.swing.JFrame {
                 isDataCorrect = false;
             }
         }
+        
+        if (cb_telegram.isSelected()) {
 
-        if (!cb_discord.isSelected() && !cb_twitter.isSelected()) {
+            if (new String(pwd_telegram_token.getPassword()).isBlank()) {
+                isDataCorrect = false;
+            }
+
+            if (txt_telegram_channel.getText().isBlank()) {
+                isDataCorrect = false;
+            }
+        }
+        
+
+        if (!cb_discord.isSelected() && !cb_twitter.isSelected() && !cb_telegram.isSelected() ) {
             isDataCorrect = false;
         }
 
@@ -1160,14 +1087,21 @@ public class MainBotForm extends javax.swing.JFrame {
 
         if (cb_discord.isSelected()) {
             DiscordSocialNetwork discordSocialNetwork = new DiscordSocialNetwork();
-            discordSocialNetwork.instanceDiscord(new String(pwd_discord_token.getPassword()), txt_discord_channel.getText(), model);
+            discordSocialNetwork.instanceDiscord(new String(pwd_discord_token.getPassword()), txt_discord_channel.getText());
             socialNetworks.add(discordSocialNetwork);
         }
 
         if (cb_twitter.isSelected()) {
             TwitterSocialNetwork twitterSocialNetwork = new TwitterSocialNetwork();
-            twitterSocialNetwork.instanceTwitter(new String(pwd_twitter_public_consumer_key.getPassword()), new String(pwd_twitter_private_consumer_key.getPassword()), new String(pwd_twitter_public_key.getPassword()), new String(pwd_twitter_private_key.getPassword()), model);
+            twitterSocialNetwork.instanceTwitter(new String(pwd_twitter_public_consumer_key.getPassword()), new String(pwd_twitter_private_consumer_key.getPassword()), new String(pwd_twitter_public_key.getPassword()), new String(pwd_twitter_private_key.getPassword()));
             socialNetworks.add(twitterSocialNetwork);
+
+        }
+        
+        if (cb_telegram.isSelected()) {
+            TelegramSocialNetwork telegramSocialNetwork = new TelegramSocialNetwork();
+            telegramSocialNetwork.instanceTelegram(new String(pwd_telegram_token.getPassword()), txt_telegram_channel.getText());
+            socialNetworks.add(telegramSocialNetwork);
 
         }
 
@@ -1365,6 +1299,7 @@ public class MainBotForm extends javax.swing.JFrame {
     private javax.swing.JCheckBox cb_discord;
     private javax.swing.JCheckBox cb_sales;
     private javax.swing.JCheckBox cb_stat;
+    private javax.swing.JCheckBox cb_telegram;
     private javax.swing.JCheckBox cb_twitter;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
@@ -1373,13 +1308,19 @@ public class MainBotForm extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JLabel lbl_discord_channel;
+    private javax.swing.JLabel lbl_discord_channel1;
     private javax.swing.JLabel lbl_discord_token;
+    private javax.swing.JLabel lbl_discord_token1;
     private javax.swing.JLabel lbl_royalty_wallet;
+    private javax.swing.JLabel lbl_telegram_channel;
+    private javax.swing.JLabel lbl_telegram_token;
     private javax.swing.JLabel lbl_twitter_access_key;
     private javax.swing.JLabel lbl_twitter_private_consumer_key;
     private javax.swing.JLabel lbl_twitter_private_key;
     private javax.swing.JLabel lbl_twitter_public_consumer_key;
     private javax.swing.JPasswordField pwd_discord_token;
+    private javax.swing.JPasswordField pwd_discord_token1;
+    private javax.swing.JPasswordField pwd_telegram_token;
     private javax.swing.JPasswordField pwd_twitter_private_consumer_key;
     private javax.swing.JPasswordField pwd_twitter_private_key;
     private javax.swing.JPasswordField pwd_twitter_public_consumer_key;
@@ -1391,5 +1332,7 @@ public class MainBotForm extends javax.swing.JFrame {
     private javax.swing.JTable tbl_seller;
     private javax.swing.JTable tbl_status;
     private javax.swing.JTextField txt_discord_channel;
+    private javax.swing.JTextField txt_discord_channel1;
+    private javax.swing.JTextField txt_telegram_channel;
     // End of variables declaration//GEN-END:variables
 }
