@@ -77,7 +77,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
                 POST_PARAMS = "{ \"query\" : \"query MyQuery {  fa(where: {contract: {_in: [ "+buildIn+" ]}}) { contract collection_id  name path  tokens (where: { offers: {_and: {update_timestamp: {_gt: \\\"" + previousUTCHour.toString() + "\\\"}, status: {_eq: \\\"concluded\\\"}}}}) {      name   token_id display_uri  offers(where: {_and: {status: {_eq: \\\"concluded\\\"}}, update_timestamp: {_gt: \\\""+ previousUTCHour.toString() +"\\\"}})  {        id        update_timestamp        price   buyer {    address   tzdomain }  seller {   address   tzdomain }    }    }  }}\"}";
                 break;
             case 2 :
-                POST_PARAMS = "{ \"query\" : \"query MyQuery {  obj_fulfilled_dutch(where: {_and: {dutch_auction: {fa: {contract: {_in: [ "+buildIn+" ]}}, timestamp: {_gt: \\\"" + previousUTCHour.toString() + "\\\"}}}}) {    price    id    timestamp  buyer {    address   tzdomain }  seller {   address   tzdomain }   token {      token_id    name display_uri  }  dutch_auction {      fa {   name     path  contract    }    }  }}\"}";
+                POST_PARAMS = "{ \"query\" : \"query MyQuery {  dutch_auction_sale(where: {_and: {dutch_auction: {fa: {contract: {_in: [ "+buildIn+" ]}}, timestamp: {_gt: \\\"" + previousUTCHour.toString() + "\\\"}}}}) {    price    id    timestamp  buyer {    address   tzdomain }  seller {   address   tzdomain }   token {      token_id    name display_uri  }  dutch_auction {      fa {   name     path  contract    }    }  }}\"}";
                 break;
             case 3 :
                 POST_PARAMS =" { \"query\" : \"query MyQuery {  fa(where: {contract: {_in: [ "+buildIn+" ]}}) { contract   collection_id    name path    tokens(where: {english_auctions: {highest_bid: {_gt: \\\"0\\\"}, end_time: {_gt: \\\""+ previousUTCHour.toString() +"\\\"}, status: {_eq: \\\"concluded\\\"}}}) {      name      token_id   display_uri   english_auctions(where: {highest_bid: {_gt: \\\"0\\\"}, end_time: {_gt: \\\""+ previousUTCHour.toString() +"\\\"}, status: {_eq: \\\"concluded\\\"}}) {        highest_bid        id        end_time  highest_bidder {   address   tzdomain }  seller {   address   tzdomain }    }    }  }} \"}";
@@ -234,7 +234,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
             }
         }
         else{
-            JsonArray success_dutch_auctions = resJson.getAsJsonObject("data").getAsJsonArray("obj_fulfilled_dutch");
+            JsonArray success_dutch_auctions = resJson.getAsJsonObject("data").getAsJsonArray("dutch_auction_sale");
 
             for(Object c : success_dutch_auctions){
                 JsonObject success_dutch_auction = (JsonObject) c;

@@ -11,11 +11,11 @@ import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetwor
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Contract;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterface.CreatorThreadSocialNetworkInterface;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.LinkedHashMap;
-import java.util.Random;
 import twitter4j.StatusUpdate;
 import twitter4j.UploadedMedia;
 
@@ -49,7 +49,6 @@ public class ThreadTwitterMessage implements CreatorThreadSocialNetworkInterface
         }
         else if (mode == BotModeEnum.Sale) {
 
-            Random rand = new Random();
             for (Sale aSale : messageSaver.keySet()) {
 
                 
@@ -67,13 +66,25 @@ public class ThreadTwitterMessage implements CreatorThreadSocialNetworkInterface
                         
                         String ipfsName = aSale.getPathname() == null ? aSale.getName() : aSale.getPathname();
                         
-                        UploadedMedia media = twitter.uploadAMedia(ipfsName, ipfsMedia);
-                        long mediaId = media.getMediaId();
+                        byte[] mediaIPFS = org.apache.commons.io.IOUtils.toByteArray(ipfsMedia);
+                        
+                        //I know it's ridiculous but I try to know the size of the picture
+                        if (mediaIPFS.length < 5242880){ 
+                        
+                            InputStream targetStream = new ByteArrayInputStream(mediaIPFS);
+                            
+                            UploadedMedia media = twitter.uploadAMedia(ipfsName, targetStream);
+                            long mediaId = media.getMediaId();
 
-                        newStatus.setMediaIds(mediaId);
-                        ipfsMedia.close();
-                        urlConn = null;
-                        newURL = null;
+                            newStatus.setMediaIds(mediaId);
+                            ipfsMedia.close();
+                            urlConn = null;
+                            newURL = null;
+                        }else{
+                            urlConn = null;
+                            newURL = null;
+                            throw new Exception("Image size is too big");
+                        }
                     } catch (Exception ex) {
                         LogManager.getLogManager().writeLog(TwitterSocialNetwork.class.getName(), ex);
                     }

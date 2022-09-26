@@ -47,156 +47,73 @@ public class LicenseBot extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
         jLabel21 = new javax.swing.JLabel();
         jLabel22 = new javax.swing.JLabel();
+        jLabel23 = new javax.swing.JLabel();
 
         jLabel11.setText("Twitter API");
 
         jLabel18.setText("Twitter API");
 
+        setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
         jLabel1.setText("Package used");
+        add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 6, -1, -1));
 
         jLabel2.setText("org.twitter4J 4.0.7 : Apache License 2.0");
+        add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, -1, -1));
 
         jLabel5.setText("JDK and JRE (17)");
+        add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(167, 268, -1, -1));
 
         jLabel6.setText("Objkt API");
+        add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 224, -1, -1));
 
         jLabel7.setText("Twitter API");
+        add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 246, -1, -1));
 
         jLabel8.setText("License of this software");
+        add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(86, 334, -1, -1));
 
         jLabel9.setText("Apache License 2.0");
+        add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(108, 358, -1, -1));
 
         jLabel10.setText("API used");
+        add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 173, -1, -1));
 
         jLabel12.setText("Adoptium : GLPv2 + CE and GLPv2 + Assembly");
+        add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(17, 312, -1, -1));
 
         jLabel13.setText("IPFS Gateway used");
+        add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(167, 173, -1, -1));
 
         jLabel14.setText("Cloudflare IPFS");
+        add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(188, 212, -1, -1));
 
         jLabel15.setText("com.google.code.gson 2.9.0 Apache License 2.0");
+        add(jLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, -1, -1));
 
         jLabel16.setText("org.ini4j.ini4j 0.5.4 Apache License 2.0");
+        add(jLabel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, -1, -1));
 
         jLabel17.setText("com.github.DV8FromTheWorld.JDA v5.0.0-alpha.11 Apache License 2.0");
+        add(jLabel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, -1, -1));
 
         jLabel19.setText("Teia API (from Zir0h) ");
+        add(jLabel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 268, -1, -1));
 
         jLabel20.setText("FxHash API");
+        add(jLabel20, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 290, -1, -1));
 
         jLabel3.setText("Powered by TzKT API");
+        add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 202, -1, -1));
 
         jLabel21.setText("Rarible API");
+        add(jLabel21, new org.netbeans.lib.awtextra.AbsoluteConstraints(188, 234, -1, -1));
 
         jLabel22.setText("com.github.pengrad.java-telegram-bot-api.6.2.0 Apache License 2.0");
+        add(jLabel22, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 110, -1, -1));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(100, 100, 100)
-                        .addComponent(jLabel1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(jLabel2))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(jLabel15))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(jLabel16))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(jLabel17))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel22))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(jLabel19)
-                        .addGap(46, 46, 46)
-                        .addComponent(jLabel5))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(jLabel20))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(17, 17, 17)
-                        .addComponent(jLabel12))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(86, 86, 86)
-                        .addComponent(jLabel8))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(108, 108, 108)
-                        .addComponent(jLabel9))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(6, 6, 6)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel6)
-                                    .addComponent(jLabel7)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jLabel3)))
-                        .addGap(67, 67, 67)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel14)
-                            .addComponent(jLabel21)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel10)
-                        .addGap(112, 112, 112)
-                        .addComponent(jLabel13)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel2)
-                .addGap(12, 12, 12)
-                .addComponent(jLabel15)
-                .addGap(12, 12, 12)
-                .addComponent(jLabel16)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel17)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel22)
-                .addGap(5, 5, 5)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel10)
-                    .addComponent(jLabel13))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(13, 13, 13)
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel6)
-                        .addGap(6, 6, 6)
-                        .addComponent(jLabel7))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(23, 23, 23)
-                        .addComponent(jLabel14)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel21)))
-                .addGap(6, 6, 6)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel19)
-                    .addComponent(jLabel5))
-                .addGap(6, 6, 6)
-                .addComponent(jLabel20)
-                .addGap(6, 6, 6)
-                .addComponent(jLabel12)
-                .addGap(6, 6, 6)
-                .addComponent(jLabel8)
-                .addGap(8, 8, 8)
-                .addComponent(jLabel9))
-        );
+        jLabel23.setText("commons-io.commons-io.2.11 Apache License 2.0");
+        add(jLabel23, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, -1, -1));
     }// </editor-fold>//GEN-END:initComponents
 
 
@@ -216,6 +133,7 @@ public class LicenseBot extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;

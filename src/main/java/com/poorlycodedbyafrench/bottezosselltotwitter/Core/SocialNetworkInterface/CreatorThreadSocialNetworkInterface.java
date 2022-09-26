@@ -4,10 +4,6 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterface;
 
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
-import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
