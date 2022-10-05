@@ -150,8 +150,11 @@ public class MarketPlace {
                 if (mode == BotModeEnum.Stat && lasttimeStamp.isAfter(lastrefresh.getLastSucessfullStatRefresh())){
                     lastrefresh.setLastSucessfullStatRefresh(lasttimeStamp);
                 }
-                else if(lasttimeStamp.isAfter(lastrefresh.getLastSucessfullSaleRefresh())){
+                else if(mode == BotModeEnum.Sale && lasttimeStamp.isAfter(lastrefresh.getLastSucessfullSaleRefresh())){
                     lastrefresh.setLastSucessfullSaleRefresh(lasttimeStamp);
+                }
+                else if(mode == BotModeEnum.ListingAndBidding && lasttimeStamp.isAfter(lastrefresh.getLastSucessfullListingAndBiddingRefresh())){
+                    lastrefresh.setLastSucessfullListingAndBiddingRefresh(lasttimeStamp);
                 }
             }
         }

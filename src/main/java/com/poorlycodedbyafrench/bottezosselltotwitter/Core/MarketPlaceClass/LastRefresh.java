@@ -26,6 +26,11 @@ public class LastRefresh {
      */
     private Instant lastSucessfullStatRefresh;
     
+     /**
+     * Last timestamp of sucessful listing and bidding refresh
+     */
+    private Instant lastSucessfullListingAndBiddingRefresh;
+    
     private Instant startTime;
     
     public LastRefresh(){
@@ -39,6 +44,8 @@ public class LastRefresh {
         this.lastSucessfullSaleRefresh = Instant.now().minus(BotConfiguration.getConfiguration().getRefreshSalesTime(), ChronoUnit.valueOf(BotConfiguration.getConfiguration().getRefreshSales().toString().toUpperCase()));
         
         this.lastSucessfullStatRefresh = Instant.now().minus(BotConfiguration.getConfiguration().getRefreshSalesStats(), ChronoUnit.valueOf(BotConfiguration.getConfiguration().getRefreshStats().toString().toUpperCase()));
+        
+        this.lastSucessfullListingAndBiddingRefresh = Instant.now().minus(BotConfiguration.getConfiguration().getRefreshListingAndBiddingTime(), ChronoUnit.valueOf(BotConfiguration.getConfiguration().getRefreshListingAndBidding().toString().toUpperCase()));
         
         this.startTime = Instant.now();
     }
@@ -60,6 +67,14 @@ public class LastRefresh {
         this.lastSucessfullStatRefresh = lastSucessfullStatRefresh;
     }
 
+    public Instant getLastSucessfullListingAndBiddingRefresh() {
+        return lastSucessfullListingAndBiddingRefresh;
+    }
+
+    public void setLastSucessfullListingAndBiddingRefresh(Instant lastSucessfullListingAndBiddingRefresh) {
+        this.lastSucessfullListingAndBiddingRefresh = lastSucessfullListingAndBiddingRefresh;
+    }
+    
     public Instant getStartTime() {
         return startTime;
     }

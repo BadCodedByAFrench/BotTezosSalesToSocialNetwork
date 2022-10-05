@@ -7,6 +7,7 @@ package com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.ApiRunnable.SalesToSocialNetwork;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SaleTypeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.MarketPlace;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
 import java.time.temporal.ChronoUnit;
@@ -20,86 +21,124 @@ import java.util.List;
  * @author david
  */
 public class SalesHistoryManager {
-    
+
     private HashMap<String, Sale> salesHistory;
     private HashMap<String, Sale> statHistory;
-    
+    private HashMap<String, Sale> listingAndBiddingHistory;
+
     private static SalesHistoryManager salesHistoryManager;
-    
-    private SalesHistoryManager(){
+
+    private SalesHistoryManager() {
         salesHistory = new HashMap<String, Sale>();
         statHistory = new HashMap<String, Sale>();
+        listingAndBiddingHistory = new HashMap<String, Sale>();
     }
-    
-    public static SalesHistoryManager getSalesHistoryManager(){
-        if(salesHistoryManager == null){
+
+    public static SalesHistoryManager getSalesHistoryManager() {
+        if (salesHistoryManager == null) {
             salesHistoryManager = new SalesHistoryManager();
         }
-        
+
         return salesHistoryManager;
     }
-    
-    public List<Sale> checkNewSales(Collection<Sale> newSalesList, BotModeEnum mode, HashMap<MarketPlaceEnum,MarketPlace> marketplaces){
-        
+
+    public List<Sale> checkNewSales(Collection<Sale> newSalesList, BotModeEnum mode, HashMap<MarketPlaceEnum, MarketPlace> marketplaces) {
+
         List<Sale> saleToShow = new ArrayList<Sale>();
-        
-        if (mode == BotModeEnum.Sale){
-            for(Sale aSale : newSalesList){
-                if(!salesHistory.containsKey(aSale.getIdtransaction()) && aSale.getTimestamp().isAfter(marketplaces.get(aSale.getMarketplace()).getLastrefresh().getStartTime())){
-                    
-                    boolean sellerCheck =true;
+
+        if (mode == BotModeEnum.Sale) {
+            for (Sale aSale : newSalesList) {
+                if (!salesHistory.containsKey(aSale.getIdtransaction()) && aSale.getTimestamp().isAfter(marketplaces.get(aSale.getMarketplace()).getLastrefresh().getStartTime())) {
+
+                    boolean sellerCheck = true;
                     boolean itemCheck = true;
-                    
-                    if(!marketplaces.get(aSale.getMarketplace()).getSellerList().get(aSale.getContract()).isEmpty()  && !marketplaces.get(aSale.getMarketplace()).getSellerList().get(aSale.getContract()).contains(aSale.getSeller().getAdress()) ){
+
+                    if (!marketplaces.get(aSale.getMarketplace()).getSellerList().get(aSale.getContract()).isEmpty() && !marketplaces.get(aSale.getMarketplace()).getSellerList().get(aSale.getContract()).contains(aSale.getSeller().getAdress())) {
                         sellerCheck = false;
                     }
-                    
-                    if(!marketplaces.get(aSale.getMarketplace()).getItemList().get(aSale.getContract()).isEmpty() && !marketplaces.get(aSale.getMarketplace()).getItemList().get(aSale.getContract()).contains(aSale.getId().toString())){
+
+                    if (!marketplaces.get(aSale.getMarketplace()).getItemList().get(aSale.getContract()).isEmpty() && !marketplaces.get(aSale.getMarketplace()).getItemList().get(aSale.getContract()).contains(aSale.getId().toString())) {
                         itemCheck = false;
                     }
-                    
-                    if(itemCheck && sellerCheck){
+
+                    if (itemCheck && sellerCheck) {
                         saleToShow.add(aSale);
                         salesHistory.put(aSale.getIdtransaction(), aSale);
                     }
                 }
             }
-        }
-        else if (mode == BotModeEnum.Stat ){
-            for(Sale aSale : newSalesList){
-                if(!statHistory.containsKey(aSale.getIdtransaction()) && aSale.getTimestamp().isAfter(marketplaces.get(aSale.getMarketplace()).getLastrefresh().getStartTime())){
+        } else if (mode == BotModeEnum.Stat) {
+            for (Sale aSale : newSalesList) {
+                if (!statHistory.containsKey(aSale.getIdtransaction()) && aSale.getTimestamp().isAfter(marketplaces.get(aSale.getMarketplace()).getLastrefresh().getStartTime())) {
                     saleToShow.add(aSale);
                     statHistory.put(aSale.getIdtransaction(), aSale);
                 }
             }
+        } else if (mode == BotModeEnum.ListingAndBidding) {
+            for (Sale aSale : newSalesList) {
+                if (!listingAndBiddingHistory.containsKey(aSale.getIdtransaction()) && aSale.getTimestamp().isAfter(marketplaces.get(aSale.getMarketplace()).getLastrefresh().getStartTime())) {
+                    boolean buyerorsellerCheck = true;
+                    boolean itemCheck = true;
+
+                    if (aSale.getType() != SaleTypeEnum.NewFloorOffer && aSale.getType() != SaleTypeEnum.NewBidding) {
+                        if (!marketplaces.get(aSale.getMarketplace()).getSellerList().get(aSale.getContract()).isEmpty() && !marketplaces.get(aSale.getMarketplace()).getSellerList().get(aSale.getContract()).contains(aSale.getSeller().getAdress())) {
+                            buyerorsellerCheck = false;
+                        }
+                    } else {
+                        if (!marketplaces.get(aSale.getMarketplace()).getSellerList().get(aSale.getContract()).isEmpty() && !marketplaces.get(aSale.getMarketplace()).getSellerList().get(aSale.getContract()).contains(aSale.getBuyer().getAdress())) {
+                            buyerorsellerCheck = false;
+                        }
+                    }
+
+                    if (aSale.getType() != SaleTypeEnum.NewFloorOffer) {
+                        if (!marketplaces.get(aSale.getMarketplace()).getItemList().get(aSale.getContract()).isEmpty() && !marketplaces.get(aSale.getMarketplace()).getItemList().get(aSale.getContract()).contains(aSale.getId().toString())) {
+                            itemCheck = false;
+                        }
+                    }
+
+                    if (itemCheck && buyerorsellerCheck) {
+                        saleToShow.add(aSale);
+                        listingAndBiddingHistory.put(aSale.getIdtransaction(), aSale);
+                    }
+                }
+            }
         }
-        
+
         return saleToShow;
     }
-    
-    public void removeOldestSales(BotModeEnum mode, HashMap<MarketPlaceEnum,MarketPlace> marketplaces, HashMap<String,Sale> allNewSales, ArrayList<MarketPlaceEnum> finishedMarketPlaceToCheck){
+
+    public void removeOldestSales(BotModeEnum mode, HashMap<MarketPlaceEnum, MarketPlace> marketplaces, HashMap<String, Sale> allNewSales, ArrayList<MarketPlaceEnum> finishedMarketPlaceToCheck) {
         List<String> idsToDelete = new ArrayList<String>();
-        
-        if(mode == BotModeEnum.Stat){
-            for(Sale aSale : statHistory.values()){ 
-                if(!allNewSales.containsKey(aSale.getIdtransaction()) && finishedMarketPlaceToCheck.contains(aSale.getMarketplace())){
+
+        if (mode == BotModeEnum.Stat) {
+            for (Sale aSale : statHistory.values()) {
+                if (!allNewSales.containsKey(aSale.getIdtransaction()) && finishedMarketPlaceToCheck.contains(aSale.getMarketplace())) {
                     idsToDelete.add(aSale.getIdtransaction());
                 }
             }
 
-            for(String id : idsToDelete){
+            for (String id : idsToDelete) {
                 statHistory.remove(id);
             }
-        }
-        else if (mode == BotModeEnum.Sale){
-            for(Sale aSale : salesHistory.values()){
-                if(!allNewSales.containsKey(aSale.getIdtransaction()) && finishedMarketPlaceToCheck.contains(aSale.getMarketplace())){
+        } else if (mode == BotModeEnum.Sale) {
+            for (Sale aSale : salesHistory.values()) {
+                if (!allNewSales.containsKey(aSale.getIdtransaction()) && finishedMarketPlaceToCheck.contains(aSale.getMarketplace())) {
                     idsToDelete.add(aSale.getIdtransaction());
                 }
             }
 
-            for(String id : idsToDelete){
+            for (String id : idsToDelete) {
                 salesHistory.remove(id);
+            }
+        } else if (mode == BotModeEnum.ListingAndBidding) {
+            for (Sale aSale : listingAndBiddingHistory.values()) {
+                if (!allNewSales.containsKey(aSale.getIdtransaction()) && finishedMarketPlaceToCheck.contains(aSale.getMarketplace())) {
+                    idsToDelete.add(aSale.getIdtransaction());
+                }
+            }
+
+            for (String id : idsToDelete) {
+                listingAndBiddingHistory.remove(id);
             }
         }
     }

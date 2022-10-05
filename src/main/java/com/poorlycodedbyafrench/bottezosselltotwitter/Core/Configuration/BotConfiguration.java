@@ -115,6 +115,83 @@ public class BotConfiguration {
      */
     private String nameroyaltywallet;
     
+    
+    
+     /**
+     * Units of listing and bidding refresh (Minutes/ Hours / Days)
+     */
+    private TimeUnit refreshListingAndBidding;
+    
+    /**
+     * How many time we want to wait between 2 Listing And Bidding refresh
+     */
+    private int refreshListingAndBiddingTime;
+    
+    /**
+     * If we want to keep the security Listing And Bidding Id
+     */
+    private boolean securityIdListingAndBidding;
+    
+     /**
+     * If we want to see the wallet for Listing And Bidding
+     */
+    private boolean adressListingAndBidding;
+    
+    /**
+     * If we want to get the ipfs file for Listing And Bidding (when possible) (Not recommended for big one)
+     */
+    private boolean ipfsListingAndBidding;
+    
+    /**
+     * If we want to get the new listing
+     */
+    private boolean activateListing;
+    
+    /**
+     * If we want to get the new english auction
+     */
+    private boolean activateEnglishAuction;
+    
+    /**
+     * If we want to get the new dutch auction
+     */
+    private boolean activateDutchAuction;
+    
+    /**
+     * If we want to get the new floor offer 
+     */
+    private boolean activateFloorOffer;
+    
+    /**
+     * If we want to get the new bidding
+     */
+    private boolean activateBidding;
+    
+    /**
+     * List of all sentences for a new listing
+     */
+    private List<String> sentencesListing;
+    
+    /**
+     * List of all sentences for a new english auction
+     */
+    private List<String> sentencesEnglishAuction;
+    
+    /**
+     * List of all sentences for a new dutch auction
+     */
+    private List<String> sentencesDutchAuction;
+    
+    /**
+     * List of all sentences for a new floor offer
+     */
+    private List<String> sentencesFloorOffer;
+    
+    /**
+     * List of all sentences for a bidding
+     */
+    private List<String> sentencesBidding;
+    
     /**
      * Random singleton
      */
@@ -136,6 +213,17 @@ public class BotConfiguration {
         this.minPriceStat = true;
         this.maxPriceStat = true;
         
+        this.refreshListingAndBidding = TimeUnit.HOURS;
+        this.refreshListingAndBiddingTime = 1;
+        this.securityIdListingAndBidding = true;
+        this.adressListingAndBidding = true;
+        this.ipfsListingAndBidding = true;
+        this.activateListing = true;
+        this.activateEnglishAuction = true;
+        this.activateDutchAuction = true;
+        this.activateFloorOffer = true;
+        this.activateBidding = true;
+        
         this.royaltywalletsale = true;
         this.royaltywalletstat = true;
         this.nameroyaltywallet = "Wallet balance";
@@ -148,6 +236,21 @@ public class BotConfiguration {
         hashtags = new ArrayList<String>();
         hashtags.add("Nft");
         hashtags.add("Tezos");
+        
+        sentencesListing = new ArrayList<String>();
+        sentencesListing.add("Grab it before it's too late !");
+        
+        sentencesEnglishAuction = new ArrayList<String>();
+        sentencesEnglishAuction.add("Don't miss this opportunity !");
+        
+        sentencesDutchAuction = new ArrayList<String>();
+        sentencesDutchAuction.add("Grab it before it's too late !");
+        
+        sentencesFloorOffer = new ArrayList<String>();
+        sentencesFloorOffer.add("Here come the FOMO!");
+        
+        sentencesBidding = new ArrayList<String>();
+        sentencesBidding.add("Hehe, a new bid");
     }
     
     /**
@@ -158,7 +261,7 @@ public class BotConfiguration {
         
         Wini ini = new Wini();
         
-        ini.put("BotConfig", "version", 3);
+        ini.put("BotConfig", "version", 4);
         
         ini.put("BotConfig", "refreshSales", refreshSales);
         ini.put("BotConfig", "refreshSalesTime", refreshSalesTime);
@@ -183,6 +286,25 @@ public class BotConfiguration {
         
         //version 3
         ini.put("BotConfig", "nameroyaltywallet", nameroyaltywallet);
+        
+        //version 4
+        ini.put("BotConfig", "refreshListingAndBidding", refreshListingAndBidding);
+        ini.put("BotConfig", "refreshListingAndBiddingTime", refreshListingAndBiddingTime);
+        ini.put("BotConfig", "securityIdListingAndBidding", securityIdListingAndBidding);
+        ini.put("BotConfig", "adressListingAndBidding", adressListingAndBidding);
+        ini.put("BotConfig", "ipfsListingAndBidding", ipfsListingAndBidding);
+        
+        ini.put("BotConfig", "activateListing", activateListing);
+        ini.put("BotConfig", "activateEnglishAuction", activateEnglishAuction);
+        ini.put("BotConfig", "activateDutchAuction", activateDutchAuction);
+        ini.put("BotConfig", "activateFloorOffer", activateFloorOffer);
+        ini.put("BotConfig", "activateBidding", activateBidding);
+        
+        ini.put("BotConfig", "sentencesListing", String.join("#&#", sentencesListing));
+        ini.put("BotConfig", "sentencesEnglishAuction", String.join("#&#", sentencesEnglishAuction));
+        ini.put("BotConfig", "sentencesDutchAuction", String.join("#&#", sentencesDutchAuction));
+        ini.put("BotConfig", "sentencesFloorOffer", String.join("#&#", sentencesFloorOffer));
+        ini.put("BotConfig", "sentencesBidding", String.join("#&#", sentencesBidding));
         
         JFileChooser chooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter(
@@ -247,8 +369,63 @@ public class BotConfiguration {
                 this.royaltywalletsale = ini.get("BotConfig", "royaltywalletsale", boolean.class);
                 this.royaltywalletstat = ini.get("BotConfig", "royaltywalletstat", boolean.class);
                 
-                if(version > 2){
+                if(version >= 3){
                     this.nameroyaltywallet = ini.get("BotConfig", "nameroyaltywallet", String.class);
+                }
+                
+                if(version >= 4){
+                    this.refreshListingAndBidding = ini.get("BotConfig", "refreshListingAndBidding", TimeUnit.class);
+                    this.refreshListingAndBiddingTime = ini.get("BotConfig", "refreshListingAndBiddingTime", int.class);
+                    this.securityIdListingAndBidding = ini.get("BotConfig", "securityIdListingAndBidding", boolean.class);
+                    this.adressListingAndBidding = ini.get("BotConfig", "adressListingAndBidding", boolean.class);
+                    this.ipfsListingAndBidding = ini.get("BotConfig", "ipfsListingAndBidding", boolean.class);
+
+                    this.activateListing = ini.get("BotConfig", "activateListing", boolean.class);
+                    this.activateEnglishAuction = ini.get("BotConfig", "activateEnglishAuction", boolean.class);
+                    this.activateDutchAuction = ini.get("BotConfig", "activateDutchAuction", boolean.class);
+                    this.activateFloorOffer = ini.get("BotConfig", "activateFloorOffer", boolean.class);
+                    this.activateBidding = ini.get("BotConfig", "activateBidding", boolean.class);
+                    
+                    String newListSentences = ini.get("BotConfig", "sentencesListing");
+                    String newEnglishAuctionSentences = ini.get("BotConfig", "sentencesEnglishAuction");
+                    String newDutchAuctionSentences = ini.get("BotConfig", "sentencesDutchAuction");
+                    String newFloorOfferSentences = ini.get("BotConfig", "sentencesFloorOffer");
+                    String newBiddingSentences = ini.get("BotConfig", "sentencesBidding");
+
+                    if(newListSentences.isBlank()){
+                        this.sentencesListing = new ArrayList<>();
+                    }
+                    else{
+                        this.sentencesListing = new ArrayList<> (Arrays.asList(newListSentences.split("#&#"))); 
+                    }
+                    
+                    if(newEnglishAuctionSentences.isBlank()){
+                        this.sentencesEnglishAuction = new ArrayList<>();
+                    }
+                    else{
+                        this.sentencesEnglishAuction = new ArrayList<> (Arrays.asList(newEnglishAuctionSentences.split("#&#"))); 
+                    }
+                    
+                    if(newDutchAuctionSentences.isBlank()){
+                        this.sentencesDutchAuction = new ArrayList<>();
+                    }
+                    else{
+                        this.sentencesDutchAuction = new ArrayList<> (Arrays.asList(newDutchAuctionSentences.split("#&#"))); 
+                    }
+                    
+                    if(newFloorOfferSentences.isBlank()){
+                        this.sentencesFloorOffer = new ArrayList<>();
+                    }
+                    else{
+                        this.sentencesFloorOffer = new ArrayList<> (Arrays.asList(newFloorOfferSentences.split("#&#"))); 
+                    }
+                    
+                    if(newBiddingSentences.isBlank()){
+                        this.sentencesBidding = new ArrayList<>();
+                    }
+                    else{
+                        this.sentencesBidding = new ArrayList<> (Arrays.asList(newBiddingSentences.split("#&#"))); 
+                    }
                 }
             }
             
@@ -406,4 +583,126 @@ public class BotConfiguration {
     public void setNameroyaltywallet(String nameroyaltywallet) {
         this.nameroyaltywallet = nameroyaltywallet;
     }
+
+    public TimeUnit getRefreshListingAndBidding() {
+        return refreshListingAndBidding;
+    }
+
+    public void setRefreshListingAndBidding(TimeUnit refreshListingAndBidding) {
+        this.refreshListingAndBidding = refreshListingAndBidding;
+    }
+
+    public int getRefreshListingAndBiddingTime() {
+        return refreshListingAndBiddingTime;
+    }
+
+    public void setRefreshListingAndBiddingTime(int refreshListingAndBiddingTime) {
+        this.refreshListingAndBiddingTime = refreshListingAndBiddingTime;
+    }
+
+    public boolean isSecurityIdListingAndBidding() {
+        return securityIdListingAndBidding;
+    }
+
+    public void setSecurityIdListingAndBidding(boolean securityIdListingAndBidding) {
+        this.securityIdListingAndBidding = securityIdListingAndBidding;
+    }
+
+    public boolean isAdressListingAndBidding() {
+        return adressListingAndBidding;
+    }
+
+    public void setAdressListingAndBidding(boolean adressListingAndBidding) {
+        this.adressListingAndBidding = adressListingAndBidding;
+    }
+
+    public boolean isIpfsListingAndBidding() {
+        return ipfsListingAndBidding;
+    }
+
+    public void setIpfsListingAndBidding(boolean ipfsListingAndBidding) {
+        this.ipfsListingAndBidding = ipfsListingAndBidding;
+    }
+
+    public boolean isActivateListing() {
+        return activateListing;
+    }
+
+    public void setActivateListing(boolean activateListing) {
+        this.activateListing = activateListing;
+    }
+
+    public boolean isActivateEnglishAuction() {
+        return activateEnglishAuction;
+    }
+
+    public void setActivateEnglishAuction(boolean activateEnglishAuction) {
+        this.activateEnglishAuction = activateEnglishAuction;
+    }
+
+    public boolean isActivateDutchAuction() {
+        return activateDutchAuction;
+    }
+
+    public void setActivateDutchAuction(boolean activateDutchAuction) {
+        this.activateDutchAuction = activateDutchAuction;
+    }
+
+    public boolean isActivateFloorOffer() {
+        return activateFloorOffer;
+    }
+
+    public void setActivateFloorOffer(boolean activateFloorOffer) {
+        this.activateFloorOffer = activateFloorOffer;
+    }
+
+    public boolean isActivateBidding() {
+        return activateBidding;
+    }
+
+    public void setActivateBidding(boolean activateBidding) {
+        this.activateBidding = activateBidding;
+    }
+
+    public List<String> getSentencesListing() {
+        return sentencesListing;
+    }
+
+    public void setSentencesListing(List<String> sentencesListing) {
+        this.sentencesListing = sentencesListing;
+    }
+
+    public List<String> getSentencesEnglishAuction() {
+        return sentencesEnglishAuction;
+    }
+
+    public void setSentencesEnglishAuction(List<String> sentencesEnglishAuction) {
+        this.sentencesEnglishAuction = sentencesEnglishAuction;
+    }
+
+    public List<String> getSentencesDutchAuction() {
+        return sentencesDutchAuction;
+    }
+
+    public void setSentencesDutchAuction(List<String> sentencesDutchAuction) {
+        this.sentencesDutchAuction = sentencesDutchAuction;
+    }
+
+    public List<String> getSentencesFloorOffer() {
+        return sentencesFloorOffer;
+    }
+
+    public void setSentencesFloorOffer(List<String> sentencesFloorOffer) {
+        this.sentencesFloorOffer = sentencesFloorOffer;
+    }
+
+    public List<String> getSentencesBidding() {
+        return sentencesBidding;
+    }
+
+    public void setSentencesBidding(List<String> sentencesBidding) {
+        this.sentencesBidding = sentencesBidding;
+    }
+    
+    
 }

@@ -6,6 +6,7 @@ package com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass;
 
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotConfiguration;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SaleTypeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetworkEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Contract;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
@@ -54,16 +55,24 @@ public class ThreadDiscordMessage implements CreatorThreadSocialNetworkInterface
                 discord.send(eb);
             }
         }
-        else if (mode == BotModeEnum.Sale) {
+        else if (mode == BotModeEnum.Sale || mode == BotModeEnum.ListingAndBidding ) {
 
             Random rand = new Random();
             for (Sale aSale : messageSaver.keySet()) {
-                                
+                 
+                if(mode == BotModeEnum.Sale){
                 eb.setTitle(aSale.getName() + " has been sold for " + df.format(aSale.getPrice()).replace(',', '.') + " XTZ");
+                }
+                else if (aSale.getType() != SaleTypeEnum.NewFloorOffer) {
+                    eb.setTitle(aSale.getType().getType() + " for " + aSale.getName() + " at the price of " + df.format(aSale.getPrice()).replace(',', '.') + " XTZ");
+                }
+                else{
+                    eb.setTitle("New floor offer for " + aSale.getCollectionName() + " for " + df.format(aSale.getPrice()).replace(',', '.') + " XTZ");
+                }
                 eb.setDescription(messageSaver.get(aSale));
                 eb.setColor(Color.BLUE);
 
-                if (BotConfiguration.getConfiguration().isIpfs()) {    
+                if (BotConfiguration.getConfiguration().isIpfs() && aSale.getType() != SaleTypeEnum.NewFloorOffer) {    
                     eb.setImage("https://cloudflare-ipfs.com/" + aSale.getIpfs().replace(":/", ""));
                 }
                 

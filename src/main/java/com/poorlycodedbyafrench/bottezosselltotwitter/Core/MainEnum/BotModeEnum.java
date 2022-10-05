@@ -10,5 +10,6 @@ package com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum;
  */
 public enum BotModeEnum {
     Sale,
-    Stat
+    Stat,
+    ListingAndBidding
 }

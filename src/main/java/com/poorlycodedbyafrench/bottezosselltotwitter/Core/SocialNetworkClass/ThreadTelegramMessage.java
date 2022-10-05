@@ -9,6 +9,7 @@ import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SendPhoto;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotConfiguration;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SaleTypeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetworkEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Contract;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
@@ -49,12 +50,12 @@ public class ThreadTelegramMessage implements CreatorThreadSocialNetworkInterfac
                 telegram.send(statMessage);
             }
         }
-        else if (mode == BotModeEnum.Sale) {
+        else if (mode == BotModeEnum.Sale || mode == BotModeEnum.ListingAndBidding) {
             for (Sale aSale : messageSaver.keySet()) {
                                 
                 BaseRequest saleMessage ;
                 
-                if (BotConfiguration.getConfiguration().isIpfs()) {    
+                if (BotConfiguration.getConfiguration().isIpfs() && aSale.getType() != SaleTypeEnum.NewFloorOffer) {    
                     saleMessage = new SendPhoto(telegram.getChannelId(),"https://cloudflare-ipfs.com/" + aSale.getIpfs().replace(":/", ""));
                     saleMessage = ((SendPhoto)saleMessage).caption(messageSaver.get(aSale));
                 }

@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
@@ -37,6 +38,10 @@ public class ConfigurationMenu extends javax.swing.JPanel {
         this.combo_refresh_stat.addItem(TimeUnit.HOURS.toString());
         this.combo_refresh_stat.addItem(TimeUnit.DAYS.toString());
         
+        this.combo_refresh_listingandbidding.addItem(TimeUnit.MINUTES.toString());
+        this.combo_refresh_listingandbidding.addItem(TimeUnit.HOURS.toString());
+        this.combo_refresh_listingandbidding.addItem(TimeUnit.DAYS.toString());
+        
         this.combo_order_sales.addItem("Timestamp");
         this.combo_order_sales.addItem("Price");
         
@@ -51,6 +56,15 @@ public class ConfigurationMenu extends javax.swing.JPanel {
         });
       
         this.txt_refresh_stats.addKeyListener(new KeyAdapter() {
+        public void keyTyped(KeyEvent e) {
+            char c = e.getKeyChar();
+            if ( ((c < '0') || (c > '9')) && (c != KeyEvent.VK_BACK_SPACE)) {
+                e.consume();  
+            }
+         }
+        });
+        
+        this.txt_refresh_listingandbidding.addKeyListener(new KeyAdapter() {
         public void keyTyped(KeyEvent e) {
             char c = e.getKeyChar();
             if ( ((c < '0') || (c > '9')) && (c != KeyEvent.VK_BACK_SPACE)) {
@@ -115,13 +129,39 @@ public class ConfigurationMenu extends javax.swing.JPanel {
         cb_royalty_wallet_stat = new javax.swing.JCheckBox();
         lbl_name_royalty_wallet = new javax.swing.JLabel();
         tb_name_royalty_wallet = new javax.swing.JTextField();
+        lbl_listingandbidding = new javax.swing.JLabel();
+        lbl_refresh_listingandbidding = new javax.swing.JLabel();
+        txt_refresh_listingandbidding = new javax.swing.JTextField();
+        combo_refresh_listingandbidding = new javax.swing.JComboBox<>();
+        lbl_id_listingandbidding = new javax.swing.JLabel();
+        cb_id_listingandbidding = new javax.swing.JCheckBox();
+        lbl_ipfs_listingandbidding = new javax.swing.JLabel();
+        cb_ipfs_listingandbidding = new javax.swing.JCheckBox();
+        lbl_address_listingandbidding = new javax.swing.JLabel();
+        cb_address_listingandbidding = new javax.swing.JCheckBox();
+        jScrollPane7 = new javax.swing.JScrollPane();
+        tbl_sentenceslistingandbidding = new javax.swing.JTable();
+        btn_add_sentenceslistingbidding = new javax.swing.JButton();
+        btn_remove_sentenceslistingbidding = new javax.swing.JButton();
+        lbl_listing_listingandbidding = new javax.swing.JLabel();
+        cb_listing_listingandbidding = new javax.swing.JCheckBox();
+        lbl_englishauction_listingandbidding = new javax.swing.JLabel();
+        cb_englishauction_listingandbidding = new javax.swing.JCheckBox();
+        lbl_dutchauction_listingandbidding = new javax.swing.JLabel();
+        lbl_flooroffer_listingandbidding = new javax.swing.JLabel();
+        cb_flooroffer_listingandbidding = new javax.swing.JCheckBox();
+        cb_dutchauction_listingandbidding = new javax.swing.JCheckBox();
+        lbl_bidding_listingandbidding = new javax.swing.JLabel();
+        cb_bidding_listingandbidding = new javax.swing.JCheckBox();
+
+        setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         tbl_sentences.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Sentences"
+                "Sentences for sales messages"
             }
         ) {
             Class[] types = new Class [] {
@@ -134,12 +174,15 @@ public class ConfigurationMenu extends javax.swing.JPanel {
         });
         jScrollPane4.setViewportView(tbl_sentences);
 
+        add(jScrollPane4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 290, 210, 200));
+
         btn_add_sentence.setText("Add");
         btn_add_sentence.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_add_sentenceActionPerformed(evt);
             }
         });
+        add(btn_add_sentence, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 260, 60, -1));
 
         btn_remove_sentence.setText("Remove");
         btn_remove_sentence.addActionListener(new java.awt.event.ActionListener() {
@@ -147,6 +190,7 @@ public class ConfigurationMenu extends javax.swing.JPanel {
                 btn_remove_sentenceActionPerformed(evt);
             }
         });
+        add(btn_remove_sentence, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 260, -1, -1));
 
         tbl_hashtags.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -166,12 +210,15 @@ public class ConfigurationMenu extends javax.swing.JPanel {
         });
         jScrollPane6.setViewportView(tbl_hashtags);
 
+        add(jScrollPane6, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 290, 150, 200));
+
         btn_add_hashtag.setText("Add");
         btn_add_hashtag.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_add_hashtagActionPerformed(evt);
             }
         });
+        add(btn_add_hashtag, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 260, 50, -1));
 
         btn_remove_hashtag.setText("Remove");
         btn_remove_hashtag.addActionListener(new java.awt.event.ActionListener() {
@@ -179,44 +226,72 @@ public class ConfigurationMenu extends javax.swing.JPanel {
                 btn_remove_hashtagActionPerformed(evt);
             }
         });
+        add(btn_remove_hashtag, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 260, -1, -1));
 
         lbl_max_stat.setText("Max price");
+        add(lbl_max_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 140, -1, -1));
 
         min_avg_stat.setText("Min price");
+        add(min_avg_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 120, -1, -1));
 
         lbl_avg_stat.setText("Average price");
+        add(lbl_avg_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 100, -1, -1));
 
-        lbl_id_stat.setText("Id tweet");
+        lbl_id_stat.setText("Id message");
+        add(lbl_id_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(362, 79, -1, -1));
 
         lbl_refresh_stat.setText("Refresh every");
+        add(lbl_refresh_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(361, 51, -1, -1));
+        add(txt_refresh_stats, new org.netbeans.lib.awtextra.AbsoluteConstraints(454, 45, 70, -1));
 
         lbl_stat.setText("Stat");
+        add(lbl_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(489, 11, -1, -1));
+
+        add(combo_refresh_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 46, 110, -1));
 
         cb_id_stat.setText("Show");
+        add(cb_id_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 79, -1, -1));
 
         cb_avg_stat.setText("Show");
+        add(cb_avg_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 100, -1, -1));
 
         cb_min_stat.setText("Show");
+        add(cb_min_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 120, -1, -1));
 
         cb_max_stat.setText("Show");
+        add(cb_max_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 140, -1, -1));
 
         lbl_sales1.setText("Sales");
+        add(lbl_sales1, new org.netbeans.lib.awtextra.AbsoluteConstraints(118, 11, -1, -1));
+        add(txt_refresh_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(123, 45, 70, -1));
 
         lbl_refresh_sales.setText("Refresh every");
+        add(lbl_refresh_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 51, -1, -1));
+
+        add(combo_refresh_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(205, 46, 110, -1));
 
         cb_id_sales.setText("Show");
+        add(cb_id_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(262, 79, -1, -1));
+
+        add(combo_order_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(205, 103, 110, -1));
 
         lbl_order_sales.setText("Order by");
+        add(lbl_order_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 110, -1, -1));
 
-        lbl_id_sales.setText("Id tweet");
+        lbl_id_sales.setText("Id message");
+        add(lbl_id_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 79, -1, -1));
 
         lbl_type_sales.setText("Sale type");
+        add(lbl_type_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 130, -1, -1));
 
         cb_type_sales.setText("Show");
+        add(cb_type_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 130, -1, -1));
 
         lbl_buyer_sales.setText("Address");
+        add(lbl_buyer_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 150, -1, -1));
 
         cb_adress_sales.setText("Show");
+        add(cb_adress_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 150, -1, -1));
 
         btn_save.setText("Save");
         btn_save.addActionListener(new java.awt.event.ActionListener() {
@@ -224,6 +299,7 @@ public class ConfigurationMenu extends javax.swing.JPanel {
                 btn_saveActionPerformed(evt);
             }
         });
+        add(btn_save, new org.netbeans.lib.awtextra.AbsoluteConstraints(890, 200, 61, -1));
 
         btn_reset.setText("Reset");
         btn_reset.addActionListener(new java.awt.event.ActionListener() {
@@ -231,10 +307,13 @@ public class ConfigurationMenu extends javax.swing.JPanel {
                 btn_resetActionPerformed(evt);
             }
         });
+        add(btn_reset, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 200, -1, -1));
 
         lbl_IPFS_sales.setText("IPFS");
+        add(lbl_IPFS_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 170, -1, -1));
 
         cb_IPFS_sales.setText("Show");
+        add(cb_IPFS_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 170, -1, -1));
 
         btn_Export.setText("Export");
         btn_Export.addActionListener(new java.awt.event.ActionListener() {
@@ -242,6 +321,7 @@ public class ConfigurationMenu extends javax.swing.JPanel {
                 btn_ExportActionPerformed(evt);
             }
         });
+        add(btn_Export, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 240, -1, -1));
 
         btn_import.setText("Import");
         btn_import.addActionListener(new java.awt.event.ActionListener() {
@@ -249,208 +329,118 @@ public class ConfigurationMenu extends javax.swing.JPanel {
                 btn_importActionPerformed(evt);
             }
         });
+        add(btn_import, new org.netbeans.lib.awtextra.AbsoluteConstraints(890, 240, -1, -1));
 
         lbl_royalty_wallet_sales.setText("Royalty wallet");
+        add(lbl_royalty_wallet_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 190, -1, -1));
 
         cb_royalty_wallet_sales.setText("Show");
+        add(cb_royalty_wallet_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 190, 60, -1));
 
         lbl_royalty_wallet_stat.setText("Royalty wallet");
+        add(lbl_royalty_wallet_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 160, -1, -1));
 
         cb_royalty_wallet_stat.setText("Show");
+        add(cb_royalty_wallet_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 160, -1, -1));
 
         lbl_name_royalty_wallet.setText("Name of the label for royalty wallet");
+        add(lbl_name_royalty_wallet, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 220, -1, -1));
 
-        tb_name_royalty_wallet.setText("Wallet balance");
+        tb_name_royalty_wallet.setText("Wallet balance :");
+        add(tb_name_royalty_wallet, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 210, 113, -1));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(118, 118, 118)
-                .addComponent(lbl_sales1)
-                .addGap(339, 339, 339)
-                .addComponent(lbl_stat))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addComponent(lbl_refresh_sales)
-                .addGap(18, 18, 18)
-                .addComponent(txt_refresh_sales, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12)
-                .addComponent(combo_refresh_sales, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(46, 46, 46)
-                .addComponent(lbl_refresh_stat)
-                .addGap(18, 18, 18)
-                .addComponent(txt_refresh_stats, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(6, 6, 6)
-                .addComponent(combo_refresh_stat, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addComponent(lbl_id_sales)
-                .addGap(190, 190, 190)
-                .addComponent(cb_id_sales)
-                .addGap(47, 47, 47)
-                .addComponent(lbl_id_stat)
-                .addGap(186, 186, 186)
-                .addComponent(cb_id_stat))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbl_order_sales)
-                    .addComponent(lbl_type_sales)
-                    .addComponent(lbl_buyer_sales)
-                    .addComponent(lbl_IPFS_sales))
-                .addGap(125, 125, 125)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(combo_order_sales, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(55, 55, 55)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cb_type_sales)
-                            .addComponent(cb_adress_sales)
-                            .addComponent(cb_IPFS_sales))))
-                .addGap(45, 45, 45)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbl_avg_stat)
-                    .addComponent(min_avg_stat)
-                    .addComponent(lbl_max_stat)
-                    .addComponent(lbl_royalty_wallet_stat))
-                .addGap(156, 156, 156)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cb_avg_stat)
-                    .addComponent(cb_min_stat)
-                    .addComponent(cb_max_stat)
-                    .addComponent(cb_royalty_wallet_stat)))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(6, 6, 6)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btn_add_sentence, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_remove_sentence))
-                .addGap(111, 111, 111)
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btn_add_hashtag, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_remove_hashtag)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(btn_save, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(6, 6, 6)
-                        .addComponent(btn_reset))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(3, 3, 3)
-                        .addComponent(btn_import)
-                        .addGap(6, 6, 6)
-                        .addComponent(btn_Export))))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(lbl_name_royalty_wallet)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lbl_royalty_wallet_sales)
-                        .addGap(156, 156, 156)
-                        .addComponent(cb_royalty_wallet_sales, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
-                .addComponent(tb_name_royalty_wallet, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(11, 11, 11)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbl_sales1)
-                    .addComponent(lbl_stat))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(lbl_refresh_sales))
-                    .addComponent(txt_refresh_sales, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(1, 1, 1)
-                        .addComponent(combo_refresh_sales, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(lbl_refresh_stat))
-                    .addComponent(txt_refresh_stats, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(1, 1, 1)
-                        .addComponent(combo_refresh_stat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(6, 6, 6)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbl_id_sales)
-                    .addComponent(cb_id_sales)
-                    .addComponent(lbl_id_stat)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(1, 1, 1)
-                        .addComponent(cb_id_stat)))
-                .addGap(2, 2, 2)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(lbl_order_sales)
-                        .addGap(4, 4, 4)
-                        .addComponent(lbl_type_sales)
-                        .addGap(4, 4, 4)
-                        .addComponent(lbl_buyer_sales)
-                        .addGap(4, 4, 4)
-                        .addComponent(lbl_IPFS_sales))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(3, 3, 3)
-                        .addComponent(combo_order_sales, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(1, 1, 1)
-                        .addComponent(cb_type_sales)
-                        .addGap(2, 2, 2)
-                        .addComponent(cb_adress_sales)
-                        .addGap(2, 2, 2)
-                        .addComponent(cb_IPFS_sales))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lbl_avg_stat)
-                        .addGap(4, 4, 4)
-                        .addComponent(min_avg_stat)
-                        .addGap(4, 4, 4)
-                        .addComponent(lbl_max_stat)
-                        .addGap(4, 4, 4)
-                        .addComponent(lbl_royalty_wallet_stat))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(cb_avg_stat)
-                        .addGap(2, 2, 2)
-                        .addComponent(cb_min_stat)
-                        .addGap(2, 2, 2)
-                        .addComponent(cb_max_stat)
-                        .addGap(2, 2, 2)
-                        .addComponent(cb_royalty_wallet_stat)))
-                .addGap(2, 2, 2)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbl_royalty_wallet_sales)
-                    .addComponent(cb_royalty_wallet_sales))
-                .addGap(2, 2, 2)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbl_name_royalty_wallet)
-                    .addComponent(tb_name_royalty_wallet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btn_add_sentence)
-                        .addGap(12, 12, 12)
-                        .addComponent(btn_remove_sentence))
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btn_add_hashtag)
-                        .addGap(12, 12, 12)
-                        .addComponent(btn_remove_hashtag)
-                        .addGap(114, 114, 114)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btn_save)
-                            .addComponent(btn_reset))
-                        .addGap(6, 6, 6)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btn_import)
-                            .addComponent(btn_Export)))))
-        );
+        lbl_listingandbidding.setText("Listing and binding");
+        add(lbl_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 10, -1, -1));
+
+        lbl_refresh_listingandbidding.setText("Refresh every");
+        add(lbl_refresh_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 50, -1, -1));
+        add(txt_refresh_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 45, 70, -1));
+
+        add(combo_refresh_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 45, 110, -1));
+
+        lbl_id_listingandbidding.setText("Id message");
+        add(lbl_id_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 80, -1, -1));
+
+        cb_id_listingandbidding.setText("Show");
+        add(cb_id_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 80, -1, -1));
+
+        lbl_ipfs_listingandbidding.setText("IPFS");
+        add(lbl_ipfs_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 100, -1, -1));
+
+        cb_ipfs_listingandbidding.setText("Show");
+        add(cb_ipfs_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 100, -1, -1));
+
+        lbl_address_listingandbidding.setText("Seller/Buyer adress");
+        add(lbl_address_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 120, -1, -1));
+
+        cb_address_listingandbidding.setText("Show");
+        add(cb_address_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 120, -1, -1));
+
+        tbl_sentenceslistingandbidding.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Sentences", "Listing", "English auction", "Dutch Auction", "Floor offer", "Bidding"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jScrollPane7.setViewportView(tbl_sentenceslistingandbidding);
+
+        add(jScrollPane7, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 290, 630, 200));
+
+        btn_add_sentenceslistingbidding.setText("Add");
+        btn_add_sentenceslistingbidding.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_add_sentenceslistingbiddingActionPerformed(evt);
+            }
+        });
+        add(btn_add_sentenceslistingbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 260, 74, -1));
+
+        btn_remove_sentenceslistingbidding.setText("Remove");
+        btn_remove_sentenceslistingbidding.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_remove_sentenceslistingbiddingActionPerformed(evt);
+            }
+        });
+        add(btn_remove_sentenceslistingbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 260, -1, -1));
+
+        lbl_listing_listingandbidding.setText("Listing");
+        add(lbl_listing_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 170, -1, -1));
+
+        cb_listing_listingandbidding.setText("Activate");
+        add(cb_listing_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 170, -1, -1));
+
+        lbl_englishauction_listingandbidding.setText("English Auction");
+        add(lbl_englishauction_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 190, -1, -1));
+
+        cb_englishauction_listingandbidding.setText("Activate");
+        add(cb_englishauction_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 190, -1, -1));
+
+        lbl_dutchauction_listingandbidding.setText("Dutch Auction");
+        add(lbl_dutchauction_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 210, -1, -1));
+
+        lbl_flooroffer_listingandbidding.setText("Floor offer");
+        add(lbl_flooroffer_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 230, -1, -1));
+
+        cb_flooroffer_listingandbidding.setText("Activate");
+        add(cb_flooroffer_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 230, -1, -1));
+
+        cb_dutchauction_listingandbidding.setText("Activate");
+        add(cb_dutchauction_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 210, -1, -1));
+
+        lbl_bidding_listingandbidding.setText("Bidding");
+        add(lbl_bidding_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 250, -1, -1));
+
+        cb_bidding_listingandbidding.setText("Activate");
+        add(cb_bidding_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 250, -1, -1));
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_add_sentenceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_add_sentenceActionPerformed
@@ -536,20 +526,58 @@ public class ConfigurationMenu extends javax.swing.JPanel {
             hashtags.add(v.get(0).toString());
         }
         
-        if( Integer.valueOf(this.txt_refresh_sales.getText()) == 0 || Integer.valueOf(this.txt_refresh_stats.getText()) == 0 ){
+        List<String> listingSentences = new ArrayList<String>();
+        List<String> englishAuctionSentences = new ArrayList<String>();
+        List<String> dutchAuctionSentences = new ArrayList<String>();
+        List<String> floorOfferSentences = new ArrayList<String>();
+        List<String> biddingSentences = new ArrayList<String>();
+        
+        Vector<Vector> listingAndBindingData = ((DefaultTableModel)this.tbl_sentenceslistingandbidding.getModel()).getDataVector();
+        for(Vector v : listingAndBindingData){
+            if(v.get(0).toString().isBlank() || v.get(0).toString().contains("#&#") ){
+                checkValue = false;
+            }
+            
+            if( (boolean)  v.get(1)){
+                 listingSentences.add(v.get(0).toString());
+            }
+            
+            if( (boolean)  v.get(2)){
+                 englishAuctionSentences.add(v.get(0).toString());
+            }
+            
+            if( (boolean)  v.get(3)){
+                 dutchAuctionSentences.add(v.get(0).toString());
+            }
+            
+            if( (boolean)  v.get(4)){
+                 floorOfferSentences.add(v.get(0).toString());
+            }
+            
+            if( (boolean)  v.get(5)){
+                 biddingSentences.add(v.get(0).toString());
+            }
+        }
+        
+        if( Integer.valueOf(this.txt_refresh_sales.getText()) == 0 || Integer.valueOf(this.txt_refresh_stats.getText()) == 0  || Integer.valueOf(this.txt_refresh_listingandbidding.getText()) == 0 ){
             checkValue = false;
         } 
         
         if (checkValue){
             BotConfiguration.getConfiguration().setRefreshSalesTime(Integer.valueOf(this.txt_refresh_sales.getText()));
             BotConfiguration.getConfiguration().setRefreshSalesStats(Integer.valueOf(this.txt_refresh_stats.getText()));
+            BotConfiguration.getConfiguration().setRefreshListingAndBiddingTime(Integer.valueOf(this.txt_refresh_listingandbidding.getText()));
 
             BotConfiguration.getConfiguration().setSecurityIdSales(this.cb_id_sales.isSelected());
             BotConfiguration.getConfiguration().setSecurityIdStats(this.cb_id_stat.isSelected());
+            BotConfiguration.getConfiguration().setSecurityIdListingAndBidding(this.cb_id_listingandbidding.isSelected());
 
             BotConfiguration.getConfiguration().setSaleType(this.cb_type_sales.isSelected());
             BotConfiguration.getConfiguration().setAdress(this.cb_adress_sales.isSelected());
             BotConfiguration.getConfiguration().setIpfs(this.cb_IPFS_sales.isSelected());
+            
+            BotConfiguration.getConfiguration().setAdressListingAndBidding(this.cb_address_listingandbidding.isSelected());
+            BotConfiguration.getConfiguration().setIpfsListingAndBidding(this.cb_ipfs_listingandbidding.isSelected());
             
             BotConfiguration.getConfiguration().setAvgPriceStat(this.cb_avg_stat.isSelected());
             BotConfiguration.getConfiguration().setMinPriceStat(this.cb_min_stat.isSelected());
@@ -557,11 +585,24 @@ public class ConfigurationMenu extends javax.swing.JPanel {
 
             BotConfiguration.getConfiguration().setRefreshSales(TimeUnit.valueOf(this.combo_refresh_sales.getSelectedItem().toString().toUpperCase()));
             BotConfiguration.getConfiguration().setRefreshStats(TimeUnit.valueOf(this.combo_refresh_stat.getSelectedItem().toString().toUpperCase()));
+            BotConfiguration.getConfiguration().setRefreshListingAndBidding(TimeUnit.valueOf(this.combo_refresh_listingandbidding.getSelectedItem().toString().toUpperCase()));
             BotConfiguration.getConfiguration().setOrderBy(this.combo_order_sales.getSelectedIndex());
 
             BotConfiguration.getConfiguration().setSentences(sentences);
             BotConfiguration.getConfiguration().setHashtags(hashtags);
             
+            BotConfiguration.getConfiguration().setActivateListing(this.cb_listing_listingandbidding.isSelected());
+            BotConfiguration.getConfiguration().setActivateEnglishAuction(this.cb_englishauction_listingandbidding.isSelected());
+            BotConfiguration.getConfiguration().setActivateDutchAuction(this.cb_dutchauction_listingandbidding.isSelected());
+            BotConfiguration.getConfiguration().setActivateFloorOffer(this.cb_flooroffer_listingandbidding.isSelected());
+            BotConfiguration.getConfiguration().setActivateBidding(this.cb_bidding_listingandbidding.isSelected());
+            
+            BotConfiguration.getConfiguration().setSentencesListing(listingSentences);
+            BotConfiguration.getConfiguration().setSentencesEnglishAuction(englishAuctionSentences);
+            BotConfiguration.getConfiguration().setSentencesDutchAuction(dutchAuctionSentences);
+            BotConfiguration.getConfiguration().setSentencesFloorOffer(floorOfferSentences);
+            BotConfiguration.getConfiguration().setSentencesBidding(biddingSentences);
+               
             BotConfiguration.getConfiguration().setRoyaltywalletsale(this.cb_royalty_wallet_sales.isSelected());
             BotConfiguration.getConfiguration().setRoyaltywalletstat(this.cb_royalty_wallet_stat.isSelected());
             BotConfiguration.getConfiguration().setNameroyaltywallet(this.tb_name_royalty_wallet.getText().trim());
@@ -598,6 +639,34 @@ public class ConfigurationMenu extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btn_importActionPerformed
 
+    private void btn_add_sentenceslistingbiddingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_add_sentenceslistingbiddingActionPerformed
+        ((DefaultTableModel)this.tbl_sentenceslistingandbidding.getModel()).addRow(new Object[]{"", false, false, false, false, false});
+        this.btn_remove_sentenceslistingbidding.setEnabled(true);
+    }//GEN-LAST:event_btn_add_sentenceslistingbiddingActionPerformed
+
+    private void btn_remove_sentenceslistingbiddingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_remove_sentenceslistingbiddingActionPerformed
+        DefaultTableModel dtb = ((DefaultTableModel)this.tbl_sentenceslistingandbidding.getModel());
+        if(tbl_sentenceslistingandbidding.getSelectedRows().length != 0){
+            
+            int[] allIndex = tbl_sentenceslistingandbidding.getSelectedRows();
+            int[] reversedAllIndex = Arrays.stream(allIndex).boxed()
+                    .sorted(Collections.reverseOrder())
+                    .mapToInt(Integer::intValue)
+                    .toArray();
+
+            for (int i : reversedAllIndex ){
+                 dtb.removeRow(i);
+            }
+        }
+        else{
+            dtb.removeRow(dtb.getRowCount()-1);
+        }
+        
+        if (dtb.getRowCount() <= 0){
+            this.btn_add_sentenceslistingbidding.setEnabled(false);
+        }
+    }//GEN-LAST:event_btn_remove_sentenceslistingbiddingActionPerformed
+
     /**
      * Set value from the Singleton Object to the field
      */
@@ -606,9 +675,12 @@ public class ConfigurationMenu extends javax.swing.JPanel {
         
         this.txt_refresh_sales.setText(String.valueOf(BotConfiguration.getConfiguration().getRefreshSalesTime()));
         this.txt_refresh_stats.setText(String.valueOf(BotConfiguration.getConfiguration().getRefreshSalesStats())); 
+        this.txt_refresh_listingandbidding.setText(String.valueOf(BotConfiguration.getConfiguration().getRefreshListingAndBiddingTime()));
         
         this.cb_id_sales.setSelected(BotConfiguration.getConfiguration().isSecurityIdSales());
         this.cb_id_stat.setSelected(BotConfiguration.getConfiguration().isSecurityIdStats());
+        this.cb_id_listingandbidding.setSelected(BotConfiguration.getConfiguration().isSecurityIdListingAndBidding());
+
         
         this.cb_type_sales.setSelected(BotConfiguration.getConfiguration().isSaleType());
         this.cb_adress_sales.setSelected(BotConfiguration.getConfiguration().isAdress());
@@ -618,12 +690,27 @@ public class ConfigurationMenu extends javax.swing.JPanel {
         this.cb_min_stat.setSelected(BotConfiguration.getConfiguration().isMinPriceStat());
         this.cb_max_stat.setSelected(BotConfiguration.getConfiguration().isMaxPriceStat());
         
+        this.cb_address_listingandbidding.setSelected(BotConfiguration.getConfiguration().isAdressListingAndBidding());
+        this.cb_ipfs_listingandbidding.setSelected(BotConfiguration.getConfiguration().isIpfsListingAndBidding());
+        
+        this.cb_listing_listingandbidding.setSelected(BotConfiguration.getConfiguration().isActivateListing());
+        this.cb_englishauction_listingandbidding.setSelected(BotConfiguration.getConfiguration().isActivateEnglishAuction());
+        this.cb_dutchauction_listingandbidding.setSelected(BotConfiguration.getConfiguration().isActivateDutchAuction());
+        this.cb_flooroffer_listingandbidding.setSelected(BotConfiguration.getConfiguration().isActivateFloorOffer());
+        this.cb_bidding_listingandbidding.setSelected(BotConfiguration.getConfiguration().isActivateBidding());
+        
+        
         this.combo_refresh_sales.setSelectedItem(BotConfiguration.getConfiguration().getRefreshSales().toString());
         this.combo_refresh_stat.setSelectedItem(BotConfiguration.getConfiguration().getRefreshStats().toString());
+        this.combo_refresh_listingandbidding.setSelectedItem(BotConfiguration.getConfiguration().getRefreshListingAndBidding().toString());
         this.combo_order_sales.setSelectedIndex(BotConfiguration.getConfiguration().getOrderBy());
+        
         
         ((DefaultTableModel)this.tbl_sentences.getModel()).setRowCount(0);
         ((DefaultTableModel)this.tbl_hashtags.getModel()).setRowCount(0);
+        ((DefaultTableModel)this.tbl_sentenceslistingandbidding.getModel()).setRowCount(0);
+        
+        HashMap<String, Integer> allListingAndBiddingSentences = new HashMap<>();
         
         for(String s : BotConfiguration.getConfiguration().getSentences()){
             ((DefaultTableModel)this.tbl_sentences.getModel()).addRow(new Object[]{s});
@@ -633,43 +720,101 @@ public class ConfigurationMenu extends javax.swing.JPanel {
             ((DefaultTableModel)this.tbl_hashtags.getModel()).addRow(new Object[]{s});
         }
         
+        insertIntoListingAndBiddingTable(allListingAndBiddingSentences, BotConfiguration.getConfiguration().getSentencesListing(), 1);
+        insertIntoListingAndBiddingTable(allListingAndBiddingSentences, BotConfiguration.getConfiguration().getSentencesEnglishAuction(), 2);
+        insertIntoListingAndBiddingTable(allListingAndBiddingSentences, BotConfiguration.getConfiguration().getSentencesDutchAuction(), 3);
+        insertIntoListingAndBiddingTable(allListingAndBiddingSentences, BotConfiguration.getConfiguration().getSentencesFloorOffer(), 4);
+        insertIntoListingAndBiddingTable(allListingAndBiddingSentences, BotConfiguration.getConfiguration().getSentencesBidding(), 5);
+        
+        
         this.cb_royalty_wallet_sales.setSelected(BotConfiguration.getConfiguration().isRoyaltywalletsale());
         this.cb_royalty_wallet_stat.setSelected(BotConfiguration.getConfiguration().isRoyaltywalletstat());
         
         this.tb_name_royalty_wallet.setText(BotConfiguration.getConfiguration().getNameroyaltywallet());
     }
+    
+    private void insertIntoListingAndBiddingTable(HashMap<String, Integer> existingSentence, List<String> sentencesToAdd, int columnToChange){
+        for(String s : sentencesToAdd){
+            
+            if(existingSentence.containsKey(s)){
+                this.tbl_sentenceslistingandbidding.setValueAt(true, existingSentence.get(s), columnToChange);
+            }
+            else{
+                if (columnToChange == 1){
+                    ((DefaultTableModel)this.tbl_sentenceslistingandbidding.getModel()).addRow(new Object[]{s, true,false,false,false,false});
+                }
+                else if (columnToChange == 2){
+                    ((DefaultTableModel)this.tbl_sentenceslistingandbidding.getModel()).addRow(new Object[]{s, false,true,false,false,false});
+                }
+                else if (columnToChange == 3){
+                    ((DefaultTableModel)this.tbl_sentenceslistingandbidding.getModel()).addRow(new Object[]{s, false,false,true,false,false});
+                }
+                else if (columnToChange == 4){
+                    ((DefaultTableModel)this.tbl_sentenceslistingandbidding.getModel()).addRow(new Object[]{s, false,false,false,true,false});
+                }
+                else if (columnToChange == 5){
+                    ((DefaultTableModel)this.tbl_sentenceslistingandbidding.getModel()).addRow(new Object[]{s, false,false,false,false,true});
+                }
+                
+                existingSentence.put(s, this.tbl_sentenceslistingandbidding.getRowCount()-1);
+            }
+        }
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_Export;
     private javax.swing.JButton btn_add_hashtag;
     private javax.swing.JButton btn_add_sentence;
+    private javax.swing.JButton btn_add_sentenceslistingbidding;
     private javax.swing.JButton btn_import;
     private javax.swing.JButton btn_remove_hashtag;
     private javax.swing.JButton btn_remove_sentence;
+    private javax.swing.JButton btn_remove_sentenceslistingbidding;
     private javax.swing.JButton btn_reset;
     private javax.swing.JButton btn_save;
     private javax.swing.JCheckBox cb_IPFS_sales;
+    private javax.swing.JCheckBox cb_address_listingandbidding;
     private javax.swing.JCheckBox cb_adress_sales;
     private javax.swing.JCheckBox cb_avg_stat;
+    private javax.swing.JCheckBox cb_bidding_listingandbidding;
+    private javax.swing.JCheckBox cb_dutchauction_listingandbidding;
+    private javax.swing.JCheckBox cb_englishauction_listingandbidding;
+    private javax.swing.JCheckBox cb_flooroffer_listingandbidding;
+    private javax.swing.JCheckBox cb_id_listingandbidding;
     private javax.swing.JCheckBox cb_id_sales;
     private javax.swing.JCheckBox cb_id_stat;
+    private javax.swing.JCheckBox cb_ipfs_listingandbidding;
+    private javax.swing.JCheckBox cb_listing_listingandbidding;
     private javax.swing.JCheckBox cb_max_stat;
     private javax.swing.JCheckBox cb_min_stat;
     private javax.swing.JCheckBox cb_royalty_wallet_sales;
     private javax.swing.JCheckBox cb_royalty_wallet_stat;
     private javax.swing.JCheckBox cb_type_sales;
     private javax.swing.JComboBox<String> combo_order_sales;
+    private javax.swing.JComboBox<String> combo_refresh_listingandbidding;
     private javax.swing.JComboBox<String> combo_refresh_sales;
     private javax.swing.JComboBox<String> combo_refresh_stat;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JLabel lbl_IPFS_sales;
+    private javax.swing.JLabel lbl_address_listingandbidding;
     private javax.swing.JLabel lbl_avg_stat;
+    private javax.swing.JLabel lbl_bidding_listingandbidding;
     private javax.swing.JLabel lbl_buyer_sales;
+    private javax.swing.JLabel lbl_dutchauction_listingandbidding;
+    private javax.swing.JLabel lbl_englishauction_listingandbidding;
+    private javax.swing.JLabel lbl_flooroffer_listingandbidding;
+    private javax.swing.JLabel lbl_id_listingandbidding;
     private javax.swing.JLabel lbl_id_sales;
     private javax.swing.JLabel lbl_id_stat;
+    private javax.swing.JLabel lbl_ipfs_listingandbidding;
+    private javax.swing.JLabel lbl_listing_listingandbidding;
+    private javax.swing.JLabel lbl_listingandbidding;
     private javax.swing.JLabel lbl_max_stat;
     private javax.swing.JLabel lbl_name_royalty_wallet;
     private javax.swing.JLabel lbl_order_sales;
+    private javax.swing.JLabel lbl_refresh_listingandbidding;
     private javax.swing.JLabel lbl_refresh_sales;
     private javax.swing.JLabel lbl_refresh_stat;
     private javax.swing.JLabel lbl_royalty_wallet_sales;
@@ -681,6 +826,8 @@ public class ConfigurationMenu extends javax.swing.JPanel {
     private javax.swing.JTextField tb_name_royalty_wallet;
     private javax.swing.JTable tbl_hashtags;
     private javax.swing.JTable tbl_sentences;
+    private javax.swing.JTable tbl_sentenceslistingandbidding;
+    private javax.swing.JTextField txt_refresh_listingandbidding;
     private javax.swing.JTextField txt_refresh_sales;
     private javax.swing.JTextField txt_refresh_stats;
     // End of variables declaration//GEN-END:variables

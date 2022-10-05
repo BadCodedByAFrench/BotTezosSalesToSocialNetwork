@@ -7,6 +7,7 @@ package com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotConfiguration;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.LogManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SaleTypeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetworkEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Contract;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
@@ -47,13 +48,13 @@ public class ThreadTwitterMessage implements CreatorThreadSocialNetworkInterface
                 twitter.send(new StatusUpdate(contractMessage));
             }
         }
-        else if (mode == BotModeEnum.Sale) {
+        else if (mode == BotModeEnum.Sale || mode == BotModeEnum.ListingAndBidding) {
 
             for (Sale aSale : messageSaver.keySet()) {
 
                 
                 StatusUpdate newStatus = new StatusUpdate(messageSaver.get(aSale));
-                if (BotConfiguration.getConfiguration().isIpfs()) {
+                if (BotConfiguration.getConfiguration().isIpfs() && aSale.getType() != SaleTypeEnum.NewFloorOffer) {
                     try {
                         URL newURL = new URL("https://cloudflare-ipfs.com/" + aSale.getIpfs().replace(":/", ""));
                         URLConnection urlConn = newURL.openConnection();

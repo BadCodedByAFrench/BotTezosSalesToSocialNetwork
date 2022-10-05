@@ -78,6 +78,14 @@ public class MainBotForm extends javax.swing.JFrame {
      * The thread that will call API for follow stat
      */
     private SalesToSocialNetwork apiHandlerStat;
+    
+    
+    /**
+     * The thread that will call API for follow stat
+     */
+    private SalesToSocialNetwork apiHandlerListingAndBidding;
+    
+    
 
     /**
      * Tool that will execute query every hours
@@ -86,6 +94,7 @@ public class MainBotForm extends javax.swing.JFrame {
 
     private ScheduledFuture<?> scheduledFutureSales;
     private ScheduledFuture<?> scheduledFutureStat;
+    private ScheduledFuture<?> scheduledFutureListingAndBidding;
 
     /**
      * List of all tje marketplaces where we will find sales
@@ -122,6 +131,7 @@ public class MainBotForm extends javax.swing.JFrame {
 
         apiHandlerSales = new SalesToSocialNetwork(model, BotModeEnum.Sale);
         apiHandlerStat = new SalesToSocialNetwork(model, BotModeEnum.Stat);
+        apiHandlerListingAndBidding = new SalesToSocialNetwork(model, BotModeEnum.ListingAndBidding);
 
         executor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(1);
         executor.setRemoveOnCancelPolicy(true);
@@ -147,6 +157,7 @@ public class MainBotForm extends javax.swing.JFrame {
         btn_export.setEnabled(stateStart);
         cb_stat.setEnabled(stateStart);
         cb_sales.setEnabled(stateStart);
+        cb_listingandbidding.setEnabled(stateStart);
 
         cb_twitter.setEnabled(stateStart);
         if (cb_twitter.isSelected() && cb_twitter.isEnabled()) {
@@ -310,10 +321,10 @@ public class MainBotForm extends javax.swing.JFrame {
         btn_add_contract = new javax.swing.JButton();
         btn_remove_contract = new javax.swing.JButton();
         cb_stat = new javax.swing.JCheckBox();
-        cb_sales = new javax.swing.JCheckBox();
         BTN_Configuration = new javax.swing.JButton();
         lbl_discord_token = new javax.swing.JLabel();
         pwd_discord_token = new javax.swing.JPasswordField();
+        cb_sales = new javax.swing.JCheckBox();
         lbl_discord_channel = new javax.swing.JLabel();
         cb_twitter = new javax.swing.JCheckBox();
         cb_discord = new javax.swing.JCheckBox();
@@ -337,6 +348,7 @@ public class MainBotForm extends javax.swing.JFrame {
         txt_telegram_channel = new javax.swing.JTextField();
         lbl_telegram_channel = new javax.swing.JLabel();
         cb_telegram = new javax.swing.JCheckBox();
+        cb_listingandbidding = new javax.swing.JCheckBox();
 
         btn_add1.setText("Add");
 
@@ -457,9 +469,6 @@ public class MainBotForm extends javax.swing.JFrame {
         cb_stat.setText("Stat");
         getContentPane().add(cb_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(619, 341, -1, -1));
 
-        cb_sales.setText("Sales");
-        getContentPane().add(cb_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(723, 341, -1, -1));
-
         BTN_Configuration.setText("Configuration");
         BTN_Configuration.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -471,6 +480,14 @@ public class MainBotForm extends javax.swing.JFrame {
         lbl_discord_token.setText("Discord token");
         getContentPane().add(lbl_discord_token, new org.netbeans.lib.awtextra.AbsoluteConstraints(619, 389, -1, -1));
         getContentPane().add(pwd_discord_token, new org.netbeans.lib.awtextra.AbsoluteConstraints(723, 383, 74, -1));
+
+        cb_sales.setText("Sales");
+        cb_sales.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cb_salesActionPerformed(evt);
+            }
+        });
+        getContentPane().add(cb_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(723, 341, -1, -1));
 
         lbl_discord_channel.setText("Discord channel");
         getContentPane().add(lbl_discord_channel, new org.netbeans.lib.awtextra.AbsoluteConstraints(619, 419, -1, -1));
@@ -647,6 +664,10 @@ public class MainBotForm extends javax.swing.JFrame {
             }
         });
         getContentPane().add(cb_telegram, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 365, -1, -1));
+
+        cb_listingandbidding.setText("Listing and bidding");
+        cb_listingandbidding.setToolTipText("");
+        getContentPane().add(cb_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 340, -1, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -957,6 +978,10 @@ public class MainBotForm extends javax.swing.JFrame {
         setStateComponent(true);
     }//GEN-LAST:event_cb_telegramActionPerformed
 
+    private void cb_salesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_salesActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cb_salesActionPerformed
+
     private void addRow(JTable tableToAdd) {
         ((DefaultTableModel) tableToAdd.getModel()).addRow(new Object[]{""});
         setStateComponent(true);
@@ -1062,7 +1087,7 @@ public class MainBotForm extends javax.swing.JFrame {
             isDataCorrect = false;
         }
 
-        if (!cb_stat.isSelected() && !cb_sales.isSelected()) {
+        if (!cb_stat.isSelected() && !cb_sales.isSelected() && !cb_listingandbidding.isSelected()) {
             isDataCorrect = false;
         }
 
@@ -1110,6 +1135,9 @@ public class MainBotForm extends javax.swing.JFrame {
 
         apiHandlerStat.setMarketplaces(mpsToKeep);
         apiHandlerStat.setSocialNetworks(socialNetworks);
+        
+        apiHandlerListingAndBidding.setMarketplaces(mpsToKeep);
+        apiHandlerListingAndBidding.setSocialNetworks(socialNetworks);
     }
 
     /**
@@ -1130,6 +1158,12 @@ public class MainBotForm extends javax.swing.JFrame {
             if (cb_stat.isSelected()) {
                 scheduledFutureStat = executor.scheduleAtFixedRate(apiHandlerStat, 0, BotConfiguration.getConfiguration().getRefreshSalesStats(), BotConfiguration.getConfiguration().getRefreshStats());
             }
+            
+            if (cb_listingandbidding.isSelected()) {
+                scheduledFutureListingAndBidding = executor.scheduleAtFixedRate(apiHandlerListingAndBidding, 0, BotConfiguration.getConfiguration().getRefreshListingAndBiddingTime(), BotConfiguration.getConfiguration().getRefreshListingAndBidding());
+            }
+            
+                    
         } catch (Exception ex) {
             model.insertRow(0, new Object[]{"Start", "Error : unable to start", ex.getMessage()});
             LogManager.getLogManager().writeLog(MainBotForm.class.getName(), ex);
@@ -1157,6 +1191,11 @@ public class MainBotForm extends javax.swing.JFrame {
         if (cb_stat.isSelected()) {
             scheduledFutureStat.cancel(true);
         }
+        
+        if (cb_listingandbidding.isSelected()) {
+            scheduledFutureListingAndBidding.cancel(true);
+        }
+        
     }
 
     /**
@@ -1297,6 +1336,7 @@ public class MainBotForm extends javax.swing.JFrame {
     private javax.swing.JButton btn_start;
     private javax.swing.JButton btn_stop;
     private javax.swing.JCheckBox cb_discord;
+    private javax.swing.JCheckBox cb_listingandbidding;
     private javax.swing.JCheckBox cb_sales;
     private javax.swing.JCheckBox cb_stat;
     private javax.swing.JCheckBox cb_telegram;

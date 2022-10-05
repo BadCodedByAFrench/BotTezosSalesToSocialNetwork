@@ -78,8 +78,6 @@ public class SalesToSocialNetwork implements Runnable {
      */
     @Override
     public void run() {
-        long numberOfSale = 0;
-
         if (model.getRowCount() >= 100) {
             model.setRowCount(10);
         }
@@ -156,7 +154,7 @@ public class SalesToSocialNetwork implements Runnable {
                 countSale++;
             }
         }
-        else{
+        else if(this.mode == BotModeEnum.Stat) {
             Instant previousUTCHour = Instant.now().minus(BotConfiguration.getConfiguration().getRefreshSalesStats(), ChronoUnit.valueOf(BotConfiguration.getConfiguration().getRefreshStats().toString().toUpperCase()));
             int countStat = 1;
             
@@ -165,6 +163,15 @@ public class SalesToSocialNetwork implements Runnable {
                 countStat++;
             }            
         }
+        else if(this.mode == BotModeEnum.ListingAndBidding) {
+            int countListingAndBidding = 1;
+            
+            for (Sale aSale : filteredList) {
+                messageSaver.put(aSale, NetworkMessageManager.getMessageManager().createListingAndBiddingMessage(aSale, df, rand, countListingAndBidding, balance));
+                countListingAndBidding++;
+            }          
+        }
+        
 
         ExecutorService multithreadSocialNetwork = Executors.newFixedThreadPool(socialNetworks.size());
         ArrayList<Future<SocialNetworkEnum>> allFutureSocialNetwork = new ArrayList<>();

@@ -165,7 +165,7 @@ public class Sale implements Comparable<Sale> {
     @Override
     public int compareTo(Sale o) {
         
-        if(BotConfiguration.getConfiguration().getOrderBy() == 0){
+        if(BotConfiguration.getConfiguration().getOrderBy() == 0 || type == SaleTypeEnum.NewBidding || type == SaleTypeEnum.NewDutchAuction || type == SaleTypeEnum.NewEnglishAuction || type == SaleTypeEnum.NewFloorOffer || type == SaleTypeEnum.NewList ){
             return this.getTimestamp().compareTo(o.getTimestamp());
         }
         else {

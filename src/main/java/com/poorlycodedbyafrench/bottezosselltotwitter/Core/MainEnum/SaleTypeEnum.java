@@ -15,7 +15,12 @@ public enum SaleTypeEnum {
     DutchAuction("Dutch auction"),
     Auction("Auction"),
     Mint("Mint"),
-    Unknown("Unknown");
+    Unknown("Unknown"),
+    NewList ("New Listing"),
+    NewEnglishAuction ("New English Auction"),
+    NewDutchAuction ("New Dutch Auction"),
+    NewFloorOffer ("New Floor Offer"),
+    NewBidding("New Bidding");
     
     private String type;
     
