@@ -4,6 +4,7 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration;
 
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Bot.Bot;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SaleTypeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.MarketPlace;
@@ -18,6 +19,7 @@ import java.net.http.HttpResponse;
 import java.text.DecimalFormat;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -51,7 +53,7 @@ public class NetworkMessageManager {
      * @param newSales
      * @return
      */
-    public List<Contract> createContractList(List<Sale> newSales) {
+    public List<Contract> createContractList(Collection<Sale> newSales) {
         List<Contract> contracts = new ArrayList<Contract>();
         for (Sale aSale : newSales) {
 
@@ -86,11 +88,11 @@ public class NetworkMessageManager {
      * @param countAvoidTwitterDuplicate
      * @return
      */
-    public String createStatMessage(Contract contract, DecimalFormat df, Instant previousUTCHour, int countAvoidTwitterDuplicate, HashMap<String, Long> balance) {
+    public String createStatMessage(Contract contract, DecimalFormat df, Instant previousUTCHour, int countAvoidTwitterDuplicate, HashMap<String, Long> balance, Bot aBot) {
 
         String status = "";
 
-        if (BotConfiguration.getConfiguration().isSecurityIdStats()) {
+        if (aBot.isSecurityIdStats()) {
             status += countAvoidTwitterDuplicate + " ";
         }
 
@@ -104,31 +106,31 @@ public class NetworkMessageManager {
         status += "\nNumber of sales : " + contract.getNbSale();
         status += "\nTotal xtz : " + df.format(contract.getTotalprice()).replace(',', '.');
 
-        if (BotConfiguration.getConfiguration().isMinPriceStat()) {
+        if (aBot.isMinPriceStat()) {
             status += "\nMin price : " + df.format(contract.getMin()).replace(',', '.');
         }
 
-        if (BotConfiguration.getConfiguration().isMaxPriceStat()) {
+        if (aBot.isMaxPriceStat()) {
             status += "\nMax price : " + df.format(contract.getMax()).replace(',', '.');
         }
 
-        if (BotConfiguration.getConfiguration().isAvgPriceStat()) {
+        if (aBot.isAvgPriceStat()) {
             status += "\nAverage price : " + df.format(contract.getAvg()).replace(',', '.');
         }
 
-        if (BotConfiguration.getConfiguration().isRoyaltywalletstat() && balance != null) {
+        if (aBot.isRoyaltywalletstat() && balance != null) {
             if (balance.containsKey(contract.getContract())) {
-                status += "\n" + BotConfiguration.getConfiguration().getNameroyaltywallet() + " : " + df.format(balance.get(contract.getContract()) / 1000000.0).replace(',', '.') + " XTZ";
+                status += "\n" + aBot.getNameroyaltywallet() + " : " + df.format(balance.get(contract.getContract()) / 1000000.0).replace(',', '.') + " XTZ";
             }
         }
 
         status += getCollectionLink(contract);
 
-        if (BotConfiguration.getConfiguration().getHashtags().size() > 0) {
+        if (aBot.getHashtags().size() > 0) {
             status += "\n";
         }
 
-        for (String hashtag : BotConfiguration.getConfiguration().getHashtags()) {
+        for (String hashtag : aBot.getHashtags()) {
             status += "#" + hashtag + " ";
         }
 
@@ -152,21 +154,21 @@ public class NetworkMessageManager {
      * @param countAvoidTwitterDuplicate
      * @return
      */
-    public String createSaleMessage(Sale aSale, DecimalFormat df, Random rand, int countAvoidTwitterDuplicate, HashMap<String, Long> balance) {
+    public String createSaleMessage(Sale aSale, DecimalFormat df, Random rand, int countAvoidTwitterDuplicate, HashMap<String, Long> balance, Bot aBot) {
         String status = "";
-        if (BotConfiguration.getConfiguration().isSecurityIdSales()) {
+        if (aBot.isSecurityIdSales()) {
             status += countAvoidTwitterDuplicate + " ";
         }
 
-        status += returnRandomSentence(BotConfiguration.getConfiguration().getSentences(), rand);
+        status += returnRandomSentence(aBot.getSentences(), rand);
 
-        if (BotConfiguration.getConfiguration().isSaleType() && aSale.getType() != SaleTypeEnum.Unknown) {
+        if (aBot.isSaleType() && aSale.getType() != SaleTypeEnum.Unknown) {
             status += " : " + aSale.getType().getType();
         }
 
         status += " " + aSale.getName() + " has been sold for " + df.format(aSale.getPrice()).replace(',', '.') + " XTZ on " + aSale.getMarketplace().toString();
 
-        if (BotConfiguration.getConfiguration().isAdress()) {
+        if (aBot.isAdress()) {
 
             String buyerAdress = aSale.getBuyer().getTezdomain() == null || aSale.getBuyer().getTezdomain().isBlank() ? aSale.getBuyer().getAdress() : aSale.getBuyer().getTezdomain();
             String sellerAdress = aSale.getSeller().getTezdomain() == null || aSale.getSeller().getTezdomain().isBlank() ? aSale.getSeller().getAdress() : aSale.getSeller().getTezdomain();
@@ -184,9 +186,9 @@ public class NetworkMessageManager {
 
         }
 
-        if (BotConfiguration.getConfiguration().isRoyaltywalletsale() && balance != null) {
+        if (aBot.isRoyaltywalletsale() && balance != null) {
             if (balance.containsKey(aSale.getContract())) {
-                status += "\n" + BotConfiguration.getConfiguration().getNameroyaltywallet() + " : " + df.format(balance.get(aSale.getContract()) / 1000000.0).replace(',', '.') + " XTZ";
+                status += "\n" + aBot.getNameroyaltywallet() + " : " + df.format(balance.get(aSale.getContract()) / 1000000.0).replace(',', '.') + " XTZ";
             }
         }
 
@@ -194,11 +196,11 @@ public class NetworkMessageManager {
 
         status += "\n" + aSale.getTimestamp().toString().substring(5, 7) + "-" + aSale.getTimestamp().toString().substring(8, 10) + "-" + aSale.getTimestamp().toString().substring(0, 4) + " at " + aSale.getTimestamp().toString().substring(11, 16) + " UTC";
 
-        if (BotConfiguration.getConfiguration().getHashtags().size() > 0) {
+        if (aBot.getHashtags().size() > 0) {
             status += "\n";
         }
 
-        for (String hashtag : BotConfiguration.getConfiguration().getHashtags()) {
+        for (String hashtag : aBot.getHashtags()) {
             status += "#" + hashtag + " ";
         }
 
@@ -211,27 +213,27 @@ public class NetworkMessageManager {
         return status;
     }
 
-    public String createListingAndBiddingMessage(Sale aSale, DecimalFormat df, Random rand, int countAvoidTwitterDuplicate, HashMap<String, Long> balance) {
+    public String createListingAndBiddingMessage(Sale aSale, DecimalFormat df, Random rand, int countAvoidTwitterDuplicate, HashMap<String, Long> balance, Bot aBot) {
         String status = "";
-        if (BotConfiguration.getConfiguration().isSecurityIdSales()) {
+        if (aBot.isSecurityIdSales()) {
             status += countAvoidTwitterDuplicate + " ";
         }
 
         switch (aSale.getType()) {
             case NewList:
-                status += returnRandomSentence(BotConfiguration.getConfiguration().getSentencesListing(), rand);
+                status += returnRandomSentence(aBot.getSentencesListing(), rand);
                 break;
             case NewEnglishAuction:
-                status += returnRandomSentence(BotConfiguration.getConfiguration().getSentencesEnglishAuction(), rand);
+                status += returnRandomSentence(aBot.getSentencesEnglishAuction(), rand);
                 break;
             case NewDutchAuction:
-                status += returnRandomSentence(BotConfiguration.getConfiguration().getSentencesDutchAuction(), rand);
+                status += returnRandomSentence(aBot.getSentencesDutchAuction(), rand);
                 break;
             case NewFloorOffer:
-                status += returnRandomSentence(BotConfiguration.getConfiguration().getSentencesFloorOffer(), rand);
+                status += returnRandomSentence(aBot.getSentencesFloorOffer(), rand);
                 break;
             case NewBidding:
-                status += returnRandomSentence(BotConfiguration.getConfiguration().getSentencesBidding(), rand);
+                status += returnRandomSentence(aBot.getSentencesBidding(), rand);
                 break;
         }
 
@@ -257,7 +259,7 @@ public class NetworkMessageManager {
                 break;
         }
 
-        if (BotConfiguration.getConfiguration().isAdressListingAndBidding()) {
+        if (aBot.isAdressListingAndBidding()) {
 
             if (aSale.getType() == SaleTypeEnum.NewFloorOffer || aSale.getType() == SaleTypeEnum.NewBidding) {
                 String buyerAdress = aSale.getBuyer().getTezdomain() == null || aSale.getBuyer().getTezdomain().isBlank() ? aSale.getBuyer().getAdress() : aSale.getBuyer().getTezdomain();
@@ -293,11 +295,11 @@ public class NetworkMessageManager {
 
         status += "\n" + aSale.getTimestamp().toString().substring(5, 7) + "-" + aSale.getTimestamp().toString().substring(8, 10) + "-" + aSale.getTimestamp().toString().substring(0, 4) + " at " + aSale.getTimestamp().toString().substring(11, 16) + " UTC";
 
-        if (BotConfiguration.getConfiguration().getHashtags().size() > 0) {
+        if (aBot.getHashtags().size() > 0) {
             status += "\n";
         }
 
-        for (String hashtag : BotConfiguration.getConfiguration().getHashtags()) {
+        for (String hashtag : aBot.getHashtags()) {
             status += "#" + hashtag + " ";
         }
 
@@ -310,7 +312,7 @@ public class NetworkMessageManager {
         return status;
     }
 
-    public HashMap<String, Long> getBalanceRoyaltyWallet(HashMap<MarketPlaceEnum, MarketPlace> marketplaces, List<Sale> saleList) throws MalformedURLException, IOException, InterruptedException {
+    public HashMap<String, Long> getBalanceRoyaltyWallet(Bot theBot, List<Sale> saleList) throws MalformedURLException, IOException, InterruptedException {
         HashMap<String, Long> balance = new HashMap<String, Long>();
 
         String stringurl = "https://api.tzkt.io/v1/accounts/replaceaddress/balance";
@@ -324,14 +326,14 @@ public class NetworkMessageManager {
             }
         }
 
-        for (MarketPlace mp : marketplaces.values()) {
-            for (String contract : mp.getContracts()) {
-                if (allContractsPresent.contains(contract) && mp.getRoyaltywallet().containsKey(contract) && !mp.getRoyaltywallet().get(contract).isBlank()) {
+        for (MarketPlace mp : theBot.getMarketplaces().values()) {
+            for (String contract : mp.getAllContractsString()) {
+                if (allContractsPresent.contains(contract) && mp.getAllContractsFromThisMarketPlace().containsKey(contract) && !mp.getAllContractsFromThisMarketPlace().get(contract).getRoyaltyWallet().isBlank()) {
 
                     HttpClient client = HttpClient.newHttpClient();
 
                     HttpRequest request = HttpRequest.newBuilder(
-                            URI.create(stringurl.replace("replaceaddress", mp.getRoyaltywallet().get(contract))))
+                            URI.create(stringurl.replace("replaceaddress", mp.getAllContractsFromThisMarketPlace().get(contract).getRoyaltyWallet())))
                             .build();
 
                     String response = client.send(request, HttpResponse.BodyHandlers.ofString()).body();

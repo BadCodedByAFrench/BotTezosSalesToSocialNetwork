@@ -79,7 +79,7 @@ public class CallRarible implements CallMarketPlaceInterface {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(new URI(POST_PARAMS))
-                .timeout(Duration.of(10, SECONDS))
+                .timeout(Duration.of(15, SECONDS))
                 .GET()
                 .build();
 
@@ -152,7 +152,7 @@ public class CallRarible implements CallMarketPlaceInterface {
                     } else {
                         HttpRequest request = HttpRequest.newBuilder()
                                 .uri(new URI("https://api.rarible.org/v0.1/collections/TEZOS:" + contract))
-                                .timeout(Duration.of(10, SECONDS))
+                                .timeout(Duration.of(15, SECONDS))
                                 .GET()
                                 .build();
 
@@ -196,13 +196,9 @@ public class CallRarible implements CallMarketPlaceInterface {
                     if(!buyer.get("name").isJsonNull()){
                         buyerDomain = buyer.get("name").getAsString(); 
                     }*/
-                    
                     double price = transac.get("price").getAsDouble();
-                    
-                    
-                    JsonObject nfttransac = (JsonObject) transac.getAsJsonObject("make");
 
-                    
+                    JsonObject nfttransac = (JsonObject) transac.getAsJsonObject("make");
 
                     Long id = nfttransac.getAsJsonObject("type").get("tokenId").getAsLong();
 
@@ -217,7 +213,7 @@ public class CallRarible implements CallMarketPlaceInterface {
                     } else {
                         HttpRequest request = HttpRequest.newBuilder()
                                 .uri(new URI("https://api.rarible.org/v0.1/collections/TEZOS:" + contract))
-                                .timeout(Duration.of(10, SECONDS))
+                                .timeout(Duration.of(15, SECONDS))
                                 .GET()
                                 .build();
 
@@ -255,7 +251,7 @@ public class CallRarible implements CallMarketPlaceInterface {
                 .uri(new URI("https://api.rarible.org/v0.1/items/byIds"))
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
-                .timeout(Duration.of(10, SECONDS))
+                .timeout(Duration.of(15, SECONDS))
                 .POST(HttpRequest.BodyPublishers.ofString(POST_PARAMS))
                 .build();
 
@@ -270,27 +266,34 @@ public class CallRarible implements CallMarketPlaceInterface {
 
         for (Object c : items) {
             JsonObject item = (JsonObject) c;
-            String name = item.getAsJsonObject("meta").get("name").getAsString();
-            JsonArray contents = item.getAsJsonObject("meta").getAsJsonArray("content");
-            String ipfs = "";
 
-            for (Object d : contents) {
-                JsonObject content = (JsonObject) d;
+            if (item.getAsJsonObject("meta") != null) {
+                if (item.getAsJsonObject("meta").get("name") != null) {
+                    String name = item.getAsJsonObject("meta").get("name").getAsString();
+                    JsonArray contents = item.getAsJsonObject("meta").getAsJsonArray("content");
+                    String ipfs = "";
 
-                if (content.get("@type").getAsString().equals("IMAGE")) {
+                    for (Object d : contents) {
+                        JsonObject content = (JsonObject) d;
 
-                    String tempipfs = content.get("url").getAsString();
-                    ipfs = tempipfs.substring(tempipfs.indexOf("/ipfs/") + 1);
-                }
-            }
+                        if (content.get("@type") != null) {
+                            if (content.get("@type").getAsString().equals("IMAGE")) {
 
-            String contract = item.get("contract").toString().split(":")[1].replace("\"", "");
-            Long id = item.get("tokenId").getAsLong();
+                                String tempipfs = content.get("url").getAsString();
+                                ipfs = tempipfs.substring(tempipfs.indexOf("/ipfs/") + 1);
+                            }
+                        }
+                    }
 
-            for (Sale aSale : sellList.values()) {
-                if (aSale.getId().longValue() == id.longValue() && aSale.getContract().equals(contract)) {
-                    aSale.setName(name);
-                    aSale.setIpfs(ipfs);
+                    String contract = item.get("contract").toString().split(":")[1].replace("\"", "");
+                    Long id = item.get("tokenId").getAsLong();
+
+                    for (Sale aSale : sellList.values()) {
+                        if (aSale.getId().longValue() == id.longValue() && aSale.getContract().equals(contract)) {
+                            aSale.setName(name);
+                            aSale.setIpfs(ipfs);
+                        }
+                    }
                 }
             }
         }

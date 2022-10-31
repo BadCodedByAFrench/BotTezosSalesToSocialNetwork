@@ -4,6 +4,7 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterface;
 
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Bot.Bot;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetworkEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Contract;
@@ -22,6 +23,8 @@ public interface SocialNetworkInterface {
      */
     public SocialNetworkEnum getName();
     
+    public String getProfileName();
+    
     /**
      * Function to say that the bot is starting
      */
@@ -32,5 +35,15 @@ public interface SocialNetworkInterface {
      */
     public void stop()throws Exception;
     
-    public CreatorThreadSocialNetworkInterface createThreadSocialNetwork(BotModeEnum mode, LinkedHashMap<Sale, String> messageSaver, LinkedHashMap<Contract,String> contracts);
+    public void check() throws Exception ;
+    
+    public String isUsedByBots();
+    
+    public String isUsedBySn();
+    
+    public void turnOff();
+    
+    public void instance();
+    
+    public CreatorThreadSocialNetworkInterface createThreadSocialNetwork(BotModeEnum mode, LinkedHashMap<Sale, String> messageSaver, LinkedHashMap<Contract,String> contracts, Bot theBot);
 }

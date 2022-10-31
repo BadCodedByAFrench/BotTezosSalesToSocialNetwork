@@ -4,8 +4,12 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.MainForm;
 
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotConfiguration;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Bot.Bot;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Bot.BotManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.LogManager;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.PanelRefreshInterface;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.MarketPlaceProfile;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.MarketPlaceProfileManager;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
@@ -21,59 +25,78 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  * Form the customize the bot
+ *
  * @author david
  */
-public class ConfigurationMenu extends javax.swing.JPanel {
+public class ConfigurationMenu extends javax.swing.JPanel implements PanelRefreshInterface {
+
+    private MainBotForm mainBotForm;
+
+    private Bot bot;
+
+    private MarketPlaceProfile showedMpProfile;
 
     /**
      * Creates new form ConfigurationMenu
      */
     public ConfigurationMenu() {
         initComponents();
-        
+
         this.combo_refresh_sales.addItem(TimeUnit.MINUTES.toString());
         this.combo_refresh_sales.addItem(TimeUnit.HOURS.toString());
         this.combo_refresh_sales.addItem(TimeUnit.DAYS.toString());
-        
+
         this.combo_refresh_stat.addItem(TimeUnit.HOURS.toString());
         this.combo_refresh_stat.addItem(TimeUnit.DAYS.toString());
-        
+
         this.combo_refresh_listingandbidding.addItem(TimeUnit.MINUTES.toString());
         this.combo_refresh_listingandbidding.addItem(TimeUnit.HOURS.toString());
         this.combo_refresh_listingandbidding.addItem(TimeUnit.DAYS.toString());
-        
+
         this.combo_order_sales.addItem("Timestamp");
         this.combo_order_sales.addItem("Price");
-        
+
         //Take from https://stackhowto.com/how-to-make-jtextfield-accept-only-numbers/
         this.txt_refresh_sales.addKeyListener(new KeyAdapter() {
-        public void keyTyped(KeyEvent e) {
-            char c = e.getKeyChar();
-            if ( ((c < '0') || (c > '9')) && (c != KeyEvent.VK_BACK_SPACE)) {
-                e.consume();  
+            public void keyTyped(KeyEvent e) {
+                char c = e.getKeyChar();
+                if (((c < '0') || (c > '9')) && (c != KeyEvent.VK_BACK_SPACE)) {
+                    e.consume();
+                }
             }
-         }
         });
-      
+
         this.txt_refresh_stats.addKeyListener(new KeyAdapter() {
-        public void keyTyped(KeyEvent e) {
-            char c = e.getKeyChar();
-            if ( ((c < '0') || (c > '9')) && (c != KeyEvent.VK_BACK_SPACE)) {
-                e.consume();  
+            public void keyTyped(KeyEvent e) {
+                char c = e.getKeyChar();
+                if (((c < '0') || (c > '9')) && (c != KeyEvent.VK_BACK_SPACE)) {
+                    e.consume();
+                }
             }
-         }
         });
-        
+
         this.txt_refresh_listingandbidding.addKeyListener(new KeyAdapter() {
-        public void keyTyped(KeyEvent e) {
-            char c = e.getKeyChar();
-            if ( ((c < '0') || (c > '9')) && (c != KeyEvent.VK_BACK_SPACE)) {
-                e.consume();  
+            public void keyTyped(KeyEvent e) {
+                char c = e.getKeyChar();
+                if (((c < '0') || (c > '9')) && (c != KeyEvent.VK_BACK_SPACE)) {
+                    e.consume();
+                }
             }
-         }
         });
-        
+    }
+
+    public void refresh() {
+        combo_profile.removeAllItems();
+        for (MarketPlaceProfile mpProfile : MarketPlaceProfileManager.getMarketPlaceProfileManager().getAllMarketPlaceProfile().values()) {
+            combo_profile.addItem(mpProfile);
+        }
+
+        bot = BotManager.getBotManager().getCurrentBot();
         setValue();
+    }
+
+    public void setBot(Bot bot) {
+        this.bot = bot;
     }
 
     /**
@@ -153,6 +176,10 @@ public class ConfigurationMenu extends javax.swing.JPanel {
         cb_dutchauction_listingandbidding = new javax.swing.JCheckBox();
         lbl_bidding_listingandbidding = new javax.swing.JLabel();
         cb_bidding_listingandbidding = new javax.swing.JCheckBox();
+        jButton1 = new javax.swing.JButton();
+        combo_profile = new javax.swing.JComboBox<>();
+        lbl_title = new javax.swing.JLabel();
+        lbl_profile = new javax.swing.JLabel();
 
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -229,69 +256,77 @@ public class ConfigurationMenu extends javax.swing.JPanel {
         add(btn_remove_hashtag, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 260, -1, -1));
 
         lbl_max_stat.setText("Max price");
-        add(lbl_max_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 140, -1, -1));
+        add(lbl_max_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 150, -1, -1));
 
         min_avg_stat.setText("Min price");
-        add(min_avg_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 120, -1, -1));
+        add(min_avg_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 130, -1, -1));
 
         lbl_avg_stat.setText("Average price");
-        add(lbl_avg_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 100, -1, -1));
+        add(lbl_avg_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 110, -1, -1));
 
         lbl_id_stat.setText("Id message");
-        add(lbl_id_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(362, 79, -1, -1));
+        add(lbl_id_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 90, -1, -1));
 
         lbl_refresh_stat.setText("Refresh every");
-        add(lbl_refresh_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(361, 51, -1, -1));
-        add(txt_refresh_stats, new org.netbeans.lib.awtextra.AbsoluteConstraints(454, 45, 70, -1));
+        add(lbl_refresh_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 60, -1, -1));
+
+        txt_refresh_stats.setEditable(false);
+        txt_refresh_stats.setEnabled(false);
+        add(txt_refresh_stats, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 60, 70, -1));
 
         lbl_stat.setText("Stat");
-        add(lbl_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(489, 11, -1, -1));
+        add(lbl_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 40, -1, -1));
 
-        add(combo_refresh_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 46, 110, -1));
+        combo_refresh_stat.setEnabled(false);
+        add(combo_refresh_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 60, 110, -1));
 
         cb_id_stat.setText("Show");
-        add(cb_id_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 79, -1, -1));
+        add(cb_id_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 90, -1, -1));
 
         cb_avg_stat.setText("Show");
-        add(cb_avg_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 100, -1, -1));
+        add(cb_avg_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 110, -1, -1));
 
         cb_min_stat.setText("Show");
-        add(cb_min_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 120, -1, -1));
+        add(cb_min_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 130, -1, -1));
 
         cb_max_stat.setText("Show");
-        add(cb_max_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 140, -1, -1));
+        add(cb_max_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 150, -1, -1));
 
         lbl_sales1.setText("Sales");
-        add(lbl_sales1, new org.netbeans.lib.awtextra.AbsoluteConstraints(118, 11, -1, -1));
-        add(txt_refresh_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(123, 45, 70, -1));
+        add(lbl_sales1, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 40, -1, -1));
+
+        txt_refresh_sales.setEditable(false);
+        txt_refresh_sales.setEnabled(false);
+        add(txt_refresh_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 60, 70, -1));
 
         lbl_refresh_sales.setText("Refresh every");
-        add(lbl_refresh_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 51, -1, -1));
+        add(lbl_refresh_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 60, -1, -1));
 
-        add(combo_refresh_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(205, 46, 110, -1));
+        combo_refresh_sales.setEnabled(false);
+        add(combo_refresh_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 60, 110, -1));
 
         cb_id_sales.setText("Show");
-        add(cb_id_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(262, 79, -1, -1));
+        add(cb_id_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 90, -1, -1));
 
-        add(combo_order_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(205, 103, 110, -1));
+        add(combo_order_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 110, 110, -1));
 
         lbl_order_sales.setText("Order by");
-        add(lbl_order_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 110, -1, -1));
+        add(lbl_order_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 120, -1, -1));
 
         lbl_id_sales.setText("Id message");
-        add(lbl_id_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 79, -1, -1));
+        add(lbl_id_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 90, -1, -1));
 
         lbl_type_sales.setText("Sale type");
-        add(lbl_type_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 130, -1, -1));
+        add(lbl_type_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 140, -1, -1));
 
         cb_type_sales.setText("Show");
-        add(cb_type_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 130, -1, -1));
+        add(cb_type_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 140, -1, -1));
 
         lbl_buyer_sales.setText("Address");
-        add(lbl_buyer_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 150, -1, -1));
+        add(lbl_buyer_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 160, -1, -1));
 
         cb_adress_sales.setText("Show");
-        add(cb_adress_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 150, -1, -1));
+        add(cb_adress_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 160, -1, -1));
 
         btn_save.setText("Save");
         btn_save.addActionListener(new java.awt.event.ActionListener() {
@@ -299,7 +334,7 @@ public class ConfigurationMenu extends javax.swing.JPanel {
                 btn_saveActionPerformed(evt);
             }
         });
-        add(btn_save, new org.netbeans.lib.awtextra.AbsoluteConstraints(890, 200, 61, -1));
+        add(btn_save, new org.netbeans.lib.awtextra.AbsoluteConstraints(890, 160, 61, -1));
 
         btn_reset.setText("Reset");
         btn_reset.addActionListener(new java.awt.event.ActionListener() {
@@ -307,13 +342,13 @@ public class ConfigurationMenu extends javax.swing.JPanel {
                 btn_resetActionPerformed(evt);
             }
         });
-        add(btn_reset, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 200, -1, -1));
+        add(btn_reset, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 160, -1, -1));
 
         lbl_IPFS_sales.setText("IPFS");
-        add(lbl_IPFS_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 170, -1, -1));
+        add(lbl_IPFS_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 180, -1, -1));
 
         cb_IPFS_sales.setText("Show");
-        add(cb_IPFS_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 170, -1, -1));
+        add(cb_IPFS_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 180, -1, -1));
 
         btn_Export.setText("Export");
         btn_Export.addActionListener(new java.awt.event.ActionListener() {
@@ -321,7 +356,7 @@ public class ConfigurationMenu extends javax.swing.JPanel {
                 btn_ExportActionPerformed(evt);
             }
         });
-        add(btn_Export, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 240, -1, -1));
+        add(btn_Export, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 200, -1, -1));
 
         btn_import.setText("Import");
         btn_import.addActionListener(new java.awt.event.ActionListener() {
@@ -329,52 +364,56 @@ public class ConfigurationMenu extends javax.swing.JPanel {
                 btn_importActionPerformed(evt);
             }
         });
-        add(btn_import, new org.netbeans.lib.awtextra.AbsoluteConstraints(890, 240, -1, -1));
+        add(btn_import, new org.netbeans.lib.awtextra.AbsoluteConstraints(890, 200, -1, -1));
 
         lbl_royalty_wallet_sales.setText("Royalty wallet");
-        add(lbl_royalty_wallet_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 190, -1, -1));
+        add(lbl_royalty_wallet_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 200, -1, -1));
 
         cb_royalty_wallet_sales.setText("Show");
-        add(cb_royalty_wallet_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 190, 60, -1));
+        add(cb_royalty_wallet_sales, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 200, 60, -1));
 
         lbl_royalty_wallet_stat.setText("Royalty wallet");
-        add(lbl_royalty_wallet_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 160, -1, -1));
+        add(lbl_royalty_wallet_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 170, -1, -1));
 
         cb_royalty_wallet_stat.setText("Show");
-        add(cb_royalty_wallet_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 160, -1, -1));
+        add(cb_royalty_wallet_stat, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 170, -1, -1));
 
         lbl_name_royalty_wallet.setText("Name of the label for royalty wallet");
-        add(lbl_name_royalty_wallet, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 220, -1, -1));
+        add(lbl_name_royalty_wallet, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 230, -1, -1));
 
         tb_name_royalty_wallet.setText("Wallet balance :");
-        add(tb_name_royalty_wallet, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 210, 113, -1));
+        add(tb_name_royalty_wallet, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 220, 113, -1));
 
         lbl_listingandbidding.setText("Listing and binding");
-        add(lbl_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 10, -1, -1));
+        add(lbl_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 40, -1, -1));
 
         lbl_refresh_listingandbidding.setText("Refresh every");
-        add(lbl_refresh_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 50, -1, -1));
-        add(txt_refresh_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 45, 70, -1));
+        add(lbl_refresh_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 60, -1, -1));
 
-        add(combo_refresh_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 45, 110, -1));
+        txt_refresh_listingandbidding.setEditable(false);
+        txt_refresh_listingandbidding.setEnabled(false);
+        add(txt_refresh_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 60, 70, -1));
+
+        combo_refresh_listingandbidding.setEnabled(false);
+        add(combo_refresh_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 60, 110, -1));
 
         lbl_id_listingandbidding.setText("Id message");
-        add(lbl_id_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 80, -1, -1));
+        add(lbl_id_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 90, -1, -1));
 
         cb_id_listingandbidding.setText("Show");
-        add(cb_id_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 80, -1, -1));
+        add(cb_id_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 90, -1, -1));
 
         lbl_ipfs_listingandbidding.setText("IPFS");
-        add(lbl_ipfs_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 100, -1, -1));
+        add(lbl_ipfs_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 110, -1, -1));
 
         cb_ipfs_listingandbidding.setText("Show");
-        add(cb_ipfs_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 100, -1, -1));
+        add(cb_ipfs_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 110, -1, -1));
 
         lbl_address_listingandbidding.setText("Seller/Buyer adress");
-        add(lbl_address_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 120, -1, -1));
+        add(lbl_address_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 130, -1, -1));
 
         cb_address_listingandbidding.setText("Show");
-        add(cb_address_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 120, -1, -1));
+        add(cb_address_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 130, -1, -1));
 
         tbl_sentenceslistingandbidding.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -413,204 +452,229 @@ public class ConfigurationMenu extends javax.swing.JPanel {
         add(btn_remove_sentenceslistingbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 260, -1, -1));
 
         lbl_listing_listingandbidding.setText("Listing");
-        add(lbl_listing_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 170, -1, -1));
+        add(lbl_listing_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 180, -1, -1));
 
         cb_listing_listingandbidding.setText("Activate");
-        add(cb_listing_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 170, -1, -1));
+        add(cb_listing_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 180, -1, -1));
 
         lbl_englishauction_listingandbidding.setText("English Auction");
-        add(lbl_englishauction_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 190, -1, -1));
+        add(lbl_englishauction_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 200, -1, -1));
 
         cb_englishauction_listingandbidding.setText("Activate");
-        add(cb_englishauction_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 190, -1, -1));
+        add(cb_englishauction_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 200, -1, -1));
 
         lbl_dutchauction_listingandbidding.setText("Dutch Auction");
-        add(lbl_dutchauction_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 210, -1, -1));
+        add(lbl_dutchauction_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 220, -1, -1));
 
         lbl_flooroffer_listingandbidding.setText("Floor offer");
-        add(lbl_flooroffer_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 230, -1, -1));
+        add(lbl_flooroffer_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 240, -1, -1));
 
         cb_flooroffer_listingandbidding.setText("Activate");
-        add(cb_flooroffer_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 230, -1, -1));
+        add(cb_flooroffer_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 240, -1, -1));
 
         cb_dutchauction_listingandbidding.setText("Activate");
-        add(cb_dutchauction_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 210, -1, -1));
+        add(cb_dutchauction_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 220, -1, -1));
 
         lbl_bidding_listingandbidding.setText("Bidding");
-        add(lbl_bidding_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 250, -1, -1));
+        add(lbl_bidding_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 260, -1, -1));
 
         cb_bidding_listingandbidding.setText("Activate");
-        add(cb_bidding_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 250, -1, -1));
+        add(cb_bidding_listingandbidding, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 260, -1, -1));
+
+        jButton1.setText("Return");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(890, 250, 130, -1));
+
+        combo_profile.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                combo_profileItemStateChanged(evt);
+            }
+        });
+        add(combo_profile, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 10, 110, -1));
+
+        lbl_title.setFont(new java.awt.Font("sansserif", 1, 24)); // NOI18N
+        lbl_title.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbl_title.setText("Bot message configuration");
+        add(lbl_title, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 10, 380, -1));
+
+        lbl_profile.setText("Profile :");
+        add(lbl_profile, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 10, -1, -1));
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_add_sentenceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_add_sentenceActionPerformed
-        ((DefaultTableModel)this.tbl_sentences.getModel()).addRow(new Object[]{""});
+        ((DefaultTableModel) this.tbl_sentences.getModel()).addRow(new Object[]{""});
         btn_remove_sentence.setEnabled(true);
     }//GEN-LAST:event_btn_add_sentenceActionPerformed
 
     private void btn_remove_sentenceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_remove_sentenceActionPerformed
-        DefaultTableModel dtb = ((DefaultTableModel)this.tbl_sentences.getModel());
-        if(tbl_sentences.getSelectedRows().length != 0){
-            
+        DefaultTableModel dtb = ((DefaultTableModel) this.tbl_sentences.getModel());
+        if (tbl_sentences.getSelectedRows().length != 0) {
+
             int[] allIndex = tbl_sentences.getSelectedRows();
             int[] reversedAllIndex = Arrays.stream(allIndex).boxed()
                     .sorted(Collections.reverseOrder())
                     .mapToInt(Integer::intValue)
                     .toArray();
 
-            for (int i : reversedAllIndex ){
-                 dtb.removeRow(i);
+            for (int i : reversedAllIndex) {
+                dtb.removeRow(i);
             }
+        } else {
+            dtb.removeRow(dtb.getRowCount() - 1);
         }
-        else{
-            dtb.removeRow(dtb.getRowCount()-1);
-        }
-        
-        if (dtb.getRowCount() <= 0){
+
+        if (dtb.getRowCount() <= 0) {
             btn_remove_sentence.setEnabled(false);
         }
     }//GEN-LAST:event_btn_remove_sentenceActionPerformed
 
     private void btn_add_hashtagActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_add_hashtagActionPerformed
-        ((DefaultTableModel)this.tbl_hashtags.getModel()).addRow(new Object[]{""});
+        ((DefaultTableModel) this.tbl_hashtags.getModel()).addRow(new Object[]{""});
         btn_remove_hashtag.setEnabled(true);
     }//GEN-LAST:event_btn_add_hashtagActionPerformed
 
     private void btn_remove_hashtagActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_remove_hashtagActionPerformed
-        DefaultTableModel dtb = ((DefaultTableModel)this.tbl_hashtags.getModel());
-        if(tbl_hashtags.getSelectedRows().length != 0){
-            
+        DefaultTableModel dtb = ((DefaultTableModel) this.tbl_hashtags.getModel());
+        if (tbl_hashtags.getSelectedRows().length != 0) {
+
             int[] allIndex = tbl_hashtags.getSelectedRows();
             int[] reversedAllIndex = Arrays.stream(allIndex).boxed()
                     .sorted(Collections.reverseOrder())
                     .mapToInt(Integer::intValue)
                     .toArray();
 
-            for (int i : reversedAllIndex ){
-                 dtb.removeRow(i);
+            for (int i : reversedAllIndex) {
+                dtb.removeRow(i);
             }
+        } else {
+            dtb.removeRow(dtb.getRowCount() - 1);
         }
-        else{
-            dtb.removeRow(dtb.getRowCount()-1);
-        }
-        
-        if (dtb.getRowCount() <= 0){
+
+        if (dtb.getRowCount() <= 0) {
             btn_remove_hashtag.setEnabled(false);
         }
     }//GEN-LAST:event_btn_remove_hashtagActionPerformed
 
     /**
-     * Check the value in field and if correct then we save them 
+     * Check the value in field and if correct then we save them
      */
-    
+
     private void btn_saveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_saveActionPerformed
-        
+
         boolean checkValue = true;
-        
-        List<String> sentences = new ArrayList<String>(); 
-        Vector<Vector> sentencesData = ((DefaultTableModel)this.tbl_sentences.getModel()).getDataVector();
-        for(Vector v : sentencesData){
-            if(v.get(0).toString().isBlank() || v.get(0).toString().contains("#&#")){
+
+        List<String> sentences = new ArrayList<String>();
+        Vector<Vector> sentencesData = ((DefaultTableModel) this.tbl_sentences.getModel()).getDataVector();
+        for (Vector v : sentencesData) {
+            if (v.get(0).toString().isBlank() || v.get(0).toString().contains("#&#")) {
                 checkValue = false;
             }
             sentences.add(v.get(0).toString());
         }
-        
-        List<String> hashtags = new ArrayList<String>(); 
-        Vector<Vector> hashtagsData = ((DefaultTableModel)this.tbl_hashtags.getModel()).getDataVector();
-        for(Vector v : hashtagsData){
-            if(v.get(0).toString().isBlank() || v.get(0).toString().contains("#&#") ){
+
+        List<String> hashtags = new ArrayList<String>();
+        Vector<Vector> hashtagsData = ((DefaultTableModel) this.tbl_hashtags.getModel()).getDataVector();
+        for (Vector v : hashtagsData) {
+            if (v.get(0).toString().isBlank() || v.get(0).toString().contains("#&#")) {
                 checkValue = false;
             }
-            
+
             hashtags.add(v.get(0).toString());
         }
-        
+
         List<String> listingSentences = new ArrayList<String>();
         List<String> englishAuctionSentences = new ArrayList<String>();
         List<String> dutchAuctionSentences = new ArrayList<String>();
         List<String> floorOfferSentences = new ArrayList<String>();
         List<String> biddingSentences = new ArrayList<String>();
-        
-        Vector<Vector> listingAndBindingData = ((DefaultTableModel)this.tbl_sentenceslistingandbidding.getModel()).getDataVector();
-        for(Vector v : listingAndBindingData){
-            if(v.get(0).toString().isBlank() || v.get(0).toString().contains("#&#") ){
+
+        Vector<Vector> listingAndBindingData = ((DefaultTableModel) this.tbl_sentenceslistingandbidding.getModel()).getDataVector();
+        for (Vector v : listingAndBindingData) {
+            if (v.get(0).toString().isBlank() || v.get(0).toString().contains("#&#")) {
                 checkValue = false;
             }
-            
-            if( (boolean)  v.get(1)){
-                 listingSentences.add(v.get(0).toString());
+
+            if ((boolean) v.get(1)) {
+                listingSentences.add(v.get(0).toString());
             }
-            
-            if( (boolean)  v.get(2)){
-                 englishAuctionSentences.add(v.get(0).toString());
+
+            if ((boolean) v.get(2)) {
+                englishAuctionSentences.add(v.get(0).toString());
             }
-            
-            if( (boolean)  v.get(3)){
-                 dutchAuctionSentences.add(v.get(0).toString());
+
+            if ((boolean) v.get(3)) {
+                dutchAuctionSentences.add(v.get(0).toString());
             }
-            
-            if( (boolean)  v.get(4)){
-                 floorOfferSentences.add(v.get(0).toString());
+
+            if ((boolean) v.get(4)) {
+                floorOfferSentences.add(v.get(0).toString());
             }
-            
-            if( (boolean)  v.get(5)){
-                 biddingSentences.add(v.get(0).toString());
+
+            if ((boolean) v.get(5)) {
+                biddingSentences.add(v.get(0).toString());
             }
         }
-        
-        if( Integer.valueOf(this.txt_refresh_sales.getText()) == 0 || Integer.valueOf(this.txt_refresh_stats.getText()) == 0  || Integer.valueOf(this.txt_refresh_listingandbidding.getText()) == 0 ){
+
+        if (combo_profile.getSelectedIndex() < 0) {
             checkValue = false;
-        } 
-        
-        if (checkValue){
-            BotConfiguration.getConfiguration().setRefreshSalesTime(Integer.valueOf(this.txt_refresh_sales.getText()));
+        }
+
+        if (checkValue) {
+            /* BotConfiguration.getConfiguration().setRefreshSalesTime(Integer.valueOf(this.txt_refresh_sales.getText()));
             BotConfiguration.getConfiguration().setRefreshSalesStats(Integer.valueOf(this.txt_refresh_stats.getText()));
-            BotConfiguration.getConfiguration().setRefreshListingAndBiddingTime(Integer.valueOf(this.txt_refresh_listingandbidding.getText()));
+            BotConfiguration.getConfiguration().setRefreshListingAndBiddingTime(Integer.valueOf(this.txt_refresh_listingandbidding.getText()));*/
 
-            BotConfiguration.getConfiguration().setSecurityIdSales(this.cb_id_sales.isSelected());
-            BotConfiguration.getConfiguration().setSecurityIdStats(this.cb_id_stat.isSelected());
-            BotConfiguration.getConfiguration().setSecurityIdListingAndBidding(this.cb_id_listingandbidding.isSelected());
+            bot.setMpProfile((MarketPlaceProfile) combo_profile.getSelectedItem());
 
-            BotConfiguration.getConfiguration().setSaleType(this.cb_type_sales.isSelected());
-            BotConfiguration.getConfiguration().setAdress(this.cb_adress_sales.isSelected());
-            BotConfiguration.getConfiguration().setIpfs(this.cb_IPFS_sales.isSelected());
-            
-            BotConfiguration.getConfiguration().setAdressListingAndBidding(this.cb_address_listingandbidding.isSelected());
-            BotConfiguration.getConfiguration().setIpfsListingAndBidding(this.cb_ipfs_listingandbidding.isSelected());
-            
-            BotConfiguration.getConfiguration().setAvgPriceStat(this.cb_avg_stat.isSelected());
-            BotConfiguration.getConfiguration().setMinPriceStat(this.cb_min_stat.isSelected());
-            BotConfiguration.getConfiguration().setMaxPriceStat(this.cb_max_stat.isSelected());
+            bot.setSecurityIdSales(this.cb_id_sales.isSelected());
+            bot.setSecurityIdStats(this.cb_id_stat.isSelected());
+            bot.setSecurityIdListingAndBidding(this.cb_id_listingandbidding.isSelected());
 
-            BotConfiguration.getConfiguration().setRefreshSales(TimeUnit.valueOf(this.combo_refresh_sales.getSelectedItem().toString().toUpperCase()));
+            bot.setSaleType(this.cb_type_sales.isSelected());
+            bot.setAdress(this.cb_adress_sales.isSelected());
+            bot.setIpfs(this.cb_IPFS_sales.isSelected());
+
+            bot.setAdressListingAndBidding(this.cb_address_listingandbidding.isSelected());
+            bot.setIpfsListingAndBidding(this.cb_ipfs_listingandbidding.isSelected());
+
+            bot.setAvgPriceStat(this.cb_avg_stat.isSelected());
+            bot.setMinPriceStat(this.cb_min_stat.isSelected());
+            bot.setMaxPriceStat(this.cb_max_stat.isSelected());
+
+            /*BotConfiguration.getConfiguration().setRefreshSales(TimeUnit.valueOf(this.combo_refresh_sales.getSelectedItem().toString().toUpperCase()));
             BotConfiguration.getConfiguration().setRefreshStats(TimeUnit.valueOf(this.combo_refresh_stat.getSelectedItem().toString().toUpperCase()));
             BotConfiguration.getConfiguration().setRefreshListingAndBidding(TimeUnit.valueOf(this.combo_refresh_listingandbidding.getSelectedItem().toString().toUpperCase()));
-            BotConfiguration.getConfiguration().setOrderBy(this.combo_order_sales.getSelectedIndex());
+             */
+            bot.setOrderBy(this.combo_order_sales.getSelectedIndex());
 
-            BotConfiguration.getConfiguration().setSentences(sentences);
-            BotConfiguration.getConfiguration().setHashtags(hashtags);
+            bot.setSentences(sentences);
+            bot.setHashtags(hashtags);
+
+            bot.setActivateListing(this.cb_listing_listingandbidding.isSelected());
+            bot.setActivateEnglishAuction(this.cb_englishauction_listingandbidding.isSelected());
+            bot.setActivateDutchAuction(this.cb_dutchauction_listingandbidding.isSelected());
+            bot.setActivateFloorOffer(this.cb_flooroffer_listingandbidding.isSelected());
+            bot.setActivateBidding(this.cb_bidding_listingandbidding.isSelected());
+
+            bot.setSentencesListing(listingSentences);
+            bot.setSentencesEnglishAuction(englishAuctionSentences);
+            bot.setSentencesDutchAuction(dutchAuctionSentences);
+            bot.setSentencesFloorOffer(floorOfferSentences);
+            bot.setSentencesBidding(biddingSentences);
+
+            bot.setRoyaltywalletsale(this.cb_royalty_wallet_sales.isSelected());
+            bot.setRoyaltywalletstat(this.cb_royalty_wallet_stat.isSelected());
+            bot.setNameroyaltywallet(this.tb_name_royalty_wallet.getText().trim());
             
-            BotConfiguration.getConfiguration().setActivateListing(this.cb_listing_listingandbidding.isSelected());
-            BotConfiguration.getConfiguration().setActivateEnglishAuction(this.cb_englishauction_listingandbidding.isSelected());
-            BotConfiguration.getConfiguration().setActivateDutchAuction(this.cb_dutchauction_listingandbidding.isSelected());
-            BotConfiguration.getConfiguration().setActivateFloorOffer(this.cb_flooroffer_listingandbidding.isSelected());
-            BotConfiguration.getConfiguration().setActivateBidding(this.cb_bidding_listingandbidding.isSelected());
-            
-            BotConfiguration.getConfiguration().setSentencesListing(listingSentences);
-            BotConfiguration.getConfiguration().setSentencesEnglishAuction(englishAuctionSentences);
-            BotConfiguration.getConfiguration().setSentencesDutchAuction(dutchAuctionSentences);
-            BotConfiguration.getConfiguration().setSentencesFloorOffer(floorOfferSentences);
-            BotConfiguration.getConfiguration().setSentencesBidding(biddingSentences);
-               
-            BotConfiguration.getConfiguration().setRoyaltywalletsale(this.cb_royalty_wallet_sales.isSelected());
-            BotConfiguration.getConfiguration().setRoyaltywalletstat(this.cb_royalty_wallet_stat.isSelected());
-            BotConfiguration.getConfiguration().setNameroyaltywallet(this.tb_name_royalty_wallet.getText().trim());
-        }
-        else{
+            bot.checkComplete();
+        } else {
             JOptionPane.showMessageDialog(null, "Check if there's a sentence and/or hashtag empty, please be sure to unselect in both tables \nPlease not put 0 in any of the number field", "Empty field", JOptionPane.WARNING_MESSAGE);
         }
-        
+
     }//GEN-LAST:event_btn_saveActionPerformed
 
     private void btn_resetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_resetActionPerformed
@@ -619,7 +683,7 @@ public class ConfigurationMenu extends javax.swing.JPanel {
 
     private void btn_ExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ExportActionPerformed
         try {
-            BotConfiguration.getConfiguration().export();
+            bot.exportConfig();
         } catch (IOException ex) {
             LogManager.getLogManager().writeLog(ConfigurationMenu.class.getName(), ex);
         } catch (Exception ex) {
@@ -629,138 +693,167 @@ public class ConfigurationMenu extends javax.swing.JPanel {
 
     private void btn_importActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_importActionPerformed
         try {
-            BotConfiguration.getConfiguration().importFile();
+            bot.importConfig();
             setValue();
         } catch (IOException ex) {
             LogManager.getLogManager().writeLog(ConfigurationMenu.class.getName(), ex);
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
             LogManager.getLogManager().writeLog(ConfigurationMenu.class.getName(), ex);
         }
     }//GEN-LAST:event_btn_importActionPerformed
 
     private void btn_add_sentenceslistingbiddingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_add_sentenceslistingbiddingActionPerformed
-        ((DefaultTableModel)this.tbl_sentenceslistingandbidding.getModel()).addRow(new Object[]{"", false, false, false, false, false});
+        ((DefaultTableModel) this.tbl_sentenceslistingandbidding.getModel()).addRow(new Object[]{"", false, false, false, false, false});
         this.btn_remove_sentenceslistingbidding.setEnabled(true);
     }//GEN-LAST:event_btn_add_sentenceslistingbiddingActionPerformed
 
     private void btn_remove_sentenceslistingbiddingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_remove_sentenceslistingbiddingActionPerformed
-        DefaultTableModel dtb = ((DefaultTableModel)this.tbl_sentenceslistingandbidding.getModel());
-        if(tbl_sentenceslistingandbidding.getSelectedRows().length != 0){
-            
+        DefaultTableModel dtb = ((DefaultTableModel) this.tbl_sentenceslistingandbidding.getModel());
+        if (tbl_sentenceslistingandbidding.getSelectedRows().length != 0) {
+
             int[] allIndex = tbl_sentenceslistingandbidding.getSelectedRows();
             int[] reversedAllIndex = Arrays.stream(allIndex).boxed()
                     .sorted(Collections.reverseOrder())
                     .mapToInt(Integer::intValue)
                     .toArray();
 
-            for (int i : reversedAllIndex ){
-                 dtb.removeRow(i);
+            for (int i : reversedAllIndex) {
+                dtb.removeRow(i);
             }
+        } else {
+            dtb.removeRow(dtb.getRowCount() - 1);
         }
-        else{
-            dtb.removeRow(dtb.getRowCount()-1);
-        }
-        
-        if (dtb.getRowCount() <= 0){
+
+        if (dtb.getRowCount() <= 0) {
             this.btn_add_sentenceslistingbidding.setEnabled(false);
         }
     }//GEN-LAST:event_btn_remove_sentenceslistingbiddingActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        this.mainBotForm.swapView("oneBotConfiguration");
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void combo_profileItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_combo_profileItemStateChanged
+        if (combo_profile.hasFocus() && combo_profile.getSelectedIndex() >= 0) {
+            showedMpProfile = (MarketPlaceProfile) combo_profile.getSelectedItem();
+            setMpValue();
+        }
+    }//GEN-LAST:event_combo_profileItemStateChanged
+
+    private void setMpValue() {
+        showedMpProfile = (MarketPlaceProfile) combo_profile.getSelectedItem();
+
+        if (showedMpProfile != null) {
+            this.txt_refresh_sales.setText(String.valueOf(showedMpProfile.getRefreshSalesTime()));
+            this.txt_refresh_stats.setText(String.valueOf(showedMpProfile.getRefreshSalesStats()));
+            this.txt_refresh_listingandbidding.setText(String.valueOf(showedMpProfile.getRefreshListingAndBiddingTime()));
+
+            this.combo_refresh_sales.setSelectedItem(showedMpProfile.getRefreshSales().toString());
+            this.combo_refresh_stat.setSelectedItem(showedMpProfile.getRefreshStats().toString());
+            this.combo_refresh_listingandbidding.setSelectedItem(showedMpProfile.getRefreshListingAndBidding().toString());
+        }
+        else{
+            this.txt_refresh_sales.setText("");
+            this.txt_refresh_stats.setText("");
+            this.txt_refresh_listingandbidding.setText("");
+            
+            this.combo_refresh_sales.setSelectedIndex(0);
+            this.combo_refresh_stat.setSelectedIndex(1);
+            this.combo_refresh_listingandbidding.setSelectedIndex(0);
+        }
+    }
+
     /**
      * Set value from the Singleton Object to the field
      */
-    private void setValue(){
-        
-        
-        this.txt_refresh_sales.setText(String.valueOf(BotConfiguration.getConfiguration().getRefreshSalesTime()));
-        this.txt_refresh_stats.setText(String.valueOf(BotConfiguration.getConfiguration().getRefreshSalesStats())); 
-        this.txt_refresh_listingandbidding.setText(String.valueOf(BotConfiguration.getConfiguration().getRefreshListingAndBiddingTime()));
-        
-        this.cb_id_sales.setSelected(BotConfiguration.getConfiguration().isSecurityIdSales());
-        this.cb_id_stat.setSelected(BotConfiguration.getConfiguration().isSecurityIdStats());
-        this.cb_id_listingandbidding.setSelected(BotConfiguration.getConfiguration().isSecurityIdListingAndBidding());
+    private void setValue() {
 
-        
-        this.cb_type_sales.setSelected(BotConfiguration.getConfiguration().isSaleType());
-        this.cb_adress_sales.setSelected(BotConfiguration.getConfiguration().isAdress());
-        this.cb_IPFS_sales.setSelected(BotConfiguration.getConfiguration().isIpfs());
-        
-        this.cb_avg_stat.setSelected(BotConfiguration.getConfiguration().isAvgPriceStat());
-        this.cb_min_stat.setSelected(BotConfiguration.getConfiguration().isMinPriceStat());
-        this.cb_max_stat.setSelected(BotConfiguration.getConfiguration().isMaxPriceStat());
-        
-        this.cb_address_listingandbidding.setSelected(BotConfiguration.getConfiguration().isAdressListingAndBidding());
-        this.cb_ipfs_listingandbidding.setSelected(BotConfiguration.getConfiguration().isIpfsListingAndBidding());
-        
-        this.cb_listing_listingandbidding.setSelected(BotConfiguration.getConfiguration().isActivateListing());
-        this.cb_englishauction_listingandbidding.setSelected(BotConfiguration.getConfiguration().isActivateEnglishAuction());
-        this.cb_dutchauction_listingandbidding.setSelected(BotConfiguration.getConfiguration().isActivateDutchAuction());
-        this.cb_flooroffer_listingandbidding.setSelected(BotConfiguration.getConfiguration().isActivateFloorOffer());
-        this.cb_bidding_listingandbidding.setSelected(BotConfiguration.getConfiguration().isActivateBidding());
-        
-        
-        this.combo_refresh_sales.setSelectedItem(BotConfiguration.getConfiguration().getRefreshSales().toString());
+        /*this.txt_refresh_sales.setText(String.valueOf(BotConfiguration.getConfiguration().getRefreshSalesTime()));
+        this.txt_refresh_stats.setText(String.valueOf(BotConfiguration.getConfiguration().getRefreshSalesStats())); 
+        this.txt_refresh_listingandbidding.setText(String.valueOf(BotConfiguration.getConfiguration().getRefreshListingAndBiddingTime()));*/
+        this.combo_profile.setSelectedItem(this.bot.getMpProfile());
+        setMpValue();
+
+        this.cb_id_sales.setSelected(bot.isSecurityIdSales());
+        this.cb_id_stat.setSelected(bot.isSecurityIdStats());
+        this.cb_id_listingandbidding.setSelected(bot.isSecurityIdListingAndBidding());
+
+        this.cb_type_sales.setSelected(bot.isSaleType());
+        this.cb_adress_sales.setSelected(bot.isAdress());
+        this.cb_IPFS_sales.setSelected(bot.isIpfs());
+
+        this.cb_avg_stat.setSelected(bot.isAvgPriceStat());
+        this.cb_min_stat.setSelected(bot.isMinPriceStat());
+        this.cb_max_stat.setSelected(bot.isMaxPriceStat());
+
+        this.cb_address_listingandbidding.setSelected(bot.isAdressListingAndBidding());
+        this.cb_ipfs_listingandbidding.setSelected(bot.isIpfsListingAndBidding());
+
+        this.cb_listing_listingandbidding.setSelected(bot.isActivateListing());
+        this.cb_englishauction_listingandbidding.setSelected(bot.isActivateEnglishAuction());
+        this.cb_dutchauction_listingandbidding.setSelected(bot.isActivateDutchAuction());
+        this.cb_flooroffer_listingandbidding.setSelected(bot.isActivateFloorOffer());
+        this.cb_bidding_listingandbidding.setSelected(bot.isActivateBidding());
+
+        /*this.combo_refresh_sales.setSelectedItem(BotConfiguration.getConfiguration().getRefreshSales().toString());
         this.combo_refresh_stat.setSelectedItem(BotConfiguration.getConfiguration().getRefreshStats().toString());
-        this.combo_refresh_listingandbidding.setSelectedItem(BotConfiguration.getConfiguration().getRefreshListingAndBidding().toString());
-        this.combo_order_sales.setSelectedIndex(BotConfiguration.getConfiguration().getOrderBy());
-        
-        
-        ((DefaultTableModel)this.tbl_sentences.getModel()).setRowCount(0);
-        ((DefaultTableModel)this.tbl_hashtags.getModel()).setRowCount(0);
-        ((DefaultTableModel)this.tbl_sentenceslistingandbidding.getModel()).setRowCount(0);
-        
+        this.combo_refresh_listingandbidding.setSelectedItem(BotConfiguration.getConfiguration().getRefreshListingAndBidding().toString());*/
+        this.combo_order_sales.setSelectedIndex(bot.getOrderBy());
+
+        ((DefaultTableModel) this.tbl_sentences.getModel()).setRowCount(0);
+        ((DefaultTableModel) this.tbl_hashtags.getModel()).setRowCount(0);
+        ((DefaultTableModel) this.tbl_sentenceslistingandbidding.getModel()).setRowCount(0);
+
         HashMap<String, Integer> allListingAndBiddingSentences = new HashMap<>();
-        
-        for(String s : BotConfiguration.getConfiguration().getSentences()){
-            ((DefaultTableModel)this.tbl_sentences.getModel()).addRow(new Object[]{s});
+
+        for (String s : bot.getSentences()) {
+            ((DefaultTableModel) this.tbl_sentences.getModel()).addRow(new Object[]{s});
         }
-        
-        for(String s : BotConfiguration.getConfiguration().getHashtags()){
-            ((DefaultTableModel)this.tbl_hashtags.getModel()).addRow(new Object[]{s});
+
+        for (String s : bot.getHashtags()) {
+            ((DefaultTableModel) this.tbl_hashtags.getModel()).addRow(new Object[]{s});
         }
-        
-        insertIntoListingAndBiddingTable(allListingAndBiddingSentences, BotConfiguration.getConfiguration().getSentencesListing(), 1);
-        insertIntoListingAndBiddingTable(allListingAndBiddingSentences, BotConfiguration.getConfiguration().getSentencesEnglishAuction(), 2);
-        insertIntoListingAndBiddingTable(allListingAndBiddingSentences, BotConfiguration.getConfiguration().getSentencesDutchAuction(), 3);
-        insertIntoListingAndBiddingTable(allListingAndBiddingSentences, BotConfiguration.getConfiguration().getSentencesFloorOffer(), 4);
-        insertIntoListingAndBiddingTable(allListingAndBiddingSentences, BotConfiguration.getConfiguration().getSentencesBidding(), 5);
-        
-        
-        this.cb_royalty_wallet_sales.setSelected(BotConfiguration.getConfiguration().isRoyaltywalletsale());
-        this.cb_royalty_wallet_stat.setSelected(BotConfiguration.getConfiguration().isRoyaltywalletstat());
-        
-        this.tb_name_royalty_wallet.setText(BotConfiguration.getConfiguration().getNameroyaltywallet());
+
+        insertIntoListingAndBiddingTable(allListingAndBiddingSentences, bot.getSentencesListing(), 1);
+        insertIntoListingAndBiddingTable(allListingAndBiddingSentences, bot.getSentencesEnglishAuction(), 2);
+        insertIntoListingAndBiddingTable(allListingAndBiddingSentences, bot.getSentencesDutchAuction(), 3);
+        insertIntoListingAndBiddingTable(allListingAndBiddingSentences, bot.getSentencesFloorOffer(), 4);
+        insertIntoListingAndBiddingTable(allListingAndBiddingSentences, bot.getSentencesBidding(), 5);
+
+        this.cb_royalty_wallet_sales.setSelected(bot.isRoyaltywalletsale());
+        this.cb_royalty_wallet_stat.setSelected(bot.isRoyaltywalletstat());
+
+        this.tb_name_royalty_wallet.setText(bot.getNameroyaltywallet());
     }
-    
-    private void insertIntoListingAndBiddingTable(HashMap<String, Integer> existingSentence, List<String> sentencesToAdd, int columnToChange){
-        for(String s : sentencesToAdd){
-            
-            if(existingSentence.containsKey(s)){
+
+    private void insertIntoListingAndBiddingTable(HashMap<String, Integer> existingSentence, List<String> sentencesToAdd, int columnToChange) {
+        for (String s : sentencesToAdd) {
+
+            if (existingSentence.containsKey(s)) {
                 this.tbl_sentenceslistingandbidding.setValueAt(true, existingSentence.get(s), columnToChange);
-            }
-            else{
-                if (columnToChange == 1){
-                    ((DefaultTableModel)this.tbl_sentenceslistingandbidding.getModel()).addRow(new Object[]{s, true,false,false,false,false});
+            } else {
+                if (columnToChange == 1) {
+                    ((DefaultTableModel) this.tbl_sentenceslistingandbidding.getModel()).addRow(new Object[]{s, true, false, false, false, false});
+                } else if (columnToChange == 2) {
+                    ((DefaultTableModel) this.tbl_sentenceslistingandbidding.getModel()).addRow(new Object[]{s, false, true, false, false, false});
+                } else if (columnToChange == 3) {
+                    ((DefaultTableModel) this.tbl_sentenceslistingandbidding.getModel()).addRow(new Object[]{s, false, false, true, false, false});
+                } else if (columnToChange == 4) {
+                    ((DefaultTableModel) this.tbl_sentenceslistingandbidding.getModel()).addRow(new Object[]{s, false, false, false, true, false});
+                } else if (columnToChange == 5) {
+                    ((DefaultTableModel) this.tbl_sentenceslistingandbidding.getModel()).addRow(new Object[]{s, false, false, false, false, true});
                 }
-                else if (columnToChange == 2){
-                    ((DefaultTableModel)this.tbl_sentenceslistingandbidding.getModel()).addRow(new Object[]{s, false,true,false,false,false});
-                }
-                else if (columnToChange == 3){
-                    ((DefaultTableModel)this.tbl_sentenceslistingandbidding.getModel()).addRow(new Object[]{s, false,false,true,false,false});
-                }
-                else if (columnToChange == 4){
-                    ((DefaultTableModel)this.tbl_sentenceslistingandbidding.getModel()).addRow(new Object[]{s, false,false,false,true,false});
-                }
-                else if (columnToChange == 5){
-                    ((DefaultTableModel)this.tbl_sentenceslistingandbidding.getModel()).addRow(new Object[]{s, false,false,false,false,true});
-                }
-                
-                existingSentence.put(s, this.tbl_sentenceslistingandbidding.getRowCount()-1);
+
+                existingSentence.put(s, this.tbl_sentenceslistingandbidding.getRowCount() - 1);
             }
         }
     }
-    
+
+    public void setMainBotForm(MainBotForm mainBotForm) {
+        this.mainBotForm = mainBotForm;
+    }
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_Export;
     private javax.swing.JButton btn_add_hashtag;
@@ -791,9 +884,11 @@ public class ConfigurationMenu extends javax.swing.JPanel {
     private javax.swing.JCheckBox cb_royalty_wallet_stat;
     private javax.swing.JCheckBox cb_type_sales;
     private javax.swing.JComboBox<String> combo_order_sales;
+    private javax.swing.JComboBox<MarketPlaceProfile> combo_profile;
     private javax.swing.JComboBox<String> combo_refresh_listingandbidding;
     private javax.swing.JComboBox<String> combo_refresh_sales;
     private javax.swing.JComboBox<String> combo_refresh_stat;
+    private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane7;
@@ -814,6 +909,7 @@ public class ConfigurationMenu extends javax.swing.JPanel {
     private javax.swing.JLabel lbl_max_stat;
     private javax.swing.JLabel lbl_name_royalty_wallet;
     private javax.swing.JLabel lbl_order_sales;
+    private javax.swing.JLabel lbl_profile;
     private javax.swing.JLabel lbl_refresh_listingandbidding;
     private javax.swing.JLabel lbl_refresh_sales;
     private javax.swing.JLabel lbl_refresh_stat;
@@ -821,6 +917,7 @@ public class ConfigurationMenu extends javax.swing.JPanel {
     private javax.swing.JLabel lbl_royalty_wallet_stat;
     private javax.swing.JLabel lbl_sales1;
     private javax.swing.JLabel lbl_stat;
+    private javax.swing.JLabel lbl_title;
     private javax.swing.JLabel lbl_type_sales;
     private javax.swing.JLabel min_avg_stat;
     private javax.swing.JTextField tb_name_royalty_wallet;

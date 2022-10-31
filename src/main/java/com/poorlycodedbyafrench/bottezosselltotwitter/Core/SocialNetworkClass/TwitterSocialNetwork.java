@@ -4,29 +4,22 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass;
 
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotConfiguration;
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.LogManager;
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.NetworkMessageManager;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Bot.Bot;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetworkEnum;
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.MarketPlace;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Contract;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterface.CreatorThreadSocialNetworkInterface;
-import java.util.List;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterface.SocialNetworkInterface;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.concurrent.TimeUnit;
-import javax.swing.table.DefaultTableModel;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
 import twitter4j.UploadedMedia;
@@ -36,22 +29,44 @@ import twitter4j.UploadedMedia;
  *
  * @author david
  */
-public class TwitterSocialNetwork implements SocialNetworkInterface {
+public class TwitterSocialNetwork extends SocialNetwork {
 
     /**
      * Twitter instance bind to an acoount
      */
-    private Twitter twitterInstance;
+    private transient Twitter twitterInstance;
 
     /**
      * Name of the social network
      */
     private SocialNetworkEnum name;
 
+    private String publicConsumerKey;
+
+    private String privateConsumerKey;
+
+    private String publicAccessKey;
+
+    private String privateAccessKey;
+
+    private String profileName;
+
     public TwitterSocialNetwork() {
         name = SocialNetworkEnum.Twitter;
+        profileName = "";
     }
 
+    public void initiateValue(String publicConsumerKey, String privateConsumerKey, String publicAccessKey, String privateAccessKey, String profileName) {
+        this.publicConsumerKey = publicConsumerKey;
+        this.privateConsumerKey = privateConsumerKey;
+        this.publicAccessKey = publicAccessKey;
+        this.privateAccessKey = privateAccessKey;
+        this.profileName = profileName;
+    }
+
+    public String getProfileName() {
+        return profileName;
+    }
 
     /**
      * We instance the connection with the twitter account and we set up the
@@ -63,7 +78,7 @@ public class TwitterSocialNetwork implements SocialNetworkInterface {
      * @param privateAccessKey
      * @param contract
      */
-    public void instanceTwitter(String publicConsumerKey, String privateConsumerKey, String publicAccessKey, String privateAccessKey) {
+    public void instanceTwitter() {
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setDebugEnabled(true)
                 .setOAuthConsumerKey(publicConsumerKey)
@@ -79,8 +94,8 @@ public class TwitterSocialNetwork implements SocialNetworkInterface {
         Status newTweet = twitterInstance.updateStatus(newStatus);
         TimeUnit.MINUTES.sleep(1);
     }
-    
-    public synchronized UploadedMedia uploadAMedia (String ipfsName, InputStream ipfsMedia) throws Exception {
+
+    public synchronized UploadedMedia uploadAMedia(String ipfsName, InputStream ipfsMedia) throws Exception {
         return twitterInstance.uploadMedia(ipfsName, ipfsMedia);
     }
 
@@ -90,22 +105,58 @@ public class TwitterSocialNetwork implements SocialNetworkInterface {
     }
 
     @Override
-    public void start() throws TwitterException {
-        Instant currentHour = Instant.now();
-
-        twitterInstance.updateStatus(currentHour.toString().substring(5, 7) + "-" + currentHour.toString().substring(8, 10) + "-" + currentHour.toString().substring(0, 4) + " at " + currentHour.toString().substring(11, 16) + " UTC : The bot is running !");
+    public void start() throws Exception {
+        sendStatusMessage("The bot is running !");
     }
 
     @Override
-    public void stop() throws TwitterException {
-        Instant currentHour = Instant.now();
-
-        twitterInstance.updateStatus(currentHour.toString().substring(5, 7) + "-" + currentHour.toString().substring(8, 10) + "-" + currentHour.toString().substring(0, 4) + " at " + currentHour.toString().substring(11, 16) + " UTC : The bot is no longer running");
+    public void stop() throws Exception {
+        sendStatusMessage("The bot is no longer running");
     }
 
     @Override
-    public CreatorThreadSocialNetworkInterface createThreadSocialNetwork(BotModeEnum mode, LinkedHashMap<Sale, String> messageSaver, LinkedHashMap<Contract, String> contracts) {
-        return new ThreadTwitterMessage(mode, messageSaver,  contracts, this);
+    public CreatorThreadSocialNetworkInterface createThreadSocialNetwork(BotModeEnum mode, LinkedHashMap<Sale, String> messageSaver, LinkedHashMap<Contract, String> contracts, Bot theBot) {
+        return new ThreadTwitterMessage(mode, messageSaver, contracts, this, theBot);
     }
 
+    @Override
+    public void check() throws Exception {
+        sendStatusMessage("Profile check !");
+    }
+
+    private void sendStatusMessage(String text) throws Exception {
+        Instant currentHour = Instant.now();
+        twitterInstance.updateStatus(currentHour.toString().substring(5, 7) + "-" + currentHour.toString().substring(8, 10) + "-" + currentHour.toString().substring(0, 4) + " at " + currentHour.toString().substring(11, 16) + " UTC : " + text);
+    }
+
+    public String getPublicConsumerKey() {
+        return publicConsumerKey;
+    }
+
+    public String getPrivateConsumerKey() {
+        return privateConsumerKey;
+    }
+
+    public String getPublicAccessKey() {
+        return publicAccessKey;
+    }
+
+    public String getPrivateAccessKey() {
+        return privateAccessKey;
+    }
+
+    @Override
+    public String toString() {
+        return profileName;
+    }
+
+    @Override
+    public void turnOff() {
+        //Didn't found anything about how kill a Twitter Class so I suppose there's nothing to do and once it's in garbage collector it's OK....;
+    }
+
+    @Override
+    public void instance() {
+        instanceTwitter();
+    }
 }

@@ -4,13 +4,11 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration;
 
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.ApiRunnable.SalesToSocialNetwork;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Bot.Bot;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SaleTypeEnum;
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.MarketPlace;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,38 +24,28 @@ public class SalesHistoryManager {
     private HashMap<String, Sale> statHistory;
     private HashMap<String, Sale> listingAndBiddingHistory;
 
-    private static SalesHistoryManager salesHistoryManager;
-
-    private SalesHistoryManager() {
+    public SalesHistoryManager() {
         salesHistory = new HashMap<String, Sale>();
         statHistory = new HashMap<String, Sale>();
         listingAndBiddingHistory = new HashMap<String, Sale>();
     }
 
-    public static SalesHistoryManager getSalesHistoryManager() {
-        if (salesHistoryManager == null) {
-            salesHistoryManager = new SalesHistoryManager();
-        }
-
-        return salesHistoryManager;
-    }
-
-    public List<Sale> checkNewSales(Collection<Sale> newSalesList, BotModeEnum mode, HashMap<MarketPlaceEnum, MarketPlace> marketplaces) {
+    public List<Sale> checkNewSales(Collection<Sale> newSalesList, BotModeEnum mode, Bot theBot) {
 
         List<Sale> saleToShow = new ArrayList<Sale>();
 
         if (mode == BotModeEnum.Sale) {
             for (Sale aSale : newSalesList) {
-                if (!salesHistory.containsKey(aSale.getIdtransaction()) && aSale.getTimestamp().isAfter(marketplaces.get(aSale.getMarketplace()).getLastrefresh().getStartTime())) {
+                if (!salesHistory.containsKey(aSale.getIdtransaction()) && aSale.getTimestamp().isAfter(theBot.getStartTime())) {
 
                     boolean sellerCheck = true;
                     boolean itemCheck = true;
 
-                    if (!marketplaces.get(aSale.getMarketplace()).getSellerList().get(aSale.getContract()).isEmpty() && !marketplaces.get(aSale.getMarketplace()).getSellerList().get(aSale.getContract()).contains(aSale.getSeller().getAdress())) {
+                    if (!theBot.getMarketplaces().get(aSale.getMarketplace()).getAllContractsFromThisMarketPlace().get(aSale.getContract()).getSellerFilter().isEmpty() && !theBot.getMarketplaces().get(aSale.getMarketplace()).getAllContractsFromThisMarketPlace().get(aSale.getContract()).getSellerFilter().contains(aSale.getSeller().getAdress())) {
                         sellerCheck = false;
                     }
 
-                    if (!marketplaces.get(aSale.getMarketplace()).getItemList().get(aSale.getContract()).isEmpty() && !marketplaces.get(aSale.getMarketplace()).getItemList().get(aSale.getContract()).contains(aSale.getId().toString())) {
+                    if (!theBot.getMarketplaces().get(aSale.getMarketplace()).getAllContractsFromThisMarketPlace().get(aSale.getContract()).getItemFilter().isEmpty() && !theBot.getMarketplaces().get(aSale.getMarketplace()).getAllContractsFromThisMarketPlace().get(aSale.getContract()).getItemFilter().contains(aSale.getId().toString())) {
                         itemCheck = false;
                     }
 
@@ -69,29 +57,30 @@ public class SalesHistoryManager {
             }
         } else if (mode == BotModeEnum.Stat) {
             for (Sale aSale : newSalesList) {
-                if (!statHistory.containsKey(aSale.getIdtransaction()) && aSale.getTimestamp().isAfter(marketplaces.get(aSale.getMarketplace()).getLastrefresh().getStartTime())) {
+                if (!statHistory.containsKey(aSale.getIdtransaction()) && aSale.getTimestamp().isAfter(theBot.getStartTime())) {
                     saleToShow.add(aSale);
                     statHistory.put(aSale.getIdtransaction(), aSale);
                 }
             }
         } else if (mode == BotModeEnum.ListingAndBidding) {
             for (Sale aSale : newSalesList) {
-                if (!listingAndBiddingHistory.containsKey(aSale.getIdtransaction()) && aSale.getTimestamp().isAfter(marketplaces.get(aSale.getMarketplace()).getLastrefresh().getStartTime())) {
+                if (!listingAndBiddingHistory.containsKey(aSale.getIdtransaction()) && aSale.getTimestamp().isAfter(theBot.getStartTime())) {
+                    
                     boolean buyerorsellerCheck = true;
                     boolean itemCheck = true;
 
                     if (aSale.getType() != SaleTypeEnum.NewFloorOffer && aSale.getType() != SaleTypeEnum.NewBidding) {
-                        if (!marketplaces.get(aSale.getMarketplace()).getSellerList().get(aSale.getContract()).isEmpty() && !marketplaces.get(aSale.getMarketplace()).getSellerList().get(aSale.getContract()).contains(aSale.getSeller().getAdress())) {
+                        if (!theBot.getMarketplaces().get(aSale.getMarketplace()).getAllContractsFromThisMarketPlace().get(aSale.getContract()).getSellerFilter().isEmpty() && !theBot.getMarketplaces().get(aSale.getMarketplace()).getAllContractsFromThisMarketPlace().get(aSale.getContract()).getSellerFilter().contains(aSale.getSeller().getAdress())) {
                             buyerorsellerCheck = false;
                         }
                     } else {
-                        if (!marketplaces.get(aSale.getMarketplace()).getSellerList().get(aSale.getContract()).isEmpty() && !marketplaces.get(aSale.getMarketplace()).getSellerList().get(aSale.getContract()).contains(aSale.getBuyer().getAdress())) {
+                        if (!theBot.getMarketplaces().get(aSale.getMarketplace()).getAllContractsFromThisMarketPlace().get(aSale.getContract()).getSellerFilter().isEmpty() && !theBot.getMarketplaces().get(aSale.getMarketplace()).getAllContractsFromThisMarketPlace().get(aSale.getContract()).getSellerFilter().contains(aSale.getBuyer().getAdress())) {
                             buyerorsellerCheck = false;
                         }
                     }
 
                     if (aSale.getType() != SaleTypeEnum.NewFloorOffer) {
-                        if (!marketplaces.get(aSale.getMarketplace()).getItemList().get(aSale.getContract()).isEmpty() && !marketplaces.get(aSale.getMarketplace()).getItemList().get(aSale.getContract()).contains(aSale.getId().toString())) {
+                        if (!theBot.getMarketplaces().get(aSale.getMarketplace()).getAllContractsFromThisMarketPlace().get(aSale.getContract()).getItemFilter().isEmpty() && !theBot.getMarketplaces().get(aSale.getMarketplace()).getAllContractsFromThisMarketPlace().get(aSale.getContract()).getItemFilter().contains(aSale.getId().toString())) {
                             itemCheck = false;
                         }
                     }
@@ -107,7 +96,7 @@ public class SalesHistoryManager {
         return saleToShow;
     }
 
-    public void removeOldestSales(BotModeEnum mode, HashMap<MarketPlaceEnum, MarketPlace> marketplaces, HashMap<String, Sale> allNewSales, ArrayList<MarketPlaceEnum> finishedMarketPlaceToCheck) {
+    public void removeOldestSales(BotModeEnum mode, HashMap<String, Sale> allNewSales, ArrayList<MarketPlaceEnum> finishedMarketPlaceToCheck) {
         List<String> idsToDelete = new ArrayList<String>();
 
         if (mode == BotModeEnum.Stat) {

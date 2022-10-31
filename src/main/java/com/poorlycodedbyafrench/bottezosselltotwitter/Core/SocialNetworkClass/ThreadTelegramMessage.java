@@ -7,13 +7,17 @@ package com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass;
 import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SendPhoto;
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotConfiguration;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Bot.Bot;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.LogManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SaleTypeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetworkEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Contract;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Sales.Sale;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterface.CreatorThreadSocialNetworkInterface;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.DecimalFormat;
 import java.util.LinkedHashMap;
 
@@ -31,11 +35,14 @@ public class ThreadTelegramMessage implements CreatorThreadSocialNetworkInterfac
     
     private TelegramSocialNetwork telegram;
     
-    public ThreadTelegramMessage(BotModeEnum mode, LinkedHashMap<Sale, String> messageSaver, LinkedHashMap<Contract,String> contracts, TelegramSocialNetwork telegram) {
+    private Bot theBot;
+    
+    public ThreadTelegramMessage(BotModeEnum mode, LinkedHashMap<Sale, String> messageSaver, LinkedHashMap<Contract,String> contracts, TelegramSocialNetwork telegram, Bot theBot) {
         this.mode = mode;
         this.messageSaver = messageSaver;
         this.contracts = contracts;
         this.telegram = telegram;
+        this.theBot = theBot;
     }
     
     @Override
@@ -54,8 +61,34 @@ public class ThreadTelegramMessage implements CreatorThreadSocialNetworkInterfac
             for (Sale aSale : messageSaver.keySet()) {
                                 
                 BaseRequest saleMessage ;
+                boolean ipfsIsGoodSize = false;
                 
-                if (BotConfiguration.getConfiguration().isIpfs() && aSale.getType() != SaleTypeEnum.NewFloorOffer) {    
+                if(this.theBot.isIpfs()){
+                    try {
+                        URL newURL = new URL("https://cloudflare-ipfs.com/" + aSale.getIpfs().replace(":/", ""));
+                        URLConnection urlConn = newURL.openConnection();
+                        urlConn.setConnectTimeout(10000);
+                        urlConn.setReadTimeout(10000);
+                        urlConn.setAllowUserInteraction(false);
+                        urlConn.setDoOutput(true);
+
+                        InputStream ipfsMedia = urlConn.getInputStream();
+                                                
+                        byte[] mediaIPFS = org.apache.commons.io.IOUtils.toByteArray(ipfsMedia);
+                        
+                        //I know it's ridiculous but I try to know the size of the picture
+                        if (mediaIPFS.length < 5242880){ 
+                            ipfsIsGoodSize = true;
+                            ipfsMedia.close();
+                            urlConn = null;
+                            newURL = null;
+                        }
+                    }catch(Exception ex){
+                        LogManager.getLogManager().writeLog(TelegramSocialNetwork.class.getName(), ex);
+                    }
+                }
+                
+                if (ipfsIsGoodSize && aSale.getType() != SaleTypeEnum.NewFloorOffer) {    
                     saleMessage = new SendPhoto(telegram.getChannelId(),"https://cloudflare-ipfs.com/" + aSale.getIpfs().replace(":/", ""));
                     saleMessage = ((SendPhoto)saleMessage).caption(messageSaver.get(aSale));
                 }

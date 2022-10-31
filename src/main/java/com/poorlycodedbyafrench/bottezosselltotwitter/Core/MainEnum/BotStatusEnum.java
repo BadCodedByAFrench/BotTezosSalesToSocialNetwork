@@ -4,17 +4,12 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum;
 
-import java.io.Serializable;
-
 /**
  *
  * @author david
  */
-public enum MarketPlaceEnum implements Serializable {
-    Objkt,
-    Teia,
-    Kalamint,
-    ByteBlocks,
-    fxhash,
-    Rarible;
+public enum BotStatusEnum {
+    Running,
+    Ready,
+    Uncompleted
 }

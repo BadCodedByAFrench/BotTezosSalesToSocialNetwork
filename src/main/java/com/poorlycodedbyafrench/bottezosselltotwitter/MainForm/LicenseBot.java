@@ -4,17 +4,25 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.MainForm;
 
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.PanelRefreshInterface;
+
 /**
  * Window with license
  * @author david
  */
-public class LicenseBot extends javax.swing.JPanel {
+public class LicenseBot extends javax.swing.JPanel implements PanelRefreshInterface{
 
+    private MainBotForm mainBotForm;
+    
     /**
      * Creates new form LicenseBot
      */
     public LicenseBot() {
         initComponents();
+    }
+
+    public void setMainBotForm(MainBotForm mainBotForm) {
+        this.mainBotForm = mainBotForm;
     }
 
     /**
@@ -48,6 +56,9 @@ public class LicenseBot extends javax.swing.JPanel {
         jLabel21 = new javax.swing.JLabel();
         jLabel22 = new javax.swing.JLabel();
         jLabel23 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
+        jLabel24 = new javax.swing.JLabel();
+        jLabel25 = new javax.swing.JLabel();
 
         jLabel11.setText("Twitter API");
 
@@ -56,68 +67,87 @@ public class LicenseBot extends javax.swing.JPanel {
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setText("Package used");
-        add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 6, -1, -1));
+        add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 10, -1, -1));
 
         jLabel2.setText("org.twitter4J 4.0.7 : Apache License 2.0");
-        add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, -1, -1));
+        add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, -1, -1));
 
         jLabel5.setText("JDK and JRE (17)");
-        add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(167, 268, -1, -1));
+        add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 120, -1, -1));
 
         jLabel6.setText("Objkt API");
-        add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 224, -1, -1));
+        add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 70, -1, -1));
 
         jLabel7.setText("Twitter API");
-        add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 246, -1, -1));
+        add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 90, -1, -1));
 
         jLabel8.setText("License of this software");
-        add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(86, 334, -1, -1));
+        add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 230, -1, -1));
 
         jLabel9.setText("Apache License 2.0");
-        add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(108, 358, -1, -1));
+        add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 260, -1, -1));
 
         jLabel10.setText("API used");
-        add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 173, -1, -1));
+        add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 20, -1, -1));
 
         jLabel12.setText("Adoptium : GLPv2 + CE and GLPv2 + Assembly");
-        add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(17, 312, -1, -1));
+        add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 160, -1, -1));
 
         jLabel13.setText("IPFS Gateway used");
-        add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(167, 173, -1, -1));
+        add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 20, -1, -1));
 
         jLabel14.setText("Cloudflare IPFS");
-        add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(188, 212, -1, -1));
+        add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 60, -1, -1));
 
         jLabel15.setText("com.google.code.gson 2.9.0 Apache License 2.0");
-        add(jLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, -1, -1));
+        add(jLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, -1, -1));
 
         jLabel16.setText("org.ini4j.ini4j 0.5.4 Apache License 2.0");
-        add(jLabel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, -1, -1));
+        add(jLabel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, -1, -1));
 
         jLabel17.setText("com.github.DV8FromTheWorld.JDA v5.0.0-alpha.11 Apache License 2.0");
-        add(jLabel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, -1, -1));
+        add(jLabel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 100, -1, -1));
 
         jLabel19.setText("Teia API (from Zir0h) ");
-        add(jLabel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 268, -1, -1));
+        add(jLabel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 120, -1, -1));
 
         jLabel20.setText("FxHash API");
-        add(jLabel20, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 290, -1, -1));
+        add(jLabel20, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 140, -1, -1));
 
         jLabel3.setText("Powered by TzKT API");
-        add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 202, -1, -1));
+        add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 50, -1, -1));
 
         jLabel21.setText("Rarible API");
-        add(jLabel21, new org.netbeans.lib.awtextra.AbsoluteConstraints(188, 234, -1, -1));
+        add(jLabel21, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 80, -1, -1));
 
         jLabel22.setText("com.github.pengrad.java-telegram-bot-api.6.2.0 Apache License 2.0");
-        add(jLabel22, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 110, -1, -1));
+        add(jLabel22, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, -1, -1));
 
-        jLabel23.setText("commons-io.commons-io.2.11 Apache License 2.0");
-        add(jLabel23, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, -1, -1));
+        jLabel23.setText("org.apache.commons.commons-lang3.3.12.0 Apache License 2.0");
+        add(jLabel23, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 180, -1, -1));
+
+        jButton1.setText("Go back");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 310, -1, -1));
+
+        jLabel24.setText("commons-io.commons-io.2.11 Apache License 2.0");
+        add(jLabel24, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, -1, -1));
+
+        jLabel25.setText("org.jasypt.jasypt.1.9.3 Apache License 2.0");
+        add(jLabel25, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 160, -1, -1));
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        this.mainBotForm.swapView("oneBotConfiguration");
+    }//GEN-LAST:event_jButton1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -134,6 +164,8 @@ public class LicenseBot extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -141,4 +173,9 @@ public class LicenseBot extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void refresh() {
+        //Nothing to do here
+    }
 }

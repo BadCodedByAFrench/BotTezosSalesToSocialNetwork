@@ -33,7 +33,7 @@ public class LogManager {
     private LogManager(){
         fileLogger = Logger.getLogger("Logger");
         FileHandler fh;
-        
+
         try {  
             fh = new FileHandler("./BotTezosLog.log");
             SimpleFormatter formatter = new SimpleFormatter();  

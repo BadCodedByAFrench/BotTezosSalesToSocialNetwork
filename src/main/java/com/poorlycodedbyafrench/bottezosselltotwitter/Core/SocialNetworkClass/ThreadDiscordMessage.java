@@ -4,7 +4,7 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass;
 
-import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.BotConfiguration;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Bot.Bot;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SaleTypeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetworkEnum;
@@ -30,12 +30,15 @@ public class ThreadDiscordMessage implements CreatorThreadSocialNetworkInterface
     private LinkedHashMap<Contract,String> contracts;
     
     private DiscordSocialNetwork discord;
+    
+    private Bot theBot;
 
-    public ThreadDiscordMessage(BotModeEnum mode, LinkedHashMap<Sale, String> messageSaver, LinkedHashMap<Contract,String> contracts, DiscordSocialNetwork discord) {
+    public ThreadDiscordMessage(BotModeEnum mode, LinkedHashMap<Sale, String> messageSaver, LinkedHashMap<Contract,String> contracts, DiscordSocialNetwork discord, Bot theBot) {
         this.mode = mode;
         this.messageSaver = messageSaver;
         this.contracts = contracts;
         this.discord = discord;
+        this.theBot = theBot;
     }
         
     
@@ -72,7 +75,7 @@ public class ThreadDiscordMessage implements CreatorThreadSocialNetworkInterface
                 eb.setDescription(messageSaver.get(aSale));
                 eb.setColor(Color.BLUE);
 
-                if (BotConfiguration.getConfiguration().isIpfs() && aSale.getType() != SaleTypeEnum.NewFloorOffer) {    
+                if (this.theBot.isIpfs() && aSale.getType() != SaleTypeEnum.NewFloorOffer) {    
                     eb.setImage("https://cloudflare-ipfs.com/" + aSale.getIpfs().replace(":/", ""));
                 }
                 
