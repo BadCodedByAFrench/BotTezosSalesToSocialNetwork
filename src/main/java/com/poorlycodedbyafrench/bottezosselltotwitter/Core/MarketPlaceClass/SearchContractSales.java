@@ -68,5 +68,17 @@ public class SearchContractSales implements Serializable {
     public void removeItemFilter(String value){
         itemFilter.remove(value);
     }
+
+    @Override
+    public String toString() {
+        String toReturn = "Contract : " + contract;
+        toReturn += "\n\tSeller filter : " + String.join(", ", sellerFilter);
+        toReturn += "\n\tItem filter : " + String.join(", ", itemFilter);
+        toReturn += "\n\tRoyalty wallet : " + royaltyWallet;
+        
+        return toReturn;
+    }
+    
+    
     
 }

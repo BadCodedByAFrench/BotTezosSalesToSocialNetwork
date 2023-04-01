@@ -7,6 +7,7 @@ package com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass;
 import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SendPhoto;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Ad.AdCampaign;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Bot.Bot;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.LogManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
@@ -25,45 +26,47 @@ import java.util.LinkedHashMap;
  *
  * @author david
  */
-public class ThreadTelegramMessage implements CreatorThreadSocialNetworkInterface{
+public class ThreadTelegramMessage implements CreatorThreadSocialNetworkInterface {
 
     private BotModeEnum mode;
-    
+
     private LinkedHashMap<Sale, String> messageSaver;
-    
-    private LinkedHashMap<Contract,String> contracts;
-    
+
+    private LinkedHashMap<Contract, String> contracts;
+
     private TelegramSocialNetwork telegram;
-    
+
     private Bot theBot;
-    
-    public ThreadTelegramMessage(BotModeEnum mode, LinkedHashMap<Sale, String> messageSaver, LinkedHashMap<Contract,String> contracts, TelegramSocialNetwork telegram, Bot theBot) {
+
+    private AdCampaign adCampaign;
+
+    public ThreadTelegramMessage(BotModeEnum mode, LinkedHashMap<Sale, String> messageSaver, LinkedHashMap<Contract, String> contracts, TelegramSocialNetwork telegram, Bot theBot, AdCampaign adCampaign) {
         this.mode = mode;
         this.messageSaver = messageSaver;
         this.contracts = contracts;
         this.telegram = telegram;
         this.theBot = theBot;
+        this.adCampaign = adCampaign;
     }
-    
+
     @Override
     public Object call() throws Exception {
 
         DecimalFormat df = new DecimalFormat("##.00");
-        
+
         if (mode == BotModeEnum.Stat) {
             for (Contract contract : contracts.keySet()) {
                 SendMessage statMessage = new SendMessage(telegram.getChannelId(), contracts.get(contract));
-                
+
                 telegram.send(statMessage);
             }
-        }
-        else if (mode == BotModeEnum.Sale || mode == BotModeEnum.ListingAndBidding) {
+        } else if (mode == BotModeEnum.Sale || mode == BotModeEnum.ListingAndBidding) {
             for (Sale aSale : messageSaver.keySet()) {
-                                
-                BaseRequest saleMessage ;
+
+                BaseRequest saleMessage;
                 boolean ipfsIsGoodSize = false;
-                
-                if(this.theBot.isIpfs()){
+
+                if (this.theBot.isIpfs()) {
                     try {
                         URL newURL = new URL("https://cloudflare-ipfs.com/" + aSale.getIpfs().replace(":/", ""));
                         URLConnection urlConn = newURL.openConnection();
@@ -73,34 +76,38 @@ public class ThreadTelegramMessage implements CreatorThreadSocialNetworkInterfac
                         urlConn.setDoOutput(true);
 
                         InputStream ipfsMedia = urlConn.getInputStream();
-                                                
+
                         byte[] mediaIPFS = org.apache.commons.io.IOUtils.toByteArray(ipfsMedia);
-                        
+
                         //I know it's ridiculous but I try to know the size of the picture
-                        if (mediaIPFS.length < 5242880){ 
+                        if (mediaIPFS.length < 5242880) {
                             ipfsIsGoodSize = true;
                             ipfsMedia.close();
                             urlConn = null;
                             newURL = null;
                         }
-                    }catch(Exception ex){
+                    } catch (Exception ex) {
                         LogManager.getLogManager().writeLog(TelegramSocialNetwork.class.getName(), ex);
                     }
                 }
-                
-                if (ipfsIsGoodSize && aSale.getType() != SaleTypeEnum.NewFloorOffer) {    
-                    saleMessage = new SendPhoto(telegram.getChannelId(),"https://cloudflare-ipfs.com/" + aSale.getIpfs().replace(":/", ""));
-                    saleMessage = ((SendPhoto)saleMessage).caption(messageSaver.get(aSale));
+
+                if (ipfsIsGoodSize && aSale.getType() != SaleTypeEnum.NewFloorOffer) {
+                    saleMessage = new SendPhoto(telegram.getChannelId(), "https://cloudflare-ipfs.com/" + aSale.getIpfs().replace(":/", ""));
+                    saleMessage = ((SendPhoto) saleMessage).caption(messageSaver.get(aSale));
+                } else {
+                    saleMessage = new SendMessage(telegram.getChannelId(), messageSaver.get(aSale));
                 }
-                else{
-                    saleMessage = new SendMessage(telegram.getChannelId(),messageSaver.get(aSale));
-                }
-                
+
                 telegram.send(saleMessage);
             }
         }
 
+        if (adCampaign != null) {
+            String message = adCampaign.getTitle() + "\n\n" + adCampaign.getContent();
+            telegram.send(new SendMessage(telegram.getChannelId(), message));
+        }
+
         return SocialNetworkEnum.Telegram;
     }
-    
+
 }

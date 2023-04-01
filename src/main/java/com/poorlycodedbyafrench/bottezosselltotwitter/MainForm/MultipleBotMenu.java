@@ -6,12 +6,17 @@ package com.poorlycodedbyafrench.bottezosselltotwitter.MainForm;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Ad.AdCampaign;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Ad.AdCampaignManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Bot.Bot;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Bot.BotManager;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Bot.GenericBot;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Bot.GenericBotManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.LogManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.PanelRefreshInterface;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.SalesHistoryManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotStatusEnum;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotTypeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.MarketPlaceProfile;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.MarketPlaceProfileManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass.SocialNetworkProfile;
@@ -96,7 +101,7 @@ public class MultipleBotMenu extends javax.swing.JPanel implements PanelRefreshI
                 if (botToStop.getBotStatus() == BotStatusEnum.Running) {
                     botToStop.stop();
                     int modelRow = Integer.valueOf(e.getActionCommand());
-                    tb_bots.setValueAt(botToStop.getBotStatus(),modelRow,1);
+                    tb_bots.setValueAt(botToStop.getBotStatus(), modelRow, 1);
                 }
             }
         };
@@ -112,7 +117,7 @@ public class MultipleBotMenu extends javax.swing.JPanel implements PanelRefreshI
                 if (botToStart.getBotStatus() == BotStatusEnum.Ready) {
                     botToStart.start();
                     int modelRow = Integer.valueOf(e.getActionCommand());
-                    tb_bots.setValueAt(botToStart.getBotStatus(),modelRow,1);
+                    tb_bots.setValueAt(botToStart.getBotStatus(), modelRow, 1);
                 }
             }
         };
@@ -170,6 +175,7 @@ public class MultipleBotMenu extends javax.swing.JPanel implements PanelRefreshI
         jLabel4 = new javax.swing.JLabel();
         btn_import = new javax.swing.JButton();
         btn_export = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
 
         setName(""); // NOI18N
         setRequestFocusEnabled(false);
@@ -221,7 +227,7 @@ public class MultipleBotMenu extends javax.swing.JPanel implements PanelRefreshI
                 jButton3ActionPerformed(evt);
             }
         });
-        add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(688, 60, 190, -1));
+        add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 60, 190, -1));
 
         jLabel4.setFont(new java.awt.Font("sansserif", 1, 24)); // NOI18N
         jLabel4.setText("Bot manager");
@@ -242,6 +248,14 @@ public class MultipleBotMenu extends javax.swing.JPanel implements PanelRefreshI
             }
         });
         add(btn_export, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 20, -1, -1));
+
+        jButton4.setText("Edit generic bot");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+        add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 20, 190, -1));
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_editMarketplaceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editMarketplaceActionPerformed
@@ -255,7 +269,7 @@ public class MultipleBotMenu extends javax.swing.JPanel implements PanelRefreshI
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         if (!txt_bot_name.getText().isBlank()) {
             if (!BotManager.getBotManager().getAllBots().containsKey(txt_bot_name.getText())) {
-                Bot newBot = new Bot(txt_bot_name.getText());
+                Bot newBot = new Bot(txt_bot_name.getText(), BotTypeEnum.Custom, "");
                 BotManager.getBotManager().setCurrentBot(newBot);
                 BotManager.getBotManager().addBot(newBot);
                 this.mainBotForm.swapView("oneBotConfiguration");
@@ -280,10 +294,14 @@ public class MultipleBotMenu extends javax.swing.JPanel implements PanelRefreshI
 
                     Wini ini = new Wini();
 
-                    ini.put("FullExport", "version", 1);
+                    ini.put("FullExport", "version", 2);
                     ini.put("FullExport", "marketplaceprofile", encrypt(gson.toJson(MarketPlaceProfileManager.getMarketPlaceProfileManager().getAllMarketPlaceProfile()), password));
                     ini.put("FullExport", "socialNetwork", encrypt(gson.toJson(SocialNetworkProfileManager.getSocialNetworkProfileManager().getAllSocialNetworkProfile()), password));
                     ini.put("FullExport", "bots", encrypt(gson.toJson(BotManager.getBotManager().getAllBots()), password));
+
+                    //Version 2
+                    ini.put("FullExport", "genericParams", encrypt(gson.toJson(GenericBotManager.getGenericBotManager()), password));
+                    ini.put("FullExport", "adsCampaigns", encrypt(gson.toJson(AdCampaignManager.getAdCampaignManager().getAllAdCompaigns()), password));
 
                     JFileChooser chooser = new JFileChooser();
                     FileNameExtensionFilter filter = new FileNameExtensionFilter(
@@ -328,6 +346,9 @@ public class MultipleBotMenu extends javax.swing.JPanel implements PanelRefreshI
                     java.lang.reflect.Type empHashMapTypeBot = new TypeToken<HashMap<String, Bot>>() {
                     }.getType();
 
+                    java.lang.reflect.Type empHashMapTypeAdCampaign = new TypeToken<HashMap<String, AdCampaign>>() {
+                    }.getType();
+
                     JFileChooser chooser = new JFileChooser();
                     FileNameExtensionFilter filter = new FileNameExtensionFilter(
                             "INI file", "ini");
@@ -341,31 +362,66 @@ public class MultipleBotMenu extends javax.swing.JPanel implements PanelRefreshI
                             String marketplaceprofiles = ini.get("FullExport", "marketplaceprofile", String.class);
                             String socialnetworkprofiles = ini.get("FullExport", "socialNetwork", String.class);
                             String bot = ini.get("FullExport", "bots", String.class);
-                            
-                            HashMap<String, MarketPlaceProfile> mps = gson.fromJson(decrypt(marketplaceprofiles,password), empHashMapTypeMp);
-                            HashMap<String, SocialNetworkProfile> sns = gson.fromJson(decrypt(socialnetworkprofiles,password), empHashMapTypeSn);
-                            HashMap<String, Bot> bots = gson.fromJson(decrypt(bot,password), empHashMapTypeBot);
-                            
-                            
-                            
+                            String adCampaign = ini.get("FullExport", "adsCampaigns", String.class);
+
+                            HashMap<String, MarketPlaceProfile> mps = gson.fromJson(decrypt(marketplaceprofiles, password), empHashMapTypeMp);
+                            HashMap<String, SocialNetworkProfile> sns = gson.fromJson(decrypt(socialnetworkprofiles, password), empHashMapTypeSn);
+                            HashMap<String, Bot> bots = gson.fromJson(decrypt(bot, password), empHashMapTypeBot);
+
+                            GenericBotManager genericManager = gson.fromJson(decrypt(ini.get("FullExport", "genericParams", String.class), password), GenericBotManager.class);
+                            HashMap<String, AdCampaign> adCampaigns = gson.fromJson(decrypt(adCampaign, password), empHashMapTypeAdCampaign);
+
                             //We set all the profiles to be sure that the imported one with gson are not two different ones
-                            for(Bot aBot : bots.values()){
-                                if(aBot.getBotStatus() == BotStatusEnum.Running){
+                            for (Bot aBot : bots.values()) {
+                                if (aBot.getBotStatus() == BotStatusEnum.Running) {
                                     aBot.setBotStatus(BotStatusEnum.Ready);
                                 }
                                 aBot.setHistoryManager(new SalesHistoryManager());
                                 aBot.setMpProfile(mps.get(aBot.getMpProfile().getName()));
                                 aBot.setSnProfile(sns.get(aBot.getSnProfile().getName()));
+
+                                if (version < 2) {
+                                    aBot.setBotType(BotTypeEnum.Custom);
+                                }
                             }
-                            
+
                             MarketPlaceProfileManager.getMarketPlaceProfileManager().importMarketPlaceProfileManager(mps);
                             SocialNetworkProfileManager.getSocialNetworkProfileManager().importSnProfiles(sns);
                             BotManager.getBotManager().importBots(bots);
-                            
+
+                            if (version >= 2) {
+                                
+                                try{
+                                    GenericBotManager.importGenericBotManager(genericManager);
+                                }
+                                catch(Exception e){
+                                    JOptionPane.showMessageDialog(null, "Impossible to connect to the generic bot, contact the dev", "Error", JOptionPane.ERROR_MESSAGE);
+                                }
+                                
+                                for (GenericBot gb : genericManager.getGenericsBots().values()) {
+                                    
+                                    for (Bot aBot : gb.getBotsForTheServer().values()) {
+                                        if (aBot.getBotStatus() == BotStatusEnum.Running) {
+                                            aBot.setBotStatus(BotStatusEnum.Ready);
+                                        }
+
+                                        aBot.setHistoryManager(new SalesHistoryManager());
+                                        aBot.setMpProfile(mps.get(aBot.getMpProfile().getName()));
+                                    }
+                                    
+                                    if(GenericBotManager.getGenericBotManager().getGenericDiscord() != null && gb.getIdDiscordChannel() != null){
+                                        if(!gb.getIdDiscordChannel().isBlank()){
+                                            gb.setDiscordHome(GenericBotManager.getGenericBotManager().getGenericDiscord().getJda().getTextChannelById(gb.getIdDiscordChannel()));
+                                        }
+                                    }
+                                }
+
+                                AdCampaignManager.getAdCampaignManager().importAdCampaigns(adCampaigns);
+                            }
+
                             refresh();
                         }
 
-                        
                     }
                 } else {
                     JOptionPane.showMessageDialog(null, "The password is empty", "Empty field", JOptionPane.WARNING_MESSAGE);
@@ -377,17 +433,20 @@ public class MultipleBotMenu extends javax.swing.JPanel implements PanelRefreshI
         }
     }//GEN-LAST:event_btn_importActionPerformed
 
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        this.mainBotForm.swapView("genericBotMenu");
+    }//GEN-LAST:event_jButton4ActionPerformed
+
     private String encrypt(String data, String password) throws Exception {
         StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
         encryptor.setPassword(password);
-        
-        
+
         return encryptor.encrypt(data);
 
     }
-    
+
     private String decrypt(String data, String password) throws Exception {
-        
+
         StandardPBEStringEncryptor decryptor = new StandardPBEStringEncryptor();
         decryptor.setPassword(password);
         return decryptor.decrypt(data);
@@ -401,6 +460,7 @@ public class MultipleBotMenu extends javax.swing.JPanel implements PanelRefreshI
     private javax.swing.JButton btn_import;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tb_bots;

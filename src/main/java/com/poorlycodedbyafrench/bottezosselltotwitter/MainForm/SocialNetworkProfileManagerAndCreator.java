@@ -4,12 +4,18 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.MainForm;
 
+import com.pengrad.telegrambot.model.DeleteMyCommands;
+import com.pengrad.telegrambot.request.SetMyCommands;
+import com.pengrad.telegrambot.response.BaseResponse;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.PanelRefreshInterface;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetworkEnum;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass.DiscordGeneralCommands;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass.DiscordGuildJoinListener;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass.DiscordSocialNetwork;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass.SocialNetworkProfile;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass.SocialNetworkProfileManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass.TelegramSocialNetwork;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass.TelegramSocialNetworkFullCommands;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass.TwitterSocialNetwork;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkInterface.SocialNetworkInterface;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Misc.ButtonColumn;
@@ -507,6 +513,8 @@ public class SocialNetworkProfileManagerAndCreator extends javax.swing.JPanel im
                 showedDiscord.instanceDiscord();
                 showedDiscord.check();
 
+                DiscordGeneralCommands.updateCommands(showedDiscord.getTextChannel().getGuild(), false);
+
                 if (!SocialNetworkProfileManager.getSocialNetworkProfileManager().getAllDiscord().containsKey(showedDiscord.getProfileName())) {
                     combo_discord.addItem(showedDiscord);
                 }
@@ -532,6 +540,13 @@ public class SocialNetworkProfileManagerAndCreator extends javax.swing.JPanel im
                 showedTelegram.instanceTelegram();
                 showedTelegram.check();
 
+                DeleteMyCommands deleteCmds = new DeleteMyCommands();
+                BaseResponse responseDelete = showedTelegram.getTelegramInstance().execute(deleteCmds);
+                
+                SetMyCommands cmdsGeneral = new SetMyCommands(TelegramSocialNetworkFullCommands.getGeneralTelegramCommands(false));
+                showedTelegram.getTelegramInstance().execute(cmdsGeneral);
+                TelegramSocialNetworkFullCommands.addUpdatesListener(showedTelegram.getTelegramInstance());
+                
                 if (!SocialNetworkProfileManager.getSocialNetworkProfileManager().getAllTelegram().containsKey(showedTelegram.getProfileName())) {
                     combo_telegram.addItem(showedTelegram);
                 }
@@ -1136,7 +1151,7 @@ public class SocialNetworkProfileManagerAndCreator extends javax.swing.JPanel im
     private javax.swing.JCheckBox cb_discord;
     private javax.swing.JCheckBox cb_telegram;
     private javax.swing.JCheckBox cb_twitter;
-    private javax.swing.JComboBox<DiscordSocialNetwork> combo_discord;
+    private javax.swing.JComboBox<com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass.DiscordSocialNetwork> combo_discord;
     private javax.swing.JComboBox<SocialNetworkProfile> combo_profile;
     private javax.swing.JComboBox<TelegramSocialNetwork> combo_telegram;
     private javax.swing.JComboBox<TwitterSocialNetwork> combo_twitter;

@@ -4,6 +4,7 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass;
 
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Ad.AdCampaign;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Bot.Bot;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SaleTypeEnum;
@@ -32,13 +33,16 @@ public class ThreadDiscordMessage implements CreatorThreadSocialNetworkInterface
     private DiscordSocialNetwork discord;
     
     private Bot theBot;
+    
+    private AdCampaign adCampaign;
 
-    public ThreadDiscordMessage(BotModeEnum mode, LinkedHashMap<Sale, String> messageSaver, LinkedHashMap<Contract,String> contracts, DiscordSocialNetwork discord, Bot theBot) {
+    public ThreadDiscordMessage(BotModeEnum mode, LinkedHashMap<Sale, String> messageSaver, LinkedHashMap<Contract,String> contracts, DiscordSocialNetwork discord, Bot theBot, AdCampaign adCampaign) {
         this.mode = mode;
         this.messageSaver = messageSaver;
         this.contracts = contracts;
         this.discord = discord;
         this.theBot = theBot;
+        this.adCampaign = adCampaign;
     }
         
     
@@ -50,7 +54,8 @@ public class ThreadDiscordMessage implements CreatorThreadSocialNetworkInterface
         
         if (mode == BotModeEnum.Stat) {
             for (Contract contract : contracts.keySet()) {
-
+                
+                eb = new EmbedBuilder();
                 eb.setTitle("Stat for " + contract.getName());
                 eb.setDescription(contracts.get(contract));
                 eb.setColor(Color.RED);
@@ -62,7 +67,8 @@ public class ThreadDiscordMessage implements CreatorThreadSocialNetworkInterface
 
             Random rand = new Random();
             for (Sale aSale : messageSaver.keySet()) {
-                 
+                
+                eb = new EmbedBuilder();
                 if(mode == BotModeEnum.Sale){
                 eb.setTitle(aSale.getName() + " has been sold for " + df.format(aSale.getPrice()).replace(',', '.') + " XTZ");
                 }
@@ -81,6 +87,14 @@ public class ThreadDiscordMessage implements CreatorThreadSocialNetworkInterface
                 
                 discord.send(eb);
             }
+        }
+        
+        if(adCampaign != null){
+            eb = new EmbedBuilder();
+            eb.setTitle(adCampaign.getTitle());
+            eb.setDescription(adCampaign.getContent());
+            eb.setColor(Color.WHITE);
+            discord.send(eb);
         }
 
         return SocialNetworkEnum.Discord;

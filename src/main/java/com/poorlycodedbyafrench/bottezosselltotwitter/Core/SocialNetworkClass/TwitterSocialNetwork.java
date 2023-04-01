@@ -4,6 +4,7 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass;
 
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Ad.AdCampaign;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Bot.Bot;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetworkEnum;
@@ -92,7 +93,9 @@ public class TwitterSocialNetwork extends SocialNetwork {
 
     public synchronized void send(StatusUpdate newStatus) throws TwitterException, InterruptedException, MalformedURLException, IOException {
         Status newTweet = twitterInstance.updateStatus(newStatus);
-        TimeUnit.MINUTES.sleep(1);
+        
+        //Limit based on the last update of twitter. 2 tweets per hours
+        TimeUnit.MINUTES.sleep(30);
     }
 
     public synchronized UploadedMedia uploadAMedia(String ipfsName, InputStream ipfsMedia) throws Exception {
@@ -115,8 +118,8 @@ public class TwitterSocialNetwork extends SocialNetwork {
     }
 
     @Override
-    public CreatorThreadSocialNetworkInterface createThreadSocialNetwork(BotModeEnum mode, LinkedHashMap<Sale, String> messageSaver, LinkedHashMap<Contract, String> contracts, Bot theBot) {
-        return new ThreadTwitterMessage(mode, messageSaver, contracts, this, theBot);
+    public CreatorThreadSocialNetworkInterface createThreadSocialNetwork(BotModeEnum mode, LinkedHashMap<Sale, String> messageSaver, LinkedHashMap<Contract, String> contracts, Bot theBot, AdCampaign adCampaign) {
+        return new ThreadTwitterMessage(mode, messageSaver, contracts, this, theBot, adCampaign);
     }
 
     @Override

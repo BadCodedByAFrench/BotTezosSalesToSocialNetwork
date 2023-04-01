@@ -322,5 +322,7 @@ public class MarketPlaceProfile {
         this.status = status;
     }
 
-    
+    public String fullDetail(){
+        return this.name + " (Sale : " + this.refreshSalesTime + " " + this.refreshSales + ", Stat : "+ this.refreshSalesStats + " " + this.refreshStats + ", Listing & Bidding : "+ this.refreshListingAndBiddingTime + " " + this.refreshListingAndBidding +")";
+    }
 }

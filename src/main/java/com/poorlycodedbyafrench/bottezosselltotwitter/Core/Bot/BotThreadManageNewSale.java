@@ -4,10 +4,13 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.Bot;
 
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Ad.AdCampaign;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Ad.AdCampaignManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.ApiRunnable.SalesToSocialNetwork;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.LogManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.NetworkMessageManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotTypeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SaleTypeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetworkEnum;
@@ -60,12 +63,11 @@ public class BotThreadManageNewSale implements Runnable {
         theCurrentBot.getHistoryManager().removeOldestSales(mode, allNewSales, finishedMarketPlaceToCheck);
 
         //sort all the sales depend of configuration setting
-        if(theCurrentBot.getOrderBy() == 0){
+        if (theCurrentBot.getOrderBy() == 0) {
             Collections.sort(filteredList, Sale.getTimeStampComparator());
-        }else{
+        } else {
             Collections.sort(filteredList, Sale.getPriceComparator());
         }
-        
 
         HashMap<String, Long> balance = null;
         try {
@@ -84,26 +86,40 @@ public class BotThreadManageNewSale implements Runnable {
         DecimalFormat df = new DecimalFormat("##.00");
         Random rand = new Random();
 
+        int countSale = 1;
+        int countStat = 1;
+        int countListingAndBidding = 1;
         if (mode == BotModeEnum.Sale) {
-            int countSale = 1;
+
             for (Sale aSale : filteredList) {
                 messageSaver.put(aSale, NetworkMessageManager.getMessageManager().createSaleMessage(aSale, df, rand, countSale, balance, theCurrentBot));
                 countSale++;
             }
         } else if (mode == BotModeEnum.Stat) {
             Instant previousUTCHour = Instant.now().minus(theCurrentBot.getMpProfile().getRefreshSalesStats(), ChronoUnit.valueOf(theCurrentBot.getMpProfile().getRefreshStats().toString().toUpperCase()));
-            int countStat = 1;
 
             for (Contract contract : NetworkMessageManager.getMessageManager().createContractList(filteredList)) {
                 messageContractsSaver.put(contract, NetworkMessageManager.getMessageManager().createStatMessage(contract, df, previousUTCHour, countStat, balance, theCurrentBot));
                 countStat++;
             }
         } else if (mode == BotModeEnum.ListingAndBidding) {
-            int countListingAndBidding = 1;
 
             for (Sale aSale : filteredList) {
                 messageSaver.put(aSale, NetworkMessageManager.getMessageManager().createListingAndBiddingMessage(aSale, df, rand, countListingAndBidding, balance, theCurrentBot));
                 countListingAndBidding++;
+            }
+        }
+
+        AdCampaign adCampaign = null;
+
+        if (theCurrentBot.getBotType() == BotTypeEnum.Generic) {
+            GenericBot gb = GenericBotManager.getGenericBotManager().getGenericsBots().get(theCurrentBot.getIdGeneric());
+            gb.addCount(countSale + countStat + countListingAndBidding - 3);
+
+            if (gb.getCountMessage() >= 150) {
+                //If there's an active ad or not, I "reset" the count. The user should not "stack" ad if there's no one active
+                gb.addCount(gb.getCountMessage() * - 1);
+                adCampaign = AdCampaignManager.getAdCampaignManager().getRandomActiveAdCampaign();
             }
         }
 
@@ -115,7 +131,7 @@ public class BotThreadManageNewSale implements Runnable {
 
         for (SocialNetworkInterface oneSocialNetwork : theCurrentBot.getSnProfile().getAllSocialNetwork()) {
 
-            Future<SocialNetworkEnum> futureSocialNetwork = multithreadSocialNetwork.submit(oneSocialNetwork.createThreadSocialNetwork(mode, messageSaver, messageContractsSaver, theCurrentBot));
+            Future<SocialNetworkEnum> futureSocialNetwork = multithreadSocialNetwork.submit(oneSocialNetwork.createThreadSocialNetwork(mode, messageSaver, messageContractsSaver, theCurrentBot, adCampaign));
             allFutureSocialNetwork.add(futureSocialNetwork);
         }
 
@@ -134,6 +150,10 @@ public class BotThreadManageNewSale implements Runnable {
         }
 
         multithreadSocialNetwork.shutdown();
+
+        if (adCampaign != null) {
+            adCampaign.messageSent(theCurrentBot.getIdGeneric());
+        }
 
         for (SocialNetworkInterface oneSocialNetwork : theCurrentBot.getSnProfile().getAllSocialNetwork()) {
             if (!successfullSocialNetwork.contains(oneSocialNetwork.getName())) {

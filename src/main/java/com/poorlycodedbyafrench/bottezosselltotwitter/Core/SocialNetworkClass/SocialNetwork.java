@@ -4,6 +4,7 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass;
 
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Ad.AdCampaign;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Bot.Bot;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Bot.BotManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
@@ -79,5 +80,5 @@ public abstract class SocialNetwork implements SocialNetworkInterface {
     public abstract void check() throws Exception;
 
     @Override
-    public abstract CreatorThreadSocialNetworkInterface createThreadSocialNetwork(BotModeEnum mode, LinkedHashMap<Sale, String> messageSaver, LinkedHashMap<Contract, String> contracts, Bot theBot);
+    public abstract CreatorThreadSocialNetworkInterface createThreadSocialNetwork(BotModeEnum mode, LinkedHashMap<Sale, String> messageSaver, LinkedHashMap<Contract, String> contracts, Bot theBot, AdCampaign adCampaign);
 }

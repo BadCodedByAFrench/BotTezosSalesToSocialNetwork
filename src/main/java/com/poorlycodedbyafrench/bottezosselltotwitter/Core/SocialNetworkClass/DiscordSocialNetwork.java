@@ -4,7 +4,9 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass;
 
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Ad.AdCampaign;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Bot.Bot;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Bot.GenericBot;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.LogManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetworkEnum;
@@ -20,6 +22,7 @@ import javax.security.auth.login.LoginException;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 /**
@@ -54,6 +57,13 @@ public class DiscordSocialNetwork extends SocialNetwork {
         name = SocialNetworkEnum.Discord;
         profileName = "";
     }
+    
+    public DiscordSocialNetwork(JDA jda, TextChannel textChannel){
+        name = SocialNetworkEnum.Discord;
+        this.jda = jda;
+        this.textChannel = textChannel;
+        profileName = "Generic bot";
+    }
 
     public void initiateValue(String token, String channelName, String profileName) {
         this.token = token;
@@ -61,6 +71,11 @@ public class DiscordSocialNetwork extends SocialNetwork {
         this.profileName = profileName;
     }
 
+    public JDA getJda() {
+        return jda;
+    }
+
+    
     /**
      * We build the connection to Discord thanks to the token and the name of
      * the channel
@@ -73,6 +88,13 @@ public class DiscordSocialNetwork extends SocialNetwork {
      */
     public void instanceDiscord() throws LoginException, InterruptedException, Exception {
         jda = JDABuilder.createDefault(token.trim()).build().awaitReady();
+        jda.addEventListener(new DiscordGeneralCommands());
+        jda.addEventListener(new DiscordCommandSlashListener());
+        
+        for (Guild g : jda.getGuilds()) {
+            DiscordGeneralCommands.updateCommands(g, false);
+        }
+        
         List<TextChannel> allTextChannels = jda.getTextChannels();
 
         for (TextChannel oneTextChannel : allTextChannels) {
@@ -110,8 +132,8 @@ public class DiscordSocialNetwork extends SocialNetwork {
     }
 
     @Override
-    public CreatorThreadSocialNetworkInterface createThreadSocialNetwork(BotModeEnum mode, LinkedHashMap<Sale, String> messageSaver, LinkedHashMap<Contract, String> contracts, Bot theBot) {
-        return new ThreadDiscordMessage(mode, messageSaver, contracts, this, theBot);
+    public CreatorThreadSocialNetworkInterface createThreadSocialNetwork(BotModeEnum mode, LinkedHashMap<Sale, String> messageSaver, LinkedHashMap<Contract, String> contracts, Bot theBot, AdCampaign adCampaign) {
+        return new ThreadDiscordMessage(mode, messageSaver, contracts, this, theBot, adCampaign);
     }
 
     @Override
@@ -152,6 +174,12 @@ public class DiscordSocialNetwork extends SocialNetwork {
         jda.shutdown();
     }
 
+    public TextChannel getTextChannel() {
+        return textChannel;
+    }
+
+    
+    
     @Override
     public void instance() {
         try {

@@ -5,8 +5,13 @@
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass;
 
 import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.DeleteMyCommands;
+import com.pengrad.telegrambot.model.botcommandscope.BotCommandScopeDefault;
 import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.request.SetMyCommands;
+import com.pengrad.telegrambot.response.BaseResponse;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Ad.AdCampaign;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Bot.Bot;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.SocialNetworkEnum;
@@ -34,6 +39,12 @@ public class TelegramSocialNetwork extends SocialNetwork {
     public TelegramSocialNetwork() {
         profileName = "";
     }
+    
+    public TelegramSocialNetwork(TelegramBot telegramInstance, String channelID) {
+        this.telegramInstance = telegramInstance;
+        this.channelId = channelID;
+        profileName = "Generic bot";
+    }
 
     public void initiateValue(String apiKey, String channelId, String profileName) {
         this.apiKey = apiKey;
@@ -52,8 +63,22 @@ public class TelegramSocialNetwork extends SocialNetwork {
 
     public void instanceTelegram() {
         this.telegramInstance = new TelegramBot(apiKey);
+        
+        DeleteMyCommands deleteCmds = new DeleteMyCommands();
+        BaseResponse responseDelete = telegramInstance.execute(deleteCmds);
+        
+        SetMyCommands cmdsGeneral = new SetMyCommands(TelegramSocialNetworkFullCommands.getGeneralTelegramCommands(false));
+
+        telegramInstance.execute(cmdsGeneral);
+        TelegramSocialNetworkFullCommands.addUpdatesListener(telegramInstance);
     }
 
+    public TelegramBot getTelegramInstance() {
+        return telegramInstance;
+    }
+
+    
+    
     public synchronized void send(BaseRequest message) throws Exception {
         telegramInstance.execute(message);
 
@@ -61,8 +86,8 @@ public class TelegramSocialNetwork extends SocialNetwork {
     }
 
     @Override
-    public CreatorThreadSocialNetworkInterface createThreadSocialNetwork(BotModeEnum mode, LinkedHashMap<Sale, String> messageSaver, LinkedHashMap<Contract, String> contracts, Bot theBot) {
-        return new ThreadTelegramMessage(mode, messageSaver, contracts, this, theBot);
+    public CreatorThreadSocialNetworkInterface createThreadSocialNetwork(BotModeEnum mode, LinkedHashMap<Sale, String> messageSaver, LinkedHashMap<Contract, String> contracts, Bot theBot, AdCampaign adCampaign) {
+        return new ThreadTelegramMessage(mode, messageSaver, contracts, this, theBot, adCampaign);
     }
 
     public String getChannelId() {

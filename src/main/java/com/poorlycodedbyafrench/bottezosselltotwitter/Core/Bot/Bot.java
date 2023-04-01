@@ -15,6 +15,7 @@ import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.LogMana
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.SalesHistoryManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotStatusEnum;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotTypeEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.MarketPlaceEnum;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.MarketPlace;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MarketPlaceClass.MarketPlaceProfile;
@@ -199,9 +200,15 @@ public class Bot implements InterfaceLog{
     private boolean salesRunning;
 
     private boolean listingAndBiddingRunning;
+    
+    private BotTypeEnum botType;
+    
+    private String idGeneric;
 
-    public Bot(String name) {
+    public Bot(String name, BotTypeEnum botType, String idGeneric) {
         this.name = name;
+        this.botType = botType;
+        this.idGeneric = idGeneric;
         this.botStatus = BotStatusEnum.Uncompleted;
         this.marketplaces = new HashMap<MarketPlaceEnum, MarketPlace>();
 
@@ -215,19 +222,22 @@ public class Bot implements InterfaceLog{
         this.recentOperation = new ArrayList<>();
 
         startTime = Instant.now();
-
-        this.securityIdSales = true;
+        this.statRunning = true;
+        this.salesRunning = true;
+        this.listingAndBiddingRunning = true;
+        
+        this.securityIdSales = false;
         this.orderBy = 0;
         this.saleType = true;
         this.adress = true;
         this.ipfs = true;
 
-        this.securityIdStats = true;
+        this.securityIdStats = false;
         this.avgPriceStat = true;
         this.minPriceStat = true;
         this.maxPriceStat = true;
 
-        this.securityIdListingAndBidding = true;
+        this.securityIdListingAndBidding = false;
         this.adressListingAndBidding = true;
         this.ipfsListingAndBidding = true;
         this.activateListing = true;
@@ -265,8 +275,9 @@ public class Bot implements InterfaceLog{
         sentencesBidding.add("Hehe, a new bid");
     }
 
-    public void start() {
-
+    public String start() {
+        
+        String answer = "";
         try {
 
             for (SocialNetworkInterface oneSocialNetwork : this.getSnProfile().getAllSocialNetwork()) {
@@ -289,8 +300,11 @@ public class Bot implements InterfaceLog{
             this.startTime = Instant.now();
 
         } catch (Exception ex) {
-            LogManager.getLogManager().writeLog(MainBotForm.class.getName(), ex);
+            answer = "Some permissions are missing please check /permissions";
+            LogManager.getLogManager().writeLog(Bot.class.getName(), ex);
         }
+        
+        return answer;
     }
 
     public void addLog(String source, String status, String complement){
@@ -307,8 +321,8 @@ public class Bot implements InterfaceLog{
         recentOperation.add(messageList);
     }
     
-    public void stop() {
-
+    public String stop() {
+        String answer = "";
         this.botStatus = BotStatusEnum.Ready;
 
         if (salesRunning) {
@@ -328,8 +342,10 @@ public class Bot implements InterfaceLog{
                 oneSocialNetwork.stop();
             }
         } catch (Exception ex) {
+            answer = "Some permissions are missing please check /permissions";
             LogManager.getLogManager().writeLog(MainBotForm.class.getName(), ex);
         }
+        return answer;
     }
 
     public void checkComplete() {
@@ -337,7 +353,7 @@ public class Bot implements InterfaceLog{
         if (this.botStatus != BotStatusEnum.Running) {
             this.botStatus = BotStatusEnum.Uncompleted;
 
-            if (this.mpProfile != null && this.snProfile != null) {
+            if (this.mpProfile != null && this.snProfile != null && this.getAllContracts().size() > 0 && this.checkMode() ) {
                 this.botStatus = BotStatusEnum.Ready;
             }
         }
@@ -916,6 +932,40 @@ public class Bot implements InterfaceLog{
 
     public void setHistoryManager(SalesHistoryManager historyManager) {
         this.historyManager = historyManager;
+    }
+    
+    public List<String> getAllContracts(){
+        List<String> allContracts = new ArrayList<>();
+        
+        for(MarketPlace mp : marketplaces.values()){
+            allContracts.addAll(mp.getAllContractsString());
+        }
+        
+        return allContracts;
+    }
+    
+    public boolean checkMode(){
+        if(!this.salesRunning && !this.statRunning && !this.listingAndBiddingRunning){
+            return false;
+        }
+        
+        return true;
+    }
+
+    public BotTypeEnum getBotType() {
+        return botType;
+    }
+
+    public String getIdGeneric() {
+        return idGeneric;
+    }
+
+    public void setBotType(BotTypeEnum botType) {
+        this.botType = botType;
+    }
+
+    public void setIdGeneric(String idGeneric) {
+        this.idGeneric = idGeneric;
     }
     
     

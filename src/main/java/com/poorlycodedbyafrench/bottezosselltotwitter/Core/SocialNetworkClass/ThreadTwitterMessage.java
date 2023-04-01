@@ -4,6 +4,7 @@
  */
 package com.poorlycodedbyafrench.bottezosselltotwitter.Core.SocialNetworkClass;
 
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Ad.AdCampaign;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Bot.Bot;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.LogManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.MainEnum.BotModeEnum;
@@ -35,13 +36,16 @@ public class ThreadTwitterMessage implements CreatorThreadSocialNetworkInterface
     private TwitterSocialNetwork twitter;
     
     private Bot theBot;
+    
+    private AdCampaign adCampaign;
 
-    public ThreadTwitterMessage(BotModeEnum mode, LinkedHashMap<Sale, String> messageSaver, LinkedHashMap<Contract,String> contracts, TwitterSocialNetwork twitter, Bot theBot) {
+    public ThreadTwitterMessage(BotModeEnum mode, LinkedHashMap<Sale, String> messageSaver, LinkedHashMap<Contract,String> contracts, TwitterSocialNetwork twitter, Bot theBot, AdCampaign adCampaign) {
         this.mode = mode;
         this.messageSaver = messageSaver;
         this.contracts = contracts;
         this.twitter = twitter;
         this.theBot = theBot;
+        this.adCampaign = adCampaign;
     }
 
     @Override
@@ -95,6 +99,10 @@ public class ThreadTwitterMessage implements CreatorThreadSocialNetworkInterface
                 }
                 twitter.send(newStatus);
             }
+        }
+        
+        if (adCampaign != null) {
+            //This is not possible
         }
         
         return SocialNetworkEnum.Twitter;

@@ -35,7 +35,7 @@ public class LogManager {
         FileHandler fh;
 
         try {  
-            fh = new FileHandler("./BotTezosLog.log");
+            fh = new FileHandler("./BotTezosLog.log",1024*1024, 1, true);
             SimpleFormatter formatter = new SimpleFormatter();  
             fh.setFormatter(formatter); 
             fileLogger.setUseParentHandlers(false);

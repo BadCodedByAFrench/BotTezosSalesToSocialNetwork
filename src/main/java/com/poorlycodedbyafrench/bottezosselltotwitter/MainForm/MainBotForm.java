@@ -6,8 +6,14 @@ package com.poorlycodedbyafrench.bottezosselltotwitter.MainForm;
 
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.LogManager;
 import com.poorlycodedbyafrench.bottezosselltotwitter.Core.Configuration.PanelRefreshInterface;
+import com.poorlycodedbyafrench.bottezosselltotwitter.Core.GeneralStatistic.GeneralStatisticRefresher;
 import java.awt.CardLayout;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Main form of the application
@@ -19,8 +25,22 @@ public class MainBotForm extends javax.swing.JFrame {
     private CardLayout layoutManager;
     
     private HashMap<String, PanelRefreshInterface> allPanel;
+    
+    private transient ScheduledThreadPoolExecutor executor;
+
+    private transient ScheduledFuture<?> scheduledStatRefresher;
+    
+    private transient GeneralStatisticRefresher apiStatisticRefresher;
+    
     public MainBotForm() {
         initComponents();
+        
+        executor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(1);
+        executor.setRemoveOnCancelPolicy(true);
+        
+        apiStatisticRefresher = new GeneralStatisticRefresher();
+        scheduledStatRefresher = executor.scheduleAtFixedRate(apiStatisticRefresher, 0, 10, TimeUnit.MINUTES);
+        
         
         allPanel = new HashMap<>();
         
@@ -30,6 +50,10 @@ public class MainBotForm extends javax.swing.JFrame {
         allPanel.put("marketPlaceProfileManagerAndCreator", marketPlaceProfileManagerAndCreator);
         allPanel.put("multipleBotMenu", multipleBotMenu);
         allPanel.put("socialNetworkProfileManagerAndCreator", socialNetworkProfileManagerAndCreator);
+        allPanel.put("genericBotMenu", genericBotMenu);
+        allPanel.put("allDiscordServerGenericBot", allDiscordServerGenericBot);
+        allPanel.put("allTelegramServerGenericBot", allTelegramServerGenericBot);
+        allPanel.put("adCompainMenu", adCompainMenu);
         
         for(PanelRefreshInterface aPanel : allPanel.values()){
             aPanel.setMainBotForm(this);
@@ -63,6 +87,10 @@ public class MainBotForm extends javax.swing.JFrame {
         marketPlaceProfileManagerAndCreator = new com.poorlycodedbyafrench.bottezosselltotwitter.MainForm.MarketPlaceProfileManagerAndCreator();
         multipleBotMenu = new com.poorlycodedbyafrench.bottezosselltotwitter.MainForm.MultipleBotMenu();
         socialNetworkProfileManagerAndCreator = new com.poorlycodedbyafrench.bottezosselltotwitter.MainForm.SocialNetworkProfileManagerAndCreator();
+        genericBotMenu = new com.poorlycodedbyafrench.bottezosselltotwitter.MainForm.GenericBotMenu();
+        allDiscordServerGenericBot = new com.poorlycodedbyafrench.bottezosselltotwitter.MainForm.AllDiscordServerGenericBot();
+        allTelegramServerGenericBot = new com.poorlycodedbyafrench.bottezosselltotwitter.MainForm.AllTelegramServerGenericBot();
+        adCompainMenu = new com.poorlycodedbyafrench.bottezosselltotwitter.MainForm.AdCompainMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Tezos sale bot manager");
@@ -79,6 +107,15 @@ public class MainBotForm extends javax.swing.JFrame {
         mainPanel.add(multipleBotMenu, "multipleBotMenu");
         mainPanel.add(socialNetworkProfileManagerAndCreator, "socialNetworkProfileManagerAndCreator");
         socialNetworkProfileManagerAndCreator.getAccessibleContext().setAccessibleDescription("");
+
+        mainPanel.add(genericBotMenu, "genericBotMenu");
+        mainPanel.add(allDiscordServerGenericBot, "allDiscordServerGenericBot");
+        allDiscordServerGenericBot.getAccessibleContext().setAccessibleName("");
+
+        mainPanel.add(allTelegramServerGenericBot, "allTelegramServerGenericBot");
+        allTelegramServerGenericBot.getAccessibleContext().setAccessibleDescription("");
+
+        mainPanel.add(adCompainMenu, "adCompainMenu");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -130,7 +167,11 @@ public class MainBotForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private com.poorlycodedbyafrench.bottezosselltotwitter.MainForm.AdCompainMenu adCompainMenu;
+    private com.poorlycodedbyafrench.bottezosselltotwitter.MainForm.AllDiscordServerGenericBot allDiscordServerGenericBot;
+    private com.poorlycodedbyafrench.bottezosselltotwitter.MainForm.AllTelegramServerGenericBot allTelegramServerGenericBot;
     private com.poorlycodedbyafrench.bottezosselltotwitter.MainForm.ConfigurationMenu configurationMenu;
+    private com.poorlycodedbyafrench.bottezosselltotwitter.MainForm.GenericBotMenu genericBotMenu;
     private com.poorlycodedbyafrench.bottezosselltotwitter.MainForm.LicenseBot licenseBot;
     private javax.swing.JPanel mainPanel;
     private com.poorlycodedbyafrench.bottezosselltotwitter.MainForm.MarketPlaceProfileManagerAndCreator marketPlaceProfileManagerAndCreator;
