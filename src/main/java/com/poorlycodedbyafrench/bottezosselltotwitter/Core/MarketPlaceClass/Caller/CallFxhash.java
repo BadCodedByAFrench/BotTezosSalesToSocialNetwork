@@ -196,17 +196,23 @@ public class CallFxhash implements CallMarketPlaceInterface {
                 }
                 double price = action.get("numericValue").getAsDouble() / 1000000.0;
 
-                JsonObject objkt = (JsonObject) action.getAsJsonObject("objkt");
-                String id = objkt.get("id").getAsString();
-                String tokenname = objkt.get("name").getAsString();
-                String ipfs = objkt.getAsJsonObject("metadata").get("displayUri").getAsString();
+                
+                
+                
+                if (!action.getAsJsonObject("objkt").isJsonNull()){
+                    JsonObject objkt = (JsonObject) action.getAsJsonObject("objkt");
+                    
+                    String id = objkt.get("id").getAsString();
+                    String tokenname = objkt.get("name").getAsString();
+                    String ipfs = objkt.getAsJsonObject("metadata").get("displayUri").getAsString();
 
-                String contract = generativeTokens.get("id").getAsString();
-                String collectionName = generativeTokens.get("name").getAsString();
-                String path = generativeTokens.get("slug").getAsString();
+                    String contract = generativeTokens.get("id").getAsString();
+                    String collectionName = generativeTokens.get("name").getAsString();
+                    String path = generativeTokens.get("slug").getAsString();
 
-                sellList.put(idtransaction, new Sale(tokenname, id, price, type, this.getName(), path, OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs, idtransaction));
+                    sellList.put(idtransaction, new Sale(tokenname, id, price, type, this.getName(), path, OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs, idtransaction));
 
+                }
             }
         }
 
