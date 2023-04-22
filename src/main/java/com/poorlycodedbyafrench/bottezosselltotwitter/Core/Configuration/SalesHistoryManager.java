@@ -45,7 +45,7 @@ public class SalesHistoryManager {
                         sellerCheck = false;
                     }
 
-                    if (!theBot.getMarketplaces().get(aSale.getMarketplace()).getAllContractsFromThisMarketPlace().get(aSale.getContract()).getItemFilter().isEmpty() && !theBot.getMarketplaces().get(aSale.getMarketplace()).getAllContractsFromThisMarketPlace().get(aSale.getContract()).getItemFilter().contains(aSale.getId().toString())) {
+                    if (!theBot.getMarketplaces().get(aSale.getMarketplace()).getAllContractsFromThisMarketPlace().get(aSale.getContract()).getItemFilter().isEmpty() && !theBot.getMarketplaces().get(aSale.getMarketplace()).getAllContractsFromThisMarketPlace().get(aSale.getContract()).getItemFilter().contains(aSale.getId())) {
                         itemCheck = false;
                     }
 
@@ -80,7 +80,7 @@ public class SalesHistoryManager {
                     }
 
                     if (aSale.getType() != SaleTypeEnum.NewFloorOffer) {
-                        if (!theBot.getMarketplaces().get(aSale.getMarketplace()).getAllContractsFromThisMarketPlace().get(aSale.getContract()).getItemFilter().isEmpty() && !theBot.getMarketplaces().get(aSale.getMarketplace()).getAllContractsFromThisMarketPlace().get(aSale.getContract()).getItemFilter().contains(aSale.getId().toString())) {
+                        if (!theBot.getMarketplaces().get(aSale.getMarketplace()).getAllContractsFromThisMarketPlace().get(aSale.getContract()).getItemFilter().isEmpty() && !theBot.getMarketplaces().get(aSale.getMarketplace()).getAllContractsFromThisMarketPlace().get(aSale.getContract()).getItemFilter().contains(aSale.getId())) {
                             itemCheck = false;
                         }
                     }

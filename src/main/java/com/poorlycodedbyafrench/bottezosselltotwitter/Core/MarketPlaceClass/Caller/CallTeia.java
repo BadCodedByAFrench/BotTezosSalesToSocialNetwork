@@ -112,7 +112,7 @@ public class CallTeia implements CallMarketPlaceInterface {
 
                 String path = null;
 
-                Long id = trade.get("token_id").getAsLong();
+                String id = trade.get("token_id").getAsString();
                 String timestamp = trade.get("timestamp").getAsString();
 
                 String idtransaction = trade.get("swap_id").getAsString();
@@ -179,7 +179,7 @@ public class CallTeia implements CallMarketPlaceInterface {
                 String buyerDomain = null;
 
                 JsonObject token = (JsonObject) swap.getAsJsonObject("token");
-                Long id = token.get("id").getAsLong();
+                String id = token.get("id").getAsString();
 
                 String tokenname = token.get("title").getAsString();
 

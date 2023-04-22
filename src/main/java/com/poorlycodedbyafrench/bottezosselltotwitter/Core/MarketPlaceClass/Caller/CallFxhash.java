@@ -197,7 +197,7 @@ public class CallFxhash implements CallMarketPlaceInterface {
                 double price = action.get("numericValue").getAsDouble() / 1000000.0;
 
                 JsonObject objkt = (JsonObject) action.getAsJsonObject("objkt");
-                Long id = objkt.get("id").getAsLong();
+                String id = objkt.get("id").getAsString();
                 String tokenname = objkt.get("name").getAsString();
                 String ipfs = objkt.getAsJsonObject("metadata").get("displayUri").getAsString();
 

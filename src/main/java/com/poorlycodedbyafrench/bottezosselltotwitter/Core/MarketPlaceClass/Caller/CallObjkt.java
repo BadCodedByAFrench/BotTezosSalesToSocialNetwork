@@ -156,7 +156,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
                         JsonObject token = (JsonObject) s;
 
                         String tokenname = token.get("name").getAsString();
-                        Long id = token.get("token_id").getAsLong();
+                        String id = token.get("token_id").getAsString();
                         String timestamp = "";
                         double price = 0;
                         String idtransaction;
@@ -286,7 +286,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
 
                     String collectionName = success_dutch_auction.getAsJsonObject("dutch_auction").getAsJsonObject("fa").get("name").getAsString();
 
-                    Long id = success_dutch_auction.getAsJsonObject("token").get("token_id").getAsLong();
+                    String id = success_dutch_auction.getAsJsonObject("token").get("token_id").getAsString();
                     String tokenname = success_dutch_auction.getAsJsonObject("token").get("name").getAsString();
                     String ipfs = success_dutch_auction.getAsJsonObject("token").get("display_uri").getAsString();
                     sellList.put(idtransaction, new Sale(tokenname, id, price, SaleTypeEnum.DutchAuction, this.getName(), path, OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs, idtransaction));
@@ -322,7 +322,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
 
                         String collectionName = aListing.getAsJsonObject("fa").get("name").getAsString();
 
-                        Long id = aListing.getAsJsonObject("token").get("token_id").getAsLong();
+                        String id = aListing.getAsJsonObject("token").get("token_id").getAsString();
                         String tokenname = aListing.getAsJsonObject("token").get("name").getAsString();
                         String ipfs = aListing.getAsJsonObject("token").get("display_uri").getAsString();
                         sellList.put(idtransaction, new Sale(tokenname, id, price, SaleTypeEnum.NewList, this.getName(), path, OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs, idtransaction));
@@ -366,7 +366,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
                             JsonObject token = englishAuction.getAsJsonObject("token");
 
                             String tokenname = token.get("name").getAsString();
-                            Long id = token.get("token_id").getAsLong();
+                            String id = token.get("token_id").getAsString();
 
                             String ipfs = token.get("display_uri").getAsString();
 
@@ -412,7 +412,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
                             JsonObject token = dutchAuction.getAsJsonObject("token");
 
                             String tokenname = token.get("name").getAsString();
-                            Long id = token.get("token_id").getAsLong();
+                            String id = token.get("token_id").getAsString();
 
                             String ipfs = token.get("display_uri").getAsString();
 
@@ -448,7 +448,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
 
                         String collectionName = anOffer.getAsJsonObject("fa").get("name").getAsString();
 
-                        Long id = (long) 0;
+                        String id = "0";
                         String tokenname = "";
                         String ipfs = "";
                         sellList.put(idtransaction, new Sale(tokenname, id, price, SaleTypeEnum.NewFloorOffer, this.getName(), path, OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs, idtransaction));
@@ -482,7 +482,7 @@ public class CallObjkt implements CallMarketPlaceInterface {
 
                         String collectionName = aBidding.getAsJsonObject("auction").getAsJsonObject("fa").get("name").getAsString();
 
-                        Long id = aBidding.getAsJsonObject("auction").getAsJsonObject("token").get("token_id").getAsLong();
+                        String id = aBidding.getAsJsonObject("auction").getAsJsonObject("token").get("token_id").getAsString();
                         String tokenname = aBidding.getAsJsonObject("auction").getAsJsonObject("token").get("name").getAsString();
                         String ipfs = aBidding.getAsJsonObject("auction").getAsJsonObject("token").get("display_uri").getAsString();
                         sellList.put(idtransaction, new Sale(tokenname, id, price, SaleTypeEnum.NewBidding, this.getName(), path, OffsetDateTime.parse(timestamp, DATE_TIME_FORMATTER).toInstant(), contract, collectionName, new Address(buyerAdress, buyerDomain), new Address(sellerAdress, sellerDomain), ipfs, idtransaction));

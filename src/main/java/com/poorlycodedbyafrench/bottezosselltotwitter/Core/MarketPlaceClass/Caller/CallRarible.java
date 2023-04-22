@@ -139,7 +139,7 @@ public class CallRarible implements CallMarketPlaceInterface {
 
                     JsonObject nft = (JsonObject) transac.getAsJsonObject("nft");
 
-                    Long id = nft.getAsJsonObject("type").get("tokenId").getAsLong();
+                    String id = nft.getAsJsonObject("type").get("tokenId").getAsString();
 
                     String contract = nft.getAsJsonObject("type").get("contract").getAsString().split(":")[1];
 
@@ -200,7 +200,7 @@ public class CallRarible implements CallMarketPlaceInterface {
 
                     JsonObject nfttransac = (JsonObject) transac.getAsJsonObject("make");
 
-                    Long id = nfttransac.getAsJsonObject("type").get("tokenId").getAsLong();
+                    String id = nfttransac.getAsJsonObject("type").get("tokenId").getAsString();
 
                     String contract = nfttransac.getAsJsonObject("type").get("contract").getAsString().split(":")[1];
 
@@ -286,10 +286,10 @@ public class CallRarible implements CallMarketPlaceInterface {
                     }
 
                     String contract = item.get("contract").toString().split(":")[1].replace("\"", "");
-                    Long id = item.get("tokenId").getAsLong();
+                    String id = item.get("tokenId").getAsString();
 
                     for (Sale aSale : sellList.values()) {
-                        if (aSale.getId().longValue() == id.longValue() && aSale.getContract().equals(contract)) {
+                        if (aSale.getId().equals(id) && aSale.getContract().equals(contract)) {
                             aSale.setName(name);
                             aSale.setIpfs(ipfs);
                         }

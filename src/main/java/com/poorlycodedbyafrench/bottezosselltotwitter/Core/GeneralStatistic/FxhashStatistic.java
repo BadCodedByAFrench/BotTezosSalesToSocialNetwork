@@ -100,7 +100,11 @@ public class FxhashStatistic implements StatisticCallerInterface {
             Long itemNumber = contractJSON.get("objktsCount").getAsLong();
             
             Long countActiveListing = contractJSON.getAsJsonObject("marketStats").get("listed").getAsLong();
-            Double floor_price = contractJSON.getAsJsonObject("marketStats").get("floor").getAsDouble()/1000000.0;
+            Double floor_price = 0.0;
+                    
+            if (!contractJSON.getAsJsonObject("marketStats").get("floor").isJsonNull()){
+                floor_price = contractJSON.getAsJsonObject("marketStats").get("floor").getAsDouble()/1000000.0;
+            }
             
             Double allTimeVolume = contractJSON.getAsJsonObject("marketStats").get("secVolumeTz").getAsDouble()/1000000.0;
             Double lastDayVolume = contractJSON.getAsJsonObject("marketStats").get("secVolumeTz24").getAsDouble()/1000000.0;

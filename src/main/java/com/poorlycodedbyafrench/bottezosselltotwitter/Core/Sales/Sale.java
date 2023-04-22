@@ -23,7 +23,7 @@ public class Sale implements Comparable<Sale> {
     /**
      * Id of the NFT
      */
-    private Long id;
+    private String id;
 
     /**
      * Price of the sale
@@ -81,7 +81,7 @@ public class Sale implements Comparable<Sale> {
      */
     private String idtransaction;
 
-    public Sale(String name, Long id, double price, SaleTypeEnum type, MarketPlaceEnum marketplace, String pathname, Instant timestamp, String contract, String collectionName, Address buyer, Address seller, String ipfs, String idtransaction) {
+    public Sale(String name, String id, double price, SaleTypeEnum type, MarketPlaceEnum marketplace, String pathname, Instant timestamp, String contract, String collectionName, Address buyer, Address seller, String ipfs, String idtransaction) {
         this.name = name;
         this.id = id;
         this.price = price;
@@ -101,7 +101,7 @@ public class Sale implements Comparable<Sale> {
         return name;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
